@@ -1,0 +1,81 @@
+.login-body {
+    background: #F4F4F4; 
+}
+
+.login-card {
+    background: #FFFFFF; 
+    width: 100%;
+    max-width: 380px;
+    border-radius: 16px;
+    border-top: 5px solid #9D1A1A;
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.form-control:focus {
+    border-color: #9D1A1A;
+    box-shadow: 0 0 5px rgba(157, 26, 26, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: #7A0E0E;
+}
+
+
+#errorMsg {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.wrapper {
+    display: flex;
+}
+
+.sidebar {
+    width: 240px;
+    background: #9D1A1A; 
+    min-height: 100vh;
+    padding-top: 20px;
+    color: white;
+}
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    margin: 5px 0;
+}
+
+.sidebar a:hover {
+    background: #7A0E0E; 
+}
+
+.sidebar a.active {
+    background: rgba(255, 255, 255, 0.25);
+    font-weight: bold;
+}
+
+.main-content {
+    flex: 1;
+    background: #F4F4F4; 
+}
+
+.topbar {
+    background: #FFFFFF;
+    height: 60px;
+    border-bottom: 1px solid #ddd;
+}
+
+.card {
+    border-radius: 12px;
+    border-left: 6px solid #9D1A1A;
+}
