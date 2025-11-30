@@ -2,21 +2,24 @@
 
 class AuthApi {
 
+    public function __construct($data) {
+        $this->auth = new Auth();
+        $this->data = $data;
+    }
+
     public function login() {
-        
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
 
-        // $userModel = new User();
-        // $user = $userModel->checkLogin($email, $password);
+        $email = $this->data['email'] ?? '';
+        $password = $this->data['password'] ?? '';
 
-        // if ($user) {
-        //     $_SESSION['user'] = $user; // store session
-        //     return ['success' => true];
-        // }
+        if (!$email || !$password) {
+            echo json_encode(['success' => false, 'error' => 'Missing credentials']);
+            return;
+        }
 
-        // return ['success' => false, 'error' => 'Invalid email or password'];
-        return ['success' => false];
+        $result = $this->auth->login($email, $password);
+
+        echo json_encode($result);
     }
 
 }

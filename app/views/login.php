@@ -53,11 +53,21 @@ form.addEventListener("submit", function(e) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            // login successful → redirect to dashboard
-            // window.location.href = "index.php?page=home";
-            alert("good")
+            /*
+
+                CODE HERE WHEN THE LOG IN IS SUCCESSFUL
+
+            */
+
+            // window.location.href = "?page"   
         } else {
-            alert("Wrong email or password");
+            /* 
+            
+                CODE HERE WHEN THE LOG IN IS UNSUCCESSFUL
+
+                Note: you can do console.log(data.message) here to see why unsuccessful
+            
+            */
         }
     })
     .catch(err => console.error(err));

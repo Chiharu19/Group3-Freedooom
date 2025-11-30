@@ -2,6 +2,8 @@
 header("Content-Type: application/json");
 session_start();
 
+require_once __DIR__ . '/../app/config/database.php';
+
 spl_autoload_register(function($class) {
     $paths = [
         __DIR__ . '/../app/api/' . $class . '.php',
@@ -30,6 +32,5 @@ if (!isset($routes[$action])) {
 }
 
 [$apiName, $method] = $routes[$action];
-$api = new $apiName();
-
-echo json_encode($api->$method());
+$api = new $apiName($_POST);
+$api->$method();
