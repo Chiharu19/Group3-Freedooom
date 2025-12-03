@@ -1,3 +1,4 @@
+
 .wrapper {
     display: flex;
 }
@@ -42,3 +43,49 @@
     border-radius: 12px;
     border-left: 6px solid #9D1A1A;
 }
+
+.wrapper {
+    display: flex;
+}
+
+.sidebar {
+    width: 240px;
+    background: #9D1A1A;
+    min-height: 100vh;
+    padding-top: 20px;
+    color: white;
+}
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    margin: 5px 0;
+}
+
+.sidebar a:hover {
+    background: #7A0E0E;
+}
+
+.sidebar a.active {
+    background: rgba(255, 255, 255, 0.25);
+    font-weight: bold;
+}
+
+.main-content {
+    flex: 1;
+    background: #F4F4F4;
+}
+
+.topbar {
+    background: white;
+    height: 60px;
+    border-bottom: 1px solid #ddd;
+}
+
+.card {
+    border-radius: 12px;
+    border-left: 6px solid #9D1A1A;
+}
+

@@ -23,10 +23,7 @@ let requests = [
   { id: 101, student: 'student1@example.com', room_id: 'R201', date: '2025-12-02', start: '13:00', end: '15:00', purpose: 'Group meeting', assigned_to: 'instructor@example.com', status: 'Pending', comments: '' }
 ];
 
-// NEW: Modification requests
-let modification_requests = [];
-
-// ---------- Utilities ----------
+// utility
 function mkId() { return Math.floor(Math.random()*100000); }
 function timeToMinutes(t) { const [h,m]=t.split(':').map(Number); return h*60+m; }
 function rangesOverlap(startA,endA,startB,endB) {
@@ -42,12 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderRoomAvailability();
   renderMyBookings();
   renderRequestsList();
-
-  // Bind modification request form
-  const modForm = document.getElementById("mod-request-form");
-  if(modForm){
-    modForm.addEventListener("submit", submitModificationRequest);
-  }
 });
 
 // Populate small dashboard widgets
@@ -55,15 +46,12 @@ function populateDashboard(){
   const today = new Date().toISOString().slice(0,10);
   const myBookingsToday = bookings.filter(b=>b.owner==='instructor@example.com' && b.date===today);
   document.getElementById('dashboard-today-count') && (document.getElementById('dashboard-today-count').textContent = myBookingsToday.length);
-
   const pendingCount = requests.filter(r=>r.assigned_to==='instructor@example.com' && r.status==='Pending').length;
   document.getElementById('dashboard-requests-count') && (document.getElementById('dashboard-requests-count').textContent = pendingCount);
 
   const scheduleEl = document.getElementById('dashboard-schedule');
   if(scheduleEl){
-    scheduleEl.innerHTML = myBookingsToday.length ? 
-      myBookingsToday.map(b=>`${b.date} ${b.start}-${b.end} (${b.room_id})`).join('<br>') 
-      : 'No bookings today.';
+    scheduleEl.innerHTML = myBookingsToday.length ? myBookingsToday.map(b=>`${b.date} ${b.start}-${b.end} ${b.room_id}`).join('<br>') : 'No bookings today.';
   }
 }
 
@@ -102,14 +90,13 @@ function renderRoomAvailability(filter){
   for(const building in grouped){
     const bEl = document.createElement('div');
     bEl.className = 'building';
-    bEl.innerHTML = `<h5>${building}</h5>`;
 
+    bEl.innerHTML = `<h5>${building}</h5>`;
     const floors = grouped[building].reduce((acc, r)=>{
       acc[r.floor] = acc[r.floor] || [];
       acc[r.floor].push(r);
       return acc;
     }, {});
-
     for(const floor in floors){
       const floorEl = document.createElement('div');
       floorEl.className = 'floor';
@@ -120,22 +107,36 @@ function renderRoomAvailability(filter){
         let statusClass = 'status-free';
         let statusText = 'Available';
 
+        // Check bookings for filter date/time
         if(filter && filter.date){
           const busy = bookings.some(b=>{
             if(b.room_id !== r.id) return false;
             if(b.date !== filter.date) return false;
-            if(!filter.start || !filter.end) return true;
+            if(!filter.start || !filter.end) {
+              // if only date is provided, any booking makes it occupied
+              return true;
+            }
             return rangesOverlap(filter.start, filter.end, b.start, b.end);
           });
-          if(busy){ statusClass = 'status-occupied'; statusText = 'Occupied'; }
+          if(busy){
+            statusClass = 'status-occupied';
+            statusText = 'Occupied';
+          }
+        } else {
+          // Without filter: check if today & now overlapped
+          const today = new Date().toISOString().slice(0,10);
+          const now = new Date();
+          const nowStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+          const busyNow = bookings.some(b => b.room_id===r.id && b.date===today && rangesOverlap(b.start,b.end, nowStr, nowStr));
+          if(busyNow) {
+            statusClass = 'status-occupied';
+            statusText = 'Occupied now';
+          }
         }
 
         const roomBox = document.createElement('div');
         roomBox.className = `room-box ${statusClass}`;
-        roomBox.innerHTML = `
-          <div>${r.name}</div>
-          <small>${r.id}</small>
-          <div class="mt-1"><small>${statusText}</small></div>`;
+        roomBox.innerHTML = `<div>${r.name}</div><small>${r.id}</small><div class="mt-1"><small>${statusText}</small></div>`;
         roomBox.addEventListener('click', ()=> openRoomSchedule(r));
         roomsDiv.appendChild(roomBox);
       });
@@ -147,7 +148,7 @@ function renderRoomAvailability(filter){
   }
 }
 
-// ------------------ Room Schedule Modal ------------------
+// Show modal schedule for a room
 function openRoomSchedule(room){
   const modalEl = document.getElementById('roomScheduleModal');
   if(!modalEl) return;
@@ -156,40 +157,16 @@ function openRoomSchedule(room){
   document.getElementById('modal-room-title').textContent = `${room.name} (${room.id})`;
   document.getElementById('modal-book-link').href = `book_room.html?room=${room.id}`;
 
+  // build schedule table
   const scheduleBody = document.getElementById('modal-schedule-body');
-  const roomBookings = bookings
-    .filter(b=>b.room_id===room.id)
-    .sort((a,b)=> a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
-
-  if(roomBookings.length === 0){
+  const roomBookings = bookings.filter(b=>b.room_id===room.id).sort((a,b)=> a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
+  if(roomBookings.length===0){
     scheduleBody.innerHTML = '<p>No bookings yet for this room.</p>';
   } else {
-    const html = [
-      `<div class="table-responsive"><table class="table">
-         <thead>
-           <tr><th>Date</th><th>Time</th><th>Purpose</th><th>Owner</th><th>Status</th></tr>
-         </thead><tbody>`
-    ];
-
+    const html = ['<div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Time</th><th>Purpose</th><th>Owner</th><th>Status</th></tr></thead><tbody>'];
     roomBookings.forEach(b=>{
-      const isMine = b.owner === "instructor@example.com";
-      const modBtn = isMine ? "" : 
-      `<button class="btn btn-sm btn-outline-primary mt-1"
-         onclick="openModificationRequestModal(${b.id})">
-         Request Modification
-       </button>`;
-
-      html.push(`
-        <tr>
-          <td>${b.date}</td>
-          <td>${b.start} - ${b.end}</td>
-          <td>${b.purpose}<br>${modBtn}</td>
-          <td>${b.owner}</td>
-          <td>${b.status}</td>
-        </tr>
-      `);
+      html.push(`<tr><td>${b.date}</td><td>${b.start} - ${b.end}</td><td>${b.purpose}</td><td>${b.owner}</td><td>${b.status}</td></tr>`);
     });
-
     html.push('</tbody></table></div>');
     scheduleBody.innerHTML = html.join('');
   }
@@ -197,59 +174,10 @@ function openRoomSchedule(room){
   modal.show();
 }
 
-// ------------------ Modification Request Modal ------------------
-function openModificationRequestModal(bookingId){
-  const b = bookings.find(x=>x.id===bookingId);
-  if(!b) return;
-
-  document.getElementById("mod-booking-id").value = b.id;
-  document.getElementById("mod-new-date").value = b.date;
-  document.getElementById("mod-new-start").value = b.start;
-  document.getElementById("mod-new-end").value = b.end;
-  document.getElementById("mod-reason").value = "";
-
-  document.getElementById("mod-feedback").innerHTML = "";
-
-  const modal = new bootstrap.Modal(document.getElementById("modRequestModal"));
-  modal.show();
-}
-
-function submitModificationRequest(){
-  const id = Number(document.getElementById("mod-booking-id").value);
-  const newDate = document.getElementById("mod-new-date").value;
-  const newStart = document.getElementById("mod-new-start").value;
-  const newEnd = document.getElementById("mod-new-end").value;
-  const reason = document.getElementById("mod-reason").value;
-  const msg = document.getElementById("mod-feedback");
-
-  if(timeToMinutes(newEnd) <= timeToMinutes(newStart)){
-    msg.innerHTML = `<span class='text-danger'>End must be after start.</span>`;
-    return;
-  }
-
-  modification_requests.push({
-    id: mkId(),
-    booking_id: id,
-    requestor: "instructor@example.com",
-    newDate,
-    newStart,
-    newEnd,
-    reason,
-    status: "Pending"
-  });
-
-  msg.innerHTML = `<span class='text-success'>Request submitted!</span>`;
-
-  setTimeout(()=> {
-    bootstrap.Modal.getInstance(document.getElementById("modRequestModal")).hide();
-  }, 700);
-}
-
 // ------------------ Booking form & conflict detection ------------------
 function populateRoomSelect(){
   const sel = document.getElementById('room-select');
   if(!sel) return;
-
   sel.innerHTML = '<option value="">-- Select --</option>';
   sampleRooms.forEach(r=>{
     const opt = document.createElement('option');
@@ -258,6 +186,7 @@ function populateRoomSelect(){
     sel.appendChild(opt);
   });
 
+  // If URL contains room param, preselect
   const params = new URLSearchParams(location.search);
   const roomParam = params.get('room');
   if(roomParam) sel.value = roomParam;
@@ -294,6 +223,7 @@ function submitBooking(){
     return;
   }
 
+  // conflict detection
   const conflict = bookings.some(b=>{
     return b.room_id === room && b.date === date && rangesOverlap(start, end, b.start, b.end);
   });
@@ -304,6 +234,7 @@ function submitBooking(){
     return;
   }
 
+  // create booking (in-memory demo). status auto-confirm for instructor.
   const newBooking = {
     id: mkId(),
     room_id: room,
@@ -319,31 +250,24 @@ function submitBooking(){
   feedback.className = 'text-success';
   feedback.textContent = 'Booking created successfully.';
 
+  // refresh relevant views if present
   renderRoomAvailability();
   renderMyBookings();
   populateDashboard();
 
+  // optionally, redirect to My Bookings
   setTimeout(()=> { location.href = 'my_bookings.html'; }, 700);
 }
 
-// ------------------ My bookings ------------------
+// ------------------ My bookings rendering and actions ------------------
 function renderMyBookings(){
   const tbody = document.querySelector('#bookings-table tbody');
   if(!tbody) return;
-
   tbody.innerHTML = '';
-  const mine = bookings
-    .filter(b=>b.owner==='instructor@example.com')
-    .sort((a,b)=> a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
-
+  const mine = bookings.filter(b=>b.owner==='instructor@example.com').sort((a,b)=> a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
   mine.forEach(b=>{
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${b.room_id}</td>
-      <td>${b.date}</td>
-      <td>${b.start} - ${b.end}</td>
-      <td>${b.purpose}</td>
-      <td>${b.status}</td>
+    tr.innerHTML = `<td>${b.room_id}</td><td>${b.date}</td><td>${b.start} - ${b.end}</td><td>${b.purpose}</td><td>${b.status}</td>
       <td>
         <button class="btn btn-sm btn-outline-primary me-1" data-action="edit" data-id="${b.id}">Edit</button>
         <button class="btn btn-sm btn-outline-danger" data-action="cancel" data-id="${b.id}">Cancel</button>
@@ -351,6 +275,7 @@ function renderMyBookings(){
     tbody.appendChild(tr);
   });
 
+  // bind actions
   tbody.querySelectorAll('button[data-action]').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
       const id = Number(e.currentTarget.dataset.id);
@@ -364,10 +289,8 @@ function renderMyBookings(){
 function openEditBooking(id){
   const b = bookings.find(x=>x.id===id);
   if(!b) return;
-
   const modalEl = document.getElementById('editBookingModal');
   const modal = new bootstrap.Modal(modalEl);
-
   document.getElementById('edit-booking-id').value = b.id;
   document.getElementById('edit-date').value = b.date;
   document.getElementById('edit-start').value = b.start;
@@ -375,9 +298,12 @@ function openEditBooking(id){
   document.getElementById('edit-purpose').value = b.purpose;
   document.getElementById('edit-feedback').textContent = '';
 
+  // show modal
   modal.show();
 
-  document.getElementById('save-edit').onclick = () => {
+  // attach save
+  const saveBtn = document.getElementById('save-edit');
+  saveBtn.onclick = () => {
     const id = Number(document.getElementById('edit-booking-id').value);
     const date = document.getElementById('edit-date').value;
     const start = document.getElementById('edit-start').value;
@@ -385,19 +311,19 @@ function openEditBooking(id){
     const purpose = document.getElementById('edit-purpose').value;
     const feedback = document.getElementById('edit-feedback');
 
+    feedback.className = '';
+    feedback.textContent = '';
     if(timeToMinutes(end) <= timeToMinutes(start)){
       feedback.className = 'text-danger';
       feedback.textContent = 'End must be after start.';
       return;
     }
 
+    // conflict check vs other bookings
     const conflict = bookings.some(b=>{
       if(b.id === id) return false;
-      return b.room_id === bookings.find(x=>x.id===id).room_id &&
-             b.date === date &&
-             rangesOverlap(start,end,b.start,b.end);
+      return b.room_id === bookings.find(x=>x.id===id).room_id && b.date === date && rangesOverlap(start,end,b.start,b.end);
     });
-
     if(conflict){
       feedback.className = 'text-danger';
       feedback.textContent = 'Conflict found with another booking.';
@@ -411,7 +337,6 @@ function openEditBooking(id){
       bookings[idx].end = end;
       bookings[idx].purpose = purpose;
     }
-
     feedback.className = 'text-success';
     feedback.textContent = 'Saved.';
     renderMyBookings();
@@ -425,7 +350,6 @@ function openEditBooking(id){
 function cancelBooking(id){
   if(!confirm('Cancel this booking?')) return;
   bookings = bookings.filter(b=>b.id!==id);
-
   renderMyBookings();
   renderRoomAvailability();
   populateDashboard();
@@ -435,30 +359,27 @@ function cancelBooking(id){
 function renderRequestsList(){
   const el = document.getElementById('requests-list');
   if(!el) return;
-
   el.innerHTML = '';
   requests.forEach(r=>{
     const card = document.createElement('div');
     card.className = 'card mb-2';
-    card.innerHTML = `
-      <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h6 class="mb-1">${r.student} — ${r.purpose}</h6>
-            <div><small>Room ${r.room_id} • ${r.date} • ${r.start} - ${r.end}</small></div>
-            <div><small>Comments: ${r.comments || '—'}</small></div>
-          </div>
-          <div class="text-end">
-            <div class="mb-2"><strong>Status: ${r.status}</strong></div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-success" data-req-action="approve" data-id="${r.id}">Approve</button>
-              <button class="btn btn-sm btn-danger" data-req-action="reject" data-id="${r.id}">Reject</button>
-              <button class="btn btn-sm btn-outline-secondary" data-req-action="view" data-id="${r.id}">View</button>
-            </div>
+    card.innerHTML = `<div class="card-body">
+      <div class="d-flex justify-content-between">
+        <div>
+          <h6 class="mb-1">${r.student} — ${r.purpose}</h6>
+          <div><small>Room ${r.room_id} • ${r.date} • ${r.start} - ${r.end}</small></div>
+          <div><small>Comments: ${r.comments || '—'}</small></div>
+        </div>
+        <div class="text-end">
+          <div class="mb-2"><strong>Status: ${r.status}</strong></div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-success" data-req-action="approve" data-id="${r.id}">Approve</button>
+            <button class="btn btn-sm btn-danger" data-req-action="reject" data-id="${r.id}">Reject</button>
+            <button class="btn btn-sm btn-outline-secondary" data-req-action="view" data-id="${r.id}">View</button>
           </div>
         </div>
-      </div>`;
-
+      </div>
+    </div>`;
     el.appendChild(card);
   });
 
@@ -472,38 +393,23 @@ function renderRequestsList(){
     });
   });
 
+  // update dashboard count
   populateDashboard();
 }
 
 function handleRequestApprove(id){
   const req = requests.find(r=>r.id===id);
   if(!req) return;
-
-  const conflict = bookings.some(b=> 
-    b.room_id===req.room_id &&
-    b.date===req.date &&
-    rangesOverlap(req.start, req.end, b.start, b.end)
-  );
-
+  // simple conflict check on approval
+  const conflict = bookings.some(b=> b.room_id===req.room_id && b.date===req.date && rangesOverlap(req.start, req.end, b.start, b.end));
   if(conflict){
     alert('Cannot approve — conflict with existing booking.');
     return;
   }
-
-  const nb = {
-    id: mkId(),
-    room_id: req.room_id,
-    date: req.date,
-    start: req.start,
-    end: req.end,
-    purpose: req.purpose,
-    owner: req.assigned_to,
-    status: 'Confirmed'
-  };
-
+  // convert request into booking
+  const nb = { id: mkId(), room_id: req.room_id, date: req.date, start: req.start, end: req.end, purpose: req.purpose, owner: req.assigned_to, status: 'Confirmed' };
   bookings.push(nb);
   req.status = 'Approved';
-
   renderRequestsList();
   renderRoomAvailability();
   renderMyBookings();
@@ -512,84 +418,9 @@ function handleRequestApprove(id){
 function handleRequestReject(id){
   const req = requests.find(r=>r.id===id);
   if(!req) return;
-
   req.status = 'Rejected';
   renderRequestsList();
 }
-const buildings = {
-  CICS: {
-    floors: {
-      5: ["CICS-501","CICS-502","CICS-503","CICS-504","CICS-505"],
-      4: ["CICS-401","CICS-402","CICS-403","Faculty","CICS-405"],
-      3: ["CICS-301","CICS-302","CICS-303","CICS-304","CICS-305"],
-      2: ["CICS-201","CICS-202","CICS-203","CICS-204","CICS-205"],
-      1: ["RGO","Dean Office","Faculty","Faculty","Faculty"]
-    }
-  },
-  CET: {
-    floors: {
-      5: ["AVR","CET-503","LIBRARY"],
-      4: ["CET-401","CET-402","CET-403","CET-404","CET-405"],
-      3: ["CET-301","CET-302","CET-303","CET-304","CET-305"],
-      2: ["Faculty","Dean Office","CET-203","CET-204","CET-205"],
-      1: ["CET-101","CET-102","CET-103","CET-104","CET-105"]
-    }
-  }
-};
 
-// Generate Rooms dynamically
-const roomContainer = document.getElementById("room-display-container");
 
-for (let building in buildings) {
-  const buildingDiv = document.createElement("div");
-  buildingDiv.classList.add("building", "room-section");
-  buildingDiv.id = building;
-
-  const buildingHeader = document.createElement("h5");
-  buildingHeader.classList.add("fw-bold");
-  buildingHeader.textContent = building + " Building";
-  buildingDiv.appendChild(buildingHeader);
-
-  const floors = buildings[building].floors;
-  for (let floorNum of Object.keys(floors).sort((a,b)=>b-a)) {
-    const floorDiv = document.createElement("div");
-    floorDiv.classList.add("floor");
-
-    const floorLabel = document.createElement("div");
-    floorLabel.classList.add("floor-label");
-    floorLabel.textContent = "Floor " + floorNum;
-    floorDiv.appendChild(floorLabel);
-
-    const roomsDiv = document.createElement("div");
-    roomsDiv.classList.add("rooms");
-
-    floors[floorNum].forEach(room => {
-      const roomBox = document.createElement("div");
-      roomBox.classList.add("room-box");
-
-      // Assign status based on your original HTML
-      if (room.toLowerCase().includes("faculty") || room.toLowerCase().includes("office") || room.toLowerCase().includes("rgo")) {
-        roomBox.classList.add("status-faulty");
-        roomBox.setAttribute("disabled", true);
-      } else if (room.includes("502") || room.includes("402") || room.includes("303") || room.includes("404") || room.includes("203")) {
-        roomBox.classList.add("status-faulty");
-        roomBox.setAttribute("disabled", true);
-      } else {
-        roomBox.classList.add("status-free");
-        roomBox.setAttribute("data-bs-toggle","modal");
-        roomBox.setAttribute("data-bs-target","#roomDetailModal");
-      }
-
-      roomBox.textContent = room;
-      roomBox.setAttribute("data-building", building);
-      roomBox.setAttribute("data-floor", floorNum);
-      roomBox.setAttribute("data-room-id", room);
-      roomsDiv.appendChild(roomBox);
-    });
-
-    floorDiv.appendChild(roomsDiv);
-    buildingDiv.appendChild(floorDiv);
-  }
-
-  roomContainer.appendChild(buildingDiv);
-}
+// ------------------ small helper to refresh views when pages load ------------------

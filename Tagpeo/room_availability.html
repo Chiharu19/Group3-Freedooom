@@ -1,3 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Room Availability</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<!-- Sidebar Toggle for Mobile -->
+<input type="checkbox" id="sidebar-toggle">
+<label for="sidebar-toggle" class="sidebar-toggle-label">&#9776; Menu</label>
+
+<div class="wrapper">
+    <div class="sidebar">
+        <h3 class="text-center mt-3 mb-4">Student</h3>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="room_availability.html" class="active">Rooms</a>
+        <a href="submit_request.html">Submit Booking</a>
+        <a href="my_requests.html">My Requests</a>
+        <a href="login.html">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <h4 class="fw-bold">Room Availability</h4>
+            <span class="fw-semibold">Check which rooms are free or occupied.</span>
+        </div>
+
+        <div class="container-fluid mt-4">
+            <!-- Search -->
+            <div class="search-row-container">
+                <form class="row g-3 align-items-end mb-4">
+                    <div class="col-12 col-md-5">
+                        <input type="text" name="search_room_name" class="form-control" placeholder="Search by Room Name">
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <input type="text" name="search_building_text" class="form-control" placeholder="Search by Building">
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <button type="submit" class="btn btn-bsu-red w-100">Search</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Building Selection -->
+            <div class="select-building-area">
+                <p class="fw-bold m-0">Select Building</p>
+                <div class="d-flex gap-2 mt-2 flex-wrap">
+                    <a href="#cics-building-section" class="btn btn-bsu-red btn-sm">CICS Building</a>
+                    <a href="#cet-building-section" class="btn btn-bsu-red btn-sm">CET Building</a>
+                </div>
+            </div>
+
+            <!-- Room Display Container -->
+            <div id="room-display-container">
+
+                <!-- ================== CICS Building ================== -->
+                <div class="building room-section" id="cics-building-section">
+                    <h5 class="fw-bold">CICS Building</h5>
+
+                    <!-- Floor 5 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 5</div>
+                        <div class="rooms">
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-501</div>
+                            <div class="room-box status-faulty" disabled>CICS-502</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-503</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-504</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-505</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor 4 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 4</div>
+                        <div class="rooms">
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-401</div>
+                            <div class="room-box status-faulty" disabled>CICS-402</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-403</div>
+                            <div class="room-box status-faulty" disabled>Faculty</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-405</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor 3 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 3</div>
+                        <div class="rooms">
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-301</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-302</div>
+                            <div class="room-box status-faulty" disabled>CICS-303</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-304</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-305</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor 2 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 2</div>
+                        <div class="rooms">
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-201</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-202</div>
+                            <div class="room-box status-faulty" disabled>CICS-203</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-204</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CICS-205</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor 1 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 1</div>
+                        <div class="rooms">
+                            <div class="room-box status-faulty" disabled>RGO</div>
+                            <div class="room-box status-faulty" disabled>Dean Office</div>
+                            <div class="room-box status-faulty" disabled>Faculty</div>
+                            <div class="room-box status-faulty" disabled>Faculty</div>
+                            <div class="room-box status-faulty" disabled>Faculty</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================== CET Building ================== -->
+                <div class="building room-section" id="cet-building-section">
+                    <h5 class="fw-bold">CET Building</h5>
+
+                    <!-- Floor 5 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 5</div>
+                        <div class="rooms">
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">AVR</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-503</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">LIBRARY</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor 4 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 4</div>
+                        <div class="rooms">
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-401</div>
+                            <div class="room-box status-faulty" disabled>CET-402</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-403</div>
+                            <div class="room-box status-faulty" disabled>CET-404</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-405</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor 3 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 3</div>
+                        <div class="rooms">
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-301</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-302</div>
+                            <div class="room-box status-faulty" disabled>CET-303</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-304</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-305</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor 2 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 2</div>
+                        <div class="rooms">
+                            <div class="room-box status-faulty" disabled>Faculty</div>
+                            <div class="room-box status-faulty" disabled>Dean Office</div>
+                            <div class="room-box status-faulty" disabled>CET-203</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-204</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-205</div>
+                        </div>
+                    </div>
+
+                    <!-- Floor 1 -->
+                    <div class="floor">
+                        <div class="floor-label">Floor 1</div>
+                        <div class="rooms">
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-101</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-102</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-103</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-104</div>
+                            <div class="room-box status-free" data-bs-toggle="modal" data-bs-target="#roomDetailModal">CET-105</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Detail Modal -->
+            <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="roomDetailModalLabel">Room Details (Placeholder)</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Status: <span class="badge bg-success">Available</span></p>
+                            <p>Next occupied schedule: 2:00 PM</p>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="bg-light">
+                                        <tr><th>Time</th><th>Event / Subject</th><th>Status</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>8:00 - 9:00</td><td>---</td><td><span class="badge bg-success">Free</span></td></tr>
+                                        <tr><td>9:00 - 10:00</td><td>CS 101 Lecture</td><td><span class="badge bg-danger">Busy</span></td></tr>
+                                        <tr><td>10:00 - 11:00</td><td>---</td><td><span class="badge bg-success">Free</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
