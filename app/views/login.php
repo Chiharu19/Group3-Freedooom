@@ -53,13 +53,8 @@ form.addEventListener("submit", function(e) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            /*
-
-                CODE HERE WHEN THE LOG IN IS SUCCESSFUL
-
-            */
-
-            // window.location.href = "?page"   
+            // take user to the dashboard page of their role
+            window.location.href = `?page=${data.user.role}`;   
         } else {
             /* 
             

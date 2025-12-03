@@ -12,7 +12,6 @@ body {
     background: var(--bg-light);
     font-family: Arial, sans-serif;
     margin: 0;
-    color: var(--text-dark);
 }
 
 .wrapper {
@@ -28,8 +27,6 @@ body {
     flex-shrink: 0;
     padding-top: 20px;
     transition: all 0.3s;
-    position: relative;
-    z-index: 1200;
 }
 
 .sidebar h3 {
@@ -52,7 +49,7 @@ body {
 }
 
 .sidebar a.active {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.25);
     font-weight: bold;
 }
 
@@ -118,7 +115,7 @@ form textarea {
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
-    min-width: 120px;
+    min-width: 80px;
     font-weight: bold;
     border: 1px solid #ccc;
     transition: all 0.2s;
@@ -128,12 +125,6 @@ form textarea {
     background-color: #d4edda;
     border-color: #28a745;
     color: #155724;
-}
-
-.room-box.status-occupied {
-    background-color: #fff3cd;
-    border-color: #ffc107;
-    color: #856404;
 }
 
 .room-box.status-faulty {
