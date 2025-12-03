@@ -1,6 +1,9 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
     <link rel="stylesheet" href="../../../public/assets/css/admin/adminDashboard.css">
+
+    <!-- for calendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -57,8 +60,10 @@
 
             <div class="mt-4 mb-3">
                 <h5 class="fw-bold">Calendar / Timeline</h5>
-                <div class="card card-custom p-4 text-center" style="height: 300px;">
-                    <p>Calendar or timeline view placeholder</p>
+                <div class="card card-custom p-4 text-center" style="height: 600px;">
+                    <!-- <p>Calendar or timeline view placeholder</p> -->
+
+                    <div id="calendar"></div>
                 </div>
             </div>
 
@@ -66,7 +71,27 @@
     </div>
 </div>
 
+<!-- for calendar -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
 <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth', // shows the full month
+    headerToolbar: {
+      left: 'prev,next today', // buttons on the left
+      center: 'title',         // month/year title
+      right: 'dayGridMonth,timeGridWeek,timeGridDay' // optional view switcher
+    },
+    events: [
+      { title: 'Meeting', date: '2025-12-10' },
+      { title: 'lablab', date: '2025-12-10' },
+    ]
+  });
+  calendar.render();
+});
 
 </script>
 
