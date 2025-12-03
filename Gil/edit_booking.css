@@ -1,3 +1,4 @@
+
 /* Wrapper Layout */
 .wrapper {
     display: flex;
@@ -56,3 +57,4 @@
 .btn-danger, .btn-success {
     font-weight: 600;
 }
+
