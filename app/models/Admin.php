@@ -109,38 +109,85 @@ class Admin {
         return $data;
     }
 
+    // ------------------------------------------
+    // 7. Checks if the combination of room name and building already exists
+    // ------------------------------------------
+    public function roomExists($roomName, $building, $excludeId = null) {
+        $sql = "SELECT id FROM rooms WHERE room_name = ? AND building = ?";
+        
+        // If editing, exclude the current room ID
+        if ($excludeId !== null) {
+            $sql .= " AND id != ?";
+        }
+
+        $stmt = $this->conn->prepare($sql);
+
+        if ($excludeId !== null) {
+            $stmt->bind_param("ssi", $roomName, $building, $excludeId);
+        } else {
+            $stmt->bind_param("ss", $roomName, $building);
+        }
+
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        return $res->num_rows > 0; // true if exists
+    }
 
 
     // INSERTION METHODS
 
-
     // ------------------------------------------
-    // 7. Add new room
+    // 8. Add new room
     // ------------------------------------------
-    public function addRoom($roomName, $building, $capacity){
-        $sql = "INSERT INTO rooms (room_name, building, capacity) VALUES (?, ?, ?)";
-
-        $stmt = $this->conn->prepare($sql);
-
-        if (!$stmt) {
+    public function addRoom($roomName, $building, $capacity) {
+        // check duplicates
+        if ($this->roomExists($roomName, $building)) {
             return [
                 "success" => false,
-                "message" => "Failed to prepare statement"
+                "message" => "Room already exists in this building"
             ];
         }
 
+        $sql = "INSERT INTO rooms (room_name, building, capacity, status)
+                VALUES (?, ?, ?, 'available')";
+
+        $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ssi", $roomName, $building, $capacity);
 
         if ($stmt->execute()) {
-            return [
-                "success" => true,
-                "message" => "Room added successfully"
-            ];
-        } else {
+            return ["success" => true];
+        }
+
+        return ["success" => false, "message" => $stmt->error];
+    }
+
+    // ------------------------------------------
+    // 8. edit existing room
+    // ------------------------------------------
+    public function editRoom($id, $roomName, $building, $capacity, $status) {
+        // Check duplicates but exclude itself
+        if ($this->roomExists($roomName, $building, $id)) {
             return [
                 "success" => false,
-                "message" => "Database error: " . $stmt->error
+                "message" => "Another room with this name already exists in this building"
             ];
         }
+
+        $sql = "UPDATE rooms 
+                SET room_name = ?, building = ?, capacity = ?, status = ?
+                WHERE id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssisi", $roomName, $building, $capacity, $status, $id);
+
+        if ($stmt->execute()) {
+            return ["success" => true];
+        }
+
+        return ["success" => false, "message" => $stmt->error];
     }
+
+
+
 }

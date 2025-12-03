@@ -21,7 +21,8 @@ $action = $_POST['action'] ?? '';
 
 $routes = [
     'logIn'      => ['AuthApi', 'login'],
-    'addRoom'   => ['AdminApi', 'addRoom']
+    'addRoom'   => ['AdminApi', 'addRoom'],
+    'updateRoom'   => ['AdminApi', 'updateRoom']
     // 'getUsers'   => ['UserApi', 'getUsers'],
     // 'addUser'    => ['UserApi', 'addUser'],
     // 'deleteUser' => ['UserApi', 'deleteUser'],

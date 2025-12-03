@@ -23,4 +23,24 @@ class AdminApi {
         echo json_encode($result);
     }
 
+    public function updateRoom() {
+
+        $roomId   = $this->data['room-id'] ?? '';
+        $roomName = $this->data['room-name'] ?? '';
+        $building = $this->data['building'] ?? '';
+        $capacity = $this->data['capacity'] ?? '';
+        $status   = $this->data['status'] ?? '';
+
+        // Basic validation
+        if (!$roomId || !$roomName || !$building || !$capacity || !$status) {
+            echo json_encode(['success' => false, 'error' => 'Missing fields']);
+            return;
+        }
+
+        // Pass data to model
+        $result = $this->adminModel->editRoom($roomId, $roomName, $building, $capacity, $status);
+
+        echo json_encode($result);
+    }
+
 }
