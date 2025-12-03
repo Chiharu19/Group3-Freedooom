@@ -26,6 +26,9 @@ $page = $_GET['page'] ?? 'login';
 $routes = [
     'login'     => ['AuthController', 'login'],
     'admin'     => ['AdminController', 'dashboard'],
+    'admin-rooms'     => ['AdminController', 'rooms'],
+    'admin-schedules'     => ['AdminController', 'schedules'],
+    'admin-users'     => ['AdminController', 'users'],
     'student'   => ['StudentController', 'dashboard'],
     'faculty'   => ['FacultyController', 'dashboard']
 ];

@@ -1,0 +1,54 @@
+.wrapper {
+    display: flex;
+}
+
+.sidebar {
+    width: 240px;
+    background: #9D1A1A;
+    min-height: 100vh;
+    padding-top: 20px;
+    color: white;
+}
+
+.sidebar a {
+    color: white;
+    display: block;
+    text-decoration: none;
+    padding: 12px 20px;
+    margin: 5px 0;
+
+}
+
+.sidebar a:hover {
+    background: #7A0E0E;
+}
+
+.sidebar a.active {
+    background: rgba(255, 255, 255, 0.25);
+    font-weight: bold;
+}
+
+.main-content {
+    flex: 1;
+    background: #F4F4F4;
+}
+
+.topbar {
+    background: #FFFFFF;
+    height: 60px;
+    border-bottom: 2px solid #9D1A1A;
+}
+
+.card {
+    border-radius: 12px;
+    border-left: 6px solid #9D1A1A;
+}
+
+.modal-content {
+    border-top: 5px solid #9D1A1A;
+}
+
+.table-danger {
+    background-color: #9D1A1A !important;
+    color: white;
+}
