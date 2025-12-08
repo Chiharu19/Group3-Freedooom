@@ -37,10 +37,10 @@ $routes = [
     'getRooms' => ['StudentApi', 'getRooms'],
     'getFaculty' => ['StudentApi', 'getFaculty'],
     'submitRequest' => ['StudentApi', 'submitRequest'],
-    'submitRequest' => ['StudentApi', 'submitRequest'],
     'myRequests' => ['StudentApi', 'myRequests'],
     'dashboard' => ['StudentApi', 'dashboard'],
-    'getRoomSchedule' => ['StudentApi', 'getRoomSchedule']
+    'getRoomSchedule' => ['StudentApi', 'getRoomSchedule'],
+    'cancelRequest' => ['StudentApi', 'cancelRequest']
 
 
 

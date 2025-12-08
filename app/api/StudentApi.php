@@ -118,4 +118,23 @@ class StudentApi
         $schedule = $this->studentModel->getRoomSchedule($roomId, $date);
         echo json_encode(['success' => true, 'data' => $schedule]);
     }
+
+    public function cancelRequest()
+    {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'student') {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+
+        $studentId = $_SESSION['user']['id'];
+        $requestId = $this->data['request_id'] ?? '';
+
+        if (!$requestId) {
+            echo json_encode(['success' => false, 'message' => 'Request ID required']);
+            return;
+        }
+
+        $result = $this->studentModel->cancelRequest($requestId, $studentId);
+        echo json_encode($result);
+    }
 }
