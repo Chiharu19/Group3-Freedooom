@@ -4,12 +4,14 @@ session_start();
 
 require_once __DIR__ . '/../app/config/database.php';
 
-spl_autoload_register(function($class) {
+spl_autoload_register(function ($class) {
     $paths = [
         __DIR__ . '/../app/api/' . $class . '.php',
         __DIR__ . '/../app/models/' . $class . '.php',
     ];
-    foreach ($paths as $p) if (file_exists($p)) require $p;
+    foreach ($paths as $p)
+        if (file_exists($p))
+            require $p;
 });
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -20,13 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $action = $_POST['action'] ?? '';
 
 $routes = [
-    'logIn'      => ['AuthApi', 'login'],
-    'addRoom'   => ['AdminApi', 'addRoom'],
-    'updateRoom'   => ['AdminApi', 'updateRoom'],
-    'deleteRoom'    => ['AdminApi', 'deleteRoom'],
+    'logIn' => ['AuthApi', 'login'],
+    'addRoom' => ['AdminApi', 'addRoom'],
+    'updateRoom' => ['AdminApi', 'updateRoom'],
+    'deleteRoom' => ['AdminApi', 'deleteRoom'],
     'deleteBooking' => ['AdminApi', 'deleteBooking'],
-    'getBookingList' => ['AdminApi', 'getBookingList']
-  
+    'getBookingList' => ['AdminApi', 'getBookingList'],
+
+    // Student Routes
+    'getRooms' => ['StudentApi', 'getRooms'],
+    'getFaculty' => ['StudentApi', 'getFaculty'],
+    'submitRequest' => ['StudentApi', 'submitRequest'],
+    'myRequests' => ['StudentApi', 'myRequests']
+
 ];
 
 if (!isset($routes[$action])) {
