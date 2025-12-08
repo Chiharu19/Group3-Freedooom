@@ -370,7 +370,7 @@ function renderRooms(rooms) {
             // Create Room Box
             html += `
             <div class="room-box ${statusClass} p-3 border rounded text-center" 
-                 style="width: 100px; cursor: pointer; position:relative;"
+                 style="width: 120px; min-width: 120px; cursor: pointer; position:relative;"
                  onclick="showRoomDetails('${r.id}', '${r.room_name}', '${r.status}', ${r.capacity})">
                 <div class="fw-bold">${r.room_name}</div>
                 <div class="small">${(r.status || 'unknown').toUpperCase()}</div>
