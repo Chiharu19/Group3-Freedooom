@@ -38,11 +38,14 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Room</label>
-                        <select class="form-select">
-                            <option>All</option>
-                            <option>Room 101</option>
-                            <option>Room 204</option>
-                            <option>Lab 3</option>
+                        <select class="form-select" name="filter-room">
+                            <option value="">All</option>
+
+                            <?php foreach ($allRoomsList as $room): ?>
+                                <option value="<?= htmlspecialchars($room['id']); ?>">
+                                    <?= htmlspecialchars($room['room_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -53,34 +56,72 @@
 
                     <div class="col-md-3">
                         <label class="form-label">Faculty</label>
-                        <select class="form-select">
-                            <option>All</option>
-                            <option>Dr. Santos</option>
-                            <option>Prof. Dela Cruz</option>
-                            <option>Mr. Reyes</option>
+                        <select class="form-select" name="filter-faculty">
+                            <option value="">All</option>
+                            
+                            <?php foreach ($allFacultyUserList as $user): ?>
+                                <option value="<?= htmlspecialchars($user['id']); ?>">
+                                    <?= htmlspecialchars($user['full_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <div class="col-md-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select">
-                            <option>All</option>
-                            <option>Confirmed</option>
-                            <option>Pending</option>
-                            <option>Cancelled</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="text-end mt-3">
-                    <button class="btn btn-danger px-4"><i class="fa fa-search me-2"></i>Apply Filters</button>
+                    <button class="btn btn-secondary px-4 me-2" id="reset-btn">
+                        <i class="fa fa-rotate-left me-2"></i>Reset
+                    </button>
+                    <button class="btn btn-danger px-4" id="filter-btn">
+                        <i class="fa fa-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- edit booking window -->
+            <div class="modal fade" id="editBookingModal">
+                <div class="modal-dialog">
+                    <div class="modal-content p-3">
+
+                        <h5 class="fw-bold mb-3">Edit Booking</h5>
+
+                        <form id="editBookingForm">
+
+                            <input type="hidden" name="booking-id" id="edit-booking-id">
+
+                            <label class="form-label">Room Name</label>
+                            <input type="text" class="form-control mb-2" name="room-name" id="edit-room-name" readonly>
+
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control mb-2" name="date" id="edit-date">
+
+                            <label class="form-label">Start Time</label>
+                            <input type="time" class="form-control mb-2" name="start-time" id="edit-start-time">
+                            
+                            <label class="form-label">Duration (Hours)</label>
+                            <input type="number" class="form-control mb-2" name="duration" id="edit-duration">
+
+                            <label class="form-label">Faculty</label>
+                            <select class="form-select mb-2" name="faculty-name" id="edit-faculty-name">
+                                <?php foreach ($allFacultyUserList as $user): ?>
+                                    <option value="<?= htmlspecialchars($user['id']); ?>">
+                                        <?= htmlspecialchars($user['full_name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <button type="submit" class="btn btn-danger w-100 mt-2">Save Changes</button>
+
+                        </form>
+
+                    </div>
                 </div>
             </div>
 
             <!-- Bookings Table -->
-            <div class="card p-3 shadow-sm">
+            <div class="card p-3 shadow-sm" style="height: 500px;">
                 <h5 class="fw-bold mb-3">Room Booking Overview</h5>
-
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-secondary">
@@ -89,63 +130,14 @@
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Faculty</th>
-                                <th>Status</th>
-                                <th>Conflict</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                         </thead>
 
-                        <tbody>
-                            <tr>
-                                <td>Room 101</td>
-                                <td>2025-11-30</td>
-                                <td>08:00 - 10:00</td>
-                                <td>Dr. Santos</td>
-                                <td><span class="badge bg-success">Confirmed</span></td>
-                                <td><span class="badge bg-secondary">None</span></td>
-                                <td class="text-center">
-                                    <a href="edit_booking.html">
-                                    <button class="btn btn-sm btn-outline-primary me-1"><i class="fa fa-edit"></i></button>
-                                    </a>
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fa fa-times"></i></button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Room 204</td>
-                                <td>2025-11-30</td>
-                                <td>09:00 - 11:00</td>
-                                <td>Prof. Dela Cruz</td>
-                                <td><span class="badge bg-warning text-dark">Pending</span></td>
-                                <td>
-                                    <span class="badge bg-danger">
-                                        Conflict
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <a href="edit_booking.html">
-                                    <button class="btn btn-sm btn-outline-primary me-1"><i class="fa fa-edit"></i></button>
-                                    </a>                                   
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fa fa-times"></i></button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Lab 3</td>
-                                <td>2025-12-01</td>
-                                <td>14:00 - 16:00</td>
-                                <td>Mr. Reyes</td>
-                                <td><span class="badge bg-danger">Cancelled</span></td>
-                                <td><span class="badge bg-secondary">None</span></td>
-                                <td class="text-center">
-                                    <a href="edit_booking.html">
-                                    <button class="btn btn-sm btn-outline-primary me-1"><i class="fa fa-edit"></i></button>
-                                    </a>                                    
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fa fa-times"></i></button>
-                                </td>
-                            </tr>
-
+                        <tbody id="booking-table-body">
+                            <tr><td colspan="5" class="text-center py-3 text-muted">Loading...</td></tr>
                         </tbody>
+
                     </table>
                 </div>
 
@@ -157,6 +149,100 @@
 </div>
 
 <script>
+
+    function attachDeleteEvent() {
+        document.querySelectorAll(".delete-booking-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const booking_id = btn.dataset.id;
+
+                const formData = new FormData();
+                formData.append("action", "deleteBooking");
+                formData.append("booking-id", booking_id);
+
+                fetch("/public/api.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadBookings(); // refresh table only
+                    } else {
+                        console.log(data.message);
+                    }
+                });
+            });
+        });
+    }
+
+
+    function loadBookings() {
+        const room = document.querySelector("[name='filter-room']").value;
+        const date = document.querySelector("input[type='date']").value;
+        const faculty = document.querySelector("select[name='filter-faculty']")?.value ?? "";
+
+        const formData = new FormData();
+        formData.append("action", "getBookingList");
+        formData.append("room", room);
+        formData.append("date", date);
+        formData.append("faculty", faculty);
+
+        fetch("/public/api.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById("booking-table-body");
+
+            if (!data.success || data.data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-3 text-muted">No bookings found</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Build rows dynamically
+            tbody.innerHTML = data.data.map(b => `
+                <tr>
+                    <td>${b.room_name}</td>
+                    <td>${b.date}</td>
+                    <td>${b.start_time} - ${b.end_time}</td>
+                    <td>${b.full_name}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary me-1 edit-booking-btn" data-bs-toggle="modal" data-bs-target="#editBookingModal" data-id="${b.id}">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-booking-btn" data-id="${b.id}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join("");
+
+            attachDeleteEvent();
+        });
+    }
+
+    document.getElementById("filter-btn").addEventListener('click', () => {
+        loadBookings();
+    });
+
+    document.getElementById("reset-btn").addEventListener("click", () => {
+        document.querySelector("[name='filter-room']").value = "";
+        document.querySelector("input[type='date']").value = "";
+
+        const facultySelect = document.querySelector("select[name='filter-faculty']");
+        if (facultySelect) facultySelect.value = "";
+
+        loadBookings();
+    });
+
+    // load on page open
+    loadBookings(); 
+
 
 </script>
 

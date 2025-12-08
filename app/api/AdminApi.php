@@ -43,4 +43,44 @@ class AdminApi {
         echo json_encode($result);
     }
 
+    public function deleteRoom(){
+
+        $roomId   = $this->data['room-id'] ?? '';
+        
+        if (!$roomId) {
+            echo json_encode(['success' => false, 'error' => 'Missing fields']);
+            return;
+        }
+        
+        $result = $this->adminModel->deleteRoom($roomId);
+        echo json_encode($result);
+
+    }
+
+    public function deleteBooking(){
+
+        $bookingId   = $this->data['booking-id'] ?? '';
+        
+        if (!$bookingId) {
+            echo json_encode(['success' => false, 'error' => 'Missing fields']);
+            return;
+        }
+        
+        $result = $this->adminModel->deleteBooking($bookingId);
+        echo json_encode($result);
+    }
+
+    public function getBookingList(){
+        $room = $_POST['room'] ?? null;
+        $date = $_POST['date'] ?? null;
+        $faculty = $_POST['faculty'] ?? null;
+
+        $bookings = $this->adminModel->getBookingList($room, $date, $faculty);
+
+        echo json_encode([
+            "success" => true,
+            "data" => $bookings
+        ]);
+    }
+
 }

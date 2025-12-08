@@ -22,10 +22,11 @@ $action = $_POST['action'] ?? '';
 $routes = [
     'logIn'      => ['AuthApi', 'login'],
     'addRoom'   => ['AdminApi', 'addRoom'],
-    'updateRoom'   => ['AdminApi', 'updateRoom']
-    // 'getUsers'   => ['UserApi', 'getUsers'],
-    // 'addUser'    => ['UserApi', 'addUser'],
-    // 'deleteUser' => ['UserApi', 'deleteUser'],
+    'updateRoom'   => ['AdminApi', 'updateRoom'],
+    'deleteRoom'    => ['AdminApi', 'deleteRoom'],
+    'deleteBooking' => ['AdminApi', 'deleteBooking'],
+    'getBookingList' => ['AdminApi', 'getBookingList']
+  
 ];
 
 if (!isset($routes[$action])) {

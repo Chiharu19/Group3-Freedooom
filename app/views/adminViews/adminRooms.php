@@ -207,7 +207,7 @@
         .catch(err => console.error(err));
     });
 
-    // event listener to edit buttons per list
+    // event listener to edit button per list
     document.querySelectorAll(".edit-room-btn").forEach(btn => {
         btn.addEventListener("click", () => {
 
@@ -250,12 +250,35 @@
         });
     });
 
-    // event listener to edit buttons per list
+    // event listener to delete button per list
     document.querySelectorAll(".delete-room-btn").forEach(btn => {
         btn.addEventListener("click", () => {
 
             const room_id = btn.dataset.id;
-            
+            const formData = new FormData();
+            formData.append("action", "deleteRoom");    
+            formData.append("room-id", room_id);
+
+            fetch("/public/api.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "?page=admin-rooms";
+                } else {
+                    console.log(data.message);
+
+                    /* 
+                    
+                        CODE HERE WHEN UNSUCCESSFUL
+
+                        Note: you can do console.log(data.message) here to see why unsuccessful
+                    
+                    */
+                }
+            });
 
         });
     });

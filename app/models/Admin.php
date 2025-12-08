@@ -9,6 +9,12 @@ class Admin {
         $this->conn = $conn;
     }
 
+    // Helper function/s
+    private function formatTime12($time) {
+        if (!$time) return null;
+        return date("g:i A", strtotime($time));
+    }
+
     // ------------------------------------------
     // 1. Total Rooms
     // ------------------------------------------
@@ -52,7 +58,7 @@ class Admin {
     }
 
     // ------------------------------------------
-    // 7. Full list of rooms
+    // 6. Full list of rooms
     // ------------------------------------------
     public function getAllRooms() {
         $sql = "SELECT * FROM rooms ORDER BY room_name ASC";
@@ -67,50 +73,49 @@ class Admin {
         return $data;
     }
 
-
     // ------------------------------------------
-    // 5. Full list for today's bookings: UNUSED
+    // 7. List of every bookings (w/ optional filters): 
     // ------------------------------------------
-    public function getTodaysBookingList() {
+    public function getBookingList($room = null, $date = null, $faculty = null) {
         $sql = "SELECT b.*, u.full_name, r.room_name
                 FROM bookings b
                 JOIN users u ON b.user_id = u.id
                 JOIN rooms r ON b.room_id = r.id
-                WHERE b.date = CURDATE()
-                ORDER BY b.start_time ASC";
+                WHERE 1 = 1";
+
+        // dynamic conditions
+        if (!empty($room)) {
+            $sql .= " AND b.room_id = '" . $this->conn->real_escape_string($room) . "'";
+        }
+
+        if (!empty($date)) {
+            $sql .= " AND b.date = '" . $this->conn->real_escape_string($date) . "'";
+        }
+
+        if (!empty($faculty)) {
+            $sql .= " AND b.user_id = '" . $this->conn->real_escape_string($faculty) . "'";
+        }
+
+        $sql .= " ORDER BY b.start_time ASC";
 
         $res = $this->conn->query($sql);
         $data = [];
 
         while ($row = $res->fetch_assoc()) {
+
+            // Convert to 12-hour format
+            $row['start_time'] = $this->formatTime12($row['start_time']);
+            $row['end_time']   = $this->formatTime12($row['end_time']);
+
             $data[] = $row;
         }
 
         return $data;
     }
 
-    // ------------------------------------------
-    // 6. Full list for every bookings: UNUSED
-    // ------------------------------------------
-    public function getAllBookingList() {
-        $sql = "SELECT b.*, u.full_name, r.room_name
-                FROM bookings b
-                JOIN users u ON b.user_id = u.id
-                JOIN rooms r ON b.room_id = r.id
-                ORDER BY b.start_time ASC";
-
-        $res = $this->conn->query($sql);
-        $data = [];
-
-        while ($row = $res->fetch_assoc()) {
-            $data[] = $row;
-        }
-
-        return $data;
-    }
 
     // ------------------------------------------
-    // 7. Checks if the combination of room name and building already exists
+    // 8. Checks if the combination of room name and building already exists
     // ------------------------------------------
     public function roomExists($roomName, $building, $excludeId = null) {
         $sql = "SELECT id FROM rooms WHERE room_name = ? AND building = ?";
@@ -134,9 +139,39 @@ class Admin {
         return $res->num_rows > 0; // true if exists
     }
 
+    // ------------------------------------------
+    // 6. Full list of users
+    // ------------------------------------------
+    public function getAllUsers($role = null) {
+        // If no role provided → fetch all users
+        if ($role === null || $role === "") {
+            $sql = "SELECT * FROM users ORDER BY full_name ASC";
+            $stmt = $this->conn->prepare($sql);
+        } 
+        else {
+            // Fetch only matching role
+            $sql = "SELECT * FROM users WHERE role = ? ORDER BY full_name ASC";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("s", $role);
+        }
 
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        $data = [];
+        while ($row = $res->fetch_assoc()) {
+            $data[] = $row;
+        }
+
+        return $data;
+    }
+
+
+
+    
     // INSERTION METHODS
 
+    
     // ------------------------------------------
     // 8. Add new room
     // ------------------------------------------
@@ -188,6 +223,55 @@ class Admin {
         return ["success" => false, "message" => $stmt->error];
     }
 
+    // ------------------------------------------
+    // 9. Delete room
+    // ------------------------------------------
+    public function deleteRoom($id) {
+        $sql = "DELETE FROM rooms WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $id);
 
+        if ($stmt->execute()) {
+            // if no rows were affected, the ID didn't exist
+            if ($stmt->affected_rows === 0) {
+                return [
+                    "success" => false,
+                    "message" => "Room not found"
+                ];
+            }
 
+            return ["success" => true];
+        }
+
+        return [
+            "success" => false,
+            "message" => $stmt->error
+        ];
+    }
+
+    // ------------------------------------------
+    // 10. Delete Booking
+    // ------------------------------------------
+    public function deleteBooking($id) {
+        $sql = "DELETE FROM bookings WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            // if no rows were affected, the ID didn't exist
+            if ($stmt->affected_rows === 0) {
+                return [
+                    "success" => false,
+                    "message" => "Booking not found"
+                ];
+            }
+
+            return ["success" => true];
+        }
+
+        return [
+            "success" => false,
+            "message" => $stmt->error
+        ];
+    }
 }

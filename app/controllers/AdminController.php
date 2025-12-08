@@ -30,8 +30,8 @@ class AdminController {
 
     public function schedules() {
         
-        // Any data you want to use in the view/page will be defined here
-
+        $allRoomsList = $this->adminModel->getAllRooms();
+        $allFacultyUserList = $this->adminModel->getAllUsers("faculty");
         // Load the view
         require __DIR__ . '/../views/adminViews/adminSchedules.php';
     }
