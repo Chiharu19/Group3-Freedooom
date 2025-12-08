@@ -50,11 +50,20 @@ class Student
     // ==========================================
     public function submitRequest($studentId, $roomId, $facultyId, $date, $startTime, $endTime, $purpose)
     {
+        // Calculate Duration (in hours) because end_time is a GENERATED column in DB
+        $start = strtotime($startTime);
+        $end = strtotime($endTime);
+        $duration = ($end - $start) / 3600;
+
+        // Ensure duration is at least 1 hour or valid
+        if ($duration < 0)
+            $duration = 1;
+
         // Basic validation: Check if room is already booked/requested for overlapping time? 
         // For now, we will just insert as 'pending'. Admin/Faculty handles approval/conflict.
 
         $sql = "INSERT INTO student_booking_requests 
-                (student_id, room_id, faculty_id, date, start_time, end_time, purpose, status) 
+                (student_id, room_id, faculty_id, date, start_time, duration, purpose, status) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')";
 
         $stmt = $this->conn->prepare($sql);
@@ -62,7 +71,11 @@ class Student
             return ['success' => false, 'message' => 'Database prepare error: ' . $this->conn->error];
         }
 
-        $stmt->bind_param("iiissss", $studentId, $roomId, $facultyId, $date, $startTime, $endTime, $purpose);
+        // types: i (student), i (room), i (faculty), s (date), s (start_time), d (duration - use double or int), s (purpose)
+        // duration in DB is int(11), so we should separate hours.
+        $durationInt = (int) ceil($duration);
+
+        $stmt->bind_param("iiissis", $studentId, $roomId, $facultyId, $date, $startTime, $durationInt, $purpose);
 
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Request submitted successfully'];
@@ -97,6 +110,34 @@ class Student
             // Format times for display if needed
             $row['start_time_formatted'] = date("g:i A", strtotime($row['start_time']));
             $row['end_time_formatted'] = date("g:i A", strtotime($row['end_time']));
+            $requests[] = $row;
+        }
+        return $requests;
+    }
+
+    // ==========================================
+    // 5. Get Recent Requests (for Dashboard)
+    // ==========================================
+    public function getRecentRequests($studentId, $limit = 5)
+    {
+        $sql = "SELECT r.id, r.date, r.status, rm.room_name 
+                FROM student_booking_requests r
+                JOIN rooms rm ON r.room_id = rm.id
+                WHERE r.student_id = ?
+                ORDER BY r.created_at DESC
+                LIMIT ?";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            return [];
+        }
+
+        $stmt->bind_param("ii", $studentId, $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $requests = [];
+        while ($row = $result->fetch_assoc()) {
             $requests[] = $row;
         }
         return $requests;

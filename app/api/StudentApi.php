@@ -74,4 +74,35 @@ class StudentApi
         $requests = $this->studentModel->getMyRequests($studentId);
         echo json_encode(['success' => true, 'data' => $requests]);
     }
+
+    public function dashboard()
+    {
+        $studentId = $_SESSION['user']['id'] ?? $this->data['student_id'] ?? 0;
+
+        if ($studentId == 0) {
+            echo json_encode(['success' => false, 'message' => 'User not logged in']);
+            return;
+        }
+
+        // Fetch recent requests (limit 5)
+        $requests = $this->studentModel->getRecentRequests($studentId, 5);
+
+        // Derive Notices from requests (e.g., status updates)
+        $notices = [];
+        foreach ($requests as $r) {
+            if ($r['status'] === 'approved') {
+                $notices[] = "Your request for {$r['room_name']} on {$r['date']} has been APPROVED.";
+            } elseif ($r['status'] === 'denied') {
+                $notices[] = "Your request for {$r['room_name']} on {$r['date']} was DENIED.";
+            } elseif ($r['status'] === 'pending') {
+                $notices[] = "Your request for {$r['room_name']} on {$r['date']} is currently PENDING.";
+            }
+        }
+
+        if (empty($notices)) {
+            $notices[] = "Welcome! You have no recent activity notices.";
+        }
+
+        echo json_encode(['success' => true, 'requests' => $requests, 'notices' => $notices]);
+    }
 }
