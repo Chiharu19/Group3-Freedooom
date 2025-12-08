@@ -31,7 +31,7 @@ $routes = [
     'deleteRoom' => ['AdminApi', 'deleteRoom'],
     'deleteBooking' => ['AdminApi', 'deleteBooking'],
     'getBookingList' => ['AdminApi', 'getBookingList'],
-    'editBooking'   => ['AdminApi', 'editBooking'],
+    'editBooking' => ['AdminApi', 'editBooking'],
 
     // Student Routes
     'getRooms' => ['StudentApi', 'getRooms'],
@@ -39,10 +39,11 @@ $routes = [
     'submitRequest' => ['StudentApi', 'submitRequest'],
     'submitRequest' => ['StudentApi', 'submitRequest'],
     'myRequests' => ['StudentApi', 'myRequests'],
-    'dashboard' => ['StudentApi', 'dashboard']
+    'dashboard' => ['StudentApi', 'dashboard'],
+    'getRoomSchedule' => ['StudentApi', 'getRoomSchedule']
 
-    
-  
+
+
 ];
 
 if (!isset($routes[$action])) {

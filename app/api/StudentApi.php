@@ -105,4 +105,17 @@ class StudentApi
 
         echo json_encode(['success' => true, 'requests' => $requests, 'notices' => $notices]);
     }
+    public function getRoomSchedule()
+    {
+        $roomId = $this->data['room_id'] ?? '';
+        $date = $this->data['date'] ?? date('Y-m-d'); // Default to today
+
+        if (!$roomId) {
+            echo json_encode(['success' => false, 'message' => 'Room ID required']);
+            return;
+        }
+
+        $schedule = $this->studentModel->getRoomSchedule($roomId, $date);
+        echo json_encode(['success' => true, 'data' => $schedule]);
+    }
 }

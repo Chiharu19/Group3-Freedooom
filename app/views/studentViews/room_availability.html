@@ -77,8 +77,25 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Status: <span id="modalRoomStatus" class="badge"></span></p>
-                                <p>Capacity: <span id="modalRoomCapacity"></span></p>
+                                <p class="mb-2"><strong>Status:</strong> <span id="modalRoomStatus"
+                                        class="badge"></span></p>
+                                <p class="mb-3"><strong>Capacity:</strong> <span id="modalRoomCapacity"></span></p>
+
+                                <h6 class="fw-bold mt-4">Today's Schedule</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-sm">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Event / Purpose</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Dynamic Schedule Rows -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -86,60 +103,9 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-    </div>
-
-    <!-- Room Detail Modal -->
-    <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="roomDetailModalLabel">Room Details (Placeholder)</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Status: <span class="badge bg-success">Available</span></p>
-                    <p>Next occupied schedule: 2:00 PM</p>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-sm">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Event / Subject</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>8:00 - 9:00</td>
-                                    <td>---</td>
-                                    <td><span class="badge bg-success">Free</span></td>
-                                </tr>
-                                <tr>
-                                    <td>9:00 - 10:00</td>
-                                    <td>CS 101 Lecture</td>
-                                    <td><span class="badge bg-danger">Busy</span></td>
-                                </tr>
-                                <tr>
-                                    <td>10:00 - 11:00</td>
-                                    <td>---</td>
-                                    <td><span class="badge bg-success">Free</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    </div>
-    </div>
     </div>
 
     <script src="assets/js/student.js"></script>

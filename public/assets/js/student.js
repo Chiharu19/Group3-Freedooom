@@ -170,7 +170,7 @@ function initSubmitRequest() {
             .then(data => {
                 if (data.success) {
                     alert('Request submitted successfully!');
-                    window.location.href = 'my_requests.html';
+                    window.location.href = '?page=student-requests';
                 } else {
                     alert('Error: ' + (data.message || 'Unknown error'));
                 }
@@ -338,7 +338,7 @@ function renderRooms(rooms) {
             html += `
             <div class="room-box ${statusClass} p-3 border rounded text-center" 
                  style="width: 100px; cursor: pointer; position:relative;"
-                 onclick="showRoomDetails('${r.room_name}', '${r.status}', ${r.capacity})">
+                 onclick="showRoomDetails('${r.id}', '${r.room_name}', '${r.status}', ${r.capacity})">
                 <div class="fw-bold">${r.room_name}</div>
                 <div class="small">${(r.status || 'unknown').toUpperCase()}</div>
             </div>
@@ -366,11 +366,68 @@ function generateBuildingButtons(rooms) {
     container.innerHTML = html;
 }
 
-function showRoomDetails(name, status, capacity) {
-    const modal = new bootstrap.Modal(document.getElementById('roomDetailModal'));
+function showRoomDetails(id, name, status, capacity) {
+    const modalStart = new bootstrap.Modal(document.getElementById('roomDetailModal'));
     document.getElementById('roomDetailModalLabel').innerText = `Room: ${name}`;
-    document.getElementById('modalRoomStatus').innerText = status.toUpperCase();
-    document.getElementById('modalRoomStatus').className = `badge ${status === 'available' ? 'bg-success' : 'bg-danger'}`;
+
+    // Status Badge
+    const statusEl = document.getElementById('modalRoomStatus');
+    statusEl.innerText = (status || 'UNKNOWN').toUpperCase();
+    statusEl.className = `badge ${status === 'available' ? 'bg-success' : 'bg-danger'}`;
+
     document.getElementById('modalRoomCapacity').innerText = capacity;
-    modal.show();
+
+    // Load Schedule
+    const today = new Date().toISOString().split('T')[0];
+    const tbody = document.querySelector('#roomDetailModal tbody');
+    tbody.innerHTML = '<tr><td colspan="3" class="text-center">Loading schedule...</td></tr>';
+
+    modalStart.show();
+
+    fetch('api.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `action=getRoomSchedule&room_id=${id}&date=${today}`
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                renderScheduleTable(data.data, tbody);
+            } else {
+                tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">${data.message}</td></tr>`;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">Failed to load schedule</td></tr>`;
+        });
+}
+
+function renderScheduleTable(bookings, tbody) {
+    if (!bookings || bookings.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="text-center text-muted">
+                    Room is free all day (no bookings found).
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    let html = '';
+    // Simple list of bookings. 
+    // Ideally we would merge this with a full 8am-5pm grid, but for now list formatted is fine as per requirement "Show who is regularly schedules"
+
+    bookings.forEach(b => {
+        html += `
+            <tr>
+                <td>${b.start_time_formatted} - ${b.end_time_formatted}</td>
+                <td>${b.purpose || 'Reserved'}</td>
+                <td><span class="badge bg-danger">Booked</span></td>
+            </tr>
+        `;
+    });
+
+    tbody.innerHTML = html;
 }

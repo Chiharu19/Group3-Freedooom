@@ -142,4 +142,41 @@ class Student
         }
         return $requests;
     }
+    // ==========================================
+    // 6. Get Room Schedule (for Modal)
+    // ==========================================
+    public function getRoomSchedule($roomId, $date)
+    {
+        $sql = "SELECT start_time, end_time, purpose, status 
+                FROM bookings 
+                WHERE room_id = ? AND date = ?
+                ORDER BY start_time ASC";
+
+        // Note: 'status' column doesn't exist in bookings table based on schema, 
+        // but typically confirmed bookings are active. We'll simply select what's there.
+        // Actually, schema shows: bookings table does NOT have a status column (it implies confirmed).
+        // modification_requests has status. bookings is the source of truth for "Busy".
+
+        $sql = "SELECT start_time, end_time, purpose, duration
+                FROM bookings 
+                WHERE room_id = ? AND date = ?
+                ORDER BY start_time ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt)
+            return [];
+
+        $stmt->bind_param("is", $roomId, $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $schedule = [];
+        while ($row = $result->fetch_assoc()) {
+            // format times if desired
+            $row['start_time_formatted'] = date("g:i A", strtotime($row['start_time']));
+            $row['end_time_formatted'] = date("g:i A", strtotime($row['end_time']));
+            $schedule[] = $row;
+        }
+        return $schedule;
+    }
 }
