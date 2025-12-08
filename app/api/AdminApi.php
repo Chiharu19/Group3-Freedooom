@@ -83,4 +83,32 @@ class AdminApi {
         ]);
     }
 
+    public function editBooking() {
+
+        $bookingId = $this->data['booking-id'] ?? '';
+        $room      = $this->data['room-name'] ?? '';
+        $date      = $this->data['date'] ?? '';
+        $startTime = $this->data['start-time'] ?? '';
+        $duration   = $this->data['duration'] ?? '';
+        $faculty   = $this->data['faculty-id'] ?? '';
+
+        // Basic validation
+        if (!$bookingId || !$room || !$date || !$startTime || !$duration || !$faculty) {
+            echo json_encode(['success' => false, 'error' => 'Missing fields']);
+            return;
+        }
+
+        // Pass data to model
+        $result = $this->adminModel->editBooking(
+            $bookingId,
+            $room,
+            $date,
+            $startTime,
+            $duration,
+            $faculty
+        );
+
+        echo json_encode($result);
+    }
+
 }

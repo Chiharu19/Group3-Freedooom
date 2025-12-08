@@ -25,6 +25,7 @@ $routes = [
     'updateRoom'   => ['AdminApi', 'updateRoom'],
     'deleteRoom'    => ['AdminApi', 'deleteRoom'],
     'deleteBooking' => ['AdminApi', 'deleteBooking'],
+    'editBooking'   => ['AdminApi', 'editBooking'],
     'getBookingList' => ['AdminApi', 'getBookingList']
   
 ];
