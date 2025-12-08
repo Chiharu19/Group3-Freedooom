@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
         initMyRequests();
     } else if (page === 'student') {
         initDashboard();
+    } else if (page === 'student-rooms') {
+        initRoomAvailability();
     }
-    // Note: 'student-rooms' (Room Availability) logic can be added here if needed
-    // else if (page === 'student-rooms') { ... }
 
 });
 
@@ -234,4 +234,143 @@ function initMyRequests() {
             console.error('Error fetching requests:', err);
             tableBody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">Network Error: ${err.message}</td></tr>`;
         });
+}
+
+// ==========================================
+// ROOM AVAILABILITY PAGE
+// ==========================================
+let allRooms = []; // Global to store fetched rooms for filtering
+
+function initRoomAvailability() {
+    const container = document.getElementById('room-display-container');
+    const searchName = document.getElementById('searchRoomName');
+    const searchBuilding = document.getElementById('searchBuilding');
+    const searchForm = document.getElementById('roomSearchForm');
+    const buildingButtonsContainer = document.getElementById('buildingButtonsContainer');
+
+    // 1. Fetch Rooms
+    fetch('api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'action=getRooms'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                allRooms = data.data; // Store for filtering
+                renderRooms(allRooms);
+                generateBuildingButtons(allRooms);
+            } else {
+                container.innerHTML = `<div class="text-danger text-center">Error: ${data.message}</div>`;
+            }
+        })
+        .catch(err => {
+            console.error('Network Error:', err);
+            container.innerHTML = `<div class="text-danger text-center">Network Error: ${err.message}</div>`;
+        });
+
+    // 2. Setup Search Listeners
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        filterRooms();
+    });
+
+    // Real-time search (optional)
+    searchName.addEventListener('keyup', filterRooms);
+    searchBuilding.addEventListener('keyup', filterRooms);
+
+    window.filterRoomsByBuilding = function (building) {
+        if (building === 'ALL') {
+            renderRooms(allRooms);
+        } else {
+            const filtered = allRooms.filter(r => r.building === building);
+            renderRooms(filtered);
+        }
+    }
+}
+
+function filterRooms() {
+    const nameVal = document.getElementById('searchRoomName').value.toLowerCase();
+    const buildVal = document.getElementById('searchBuilding').value.toLowerCase();
+
+    const filtered = allRooms.filter(r => {
+        const matchName = r.room_name.toLowerCase().includes(nameVal);
+        // checking building text or checking if building property includes text
+        const matchBuild = (r.building || '').toLowerCase().includes(buildVal);
+        return matchName && matchBuild;
+    });
+
+    renderRooms(filtered);
+}
+
+function renderRooms(rooms) {
+    const container = document.getElementById('room-display-container');
+    if (rooms.length === 0) {
+        container.innerHTML = '<div class="text-center mt-5">No rooms found matching your criteria.</div>';
+        return;
+    }
+
+    // Group by Building
+    const distinctBuildings = [...new Set(rooms.map(r => r.building))];
+    let html = '';
+
+    distinctBuildings.forEach(building => {
+        const buildingRooms = rooms.filter(r => r.building === building);
+
+        html += `
+        <div class="building room-section mt-4" id="${building}-section">
+            <h5 class="fw-bold border-bottom pb-2">${building || 'Other'} Building</h5>
+            <div class="rooms d-flex flex-wrap gap-3 mt-3">
+        `;
+
+        buildingRooms.forEach(r => {
+            // Determine class based on status
+            let statusClass = 'status-free'; // Default green
+            const status = r.status || 'available'; // Default to available if missing
+
+            if (status !== 'available') {
+                statusClass = 'status-faulty';
+            }
+
+            // Create Room Box
+            html += `
+            <div class="room-box ${statusClass} p-3 border rounded text-center" 
+                 style="width: 100px; cursor: pointer; position:relative;"
+                 onclick="showRoomDetails('${r.room_name}', '${r.status}', ${r.capacity})">
+                <div class="fw-bold">${r.room_name}</div>
+                <div class="small">${(r.status || 'unknown').toUpperCase()}</div>
+            </div>
+            `;
+        });
+
+        html += `
+            </div>
+        </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+function generateBuildingButtons(rooms) {
+    const container = document.getElementById('buildingButtonsContainer');
+    const buildings = [...new Set(rooms.map(r => r.building))].filter(b => b); // remove nulls
+
+    let html = '<button class="btn btn-sm btn-outline-secondary" onclick="filterRoomsByBuilding(\'ALL\')">All</button>';
+    buildings.forEach(b => {
+        html += `<button class="btn btn-sm btn-bsu-red" onclick="filterRoomsByBuilding('${b}')">${b}</button> `;
+    });
+
+    container.innerHTML = html;
+}
+
+function showRoomDetails(name, status, capacity) {
+    const modal = new bootstrap.Modal(document.getElementById('roomDetailModal'));
+    document.getElementById('roomDetailModalLabel').innerText = `Room: ${name}`;
+    document.getElementById('modalRoomStatus').innerText = status.toUpperCase();
+    document.getElementById('modalRoomStatus').className = `badge ${status === 'available' ? 'bg-success' : 'bg-danger'}`;
+    document.getElementById('modalRoomCapacity').innerText = capacity;
+    modal.show();
 }

@@ -16,7 +16,7 @@ class Student
     // ==========================================
     public function getRooms()
     {
-        $sql = "SELECT id, room_name, building, capacity FROM rooms WHERE status = 'available' ORDER BY room_name ASC";
+        $sql = "SELECT id, room_name, building, capacity, status FROM rooms ORDER BY room_name ASC";
         $result = $this->conn->query($sql);
 
         $rooms = [];
