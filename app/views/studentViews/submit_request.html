@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Booking Request</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../../public/assets/css/student/dashboard.css">
+    <link rel="stylesheet" href="assets/css/student/dashboard.css">
 </head>
 
 <body>
@@ -16,67 +16,68 @@
     <label for="sidebar-toggle" class="sidebar-toggle-label">&#9776; Menu</label>
 
     <div class="wrapper">
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Student</h3>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="room_availability.html">Rooms</a>
-            <a href="submit_request.html" class="active">Submit Booking</a>
-            <a href="my_requests.html">My Requests</a>
-            <a href="login.html">Logout</a>
-        </div>
+            <!-- Sidebar -->
+    <div class="sidebar">
+        <h3 class="text-center mt-3 mb-4">Student</h3>
+        <a href="?page=student">Dashboard</a>
+        <a href="?page=student-rooms">Rooms</a>
+        <a href="?page=student-submit" class="active">Submit Booking</a>
+        <a href="?page=student-requests">My Requests</a>
+        <a href="login.html">Logout</a>
+    </div>
 
         <div class="main-content">
             <div class="topbar">
                 <h4 class="fw-bold">Submit Booking Request</h4>
             </div>
 
-            <div class="container-fluid mt-4">
-                <div class="card-custom">
-                    <form id="bookingForm">
-                        <div id="feedbackMsg"></div>
-                        <div class="mb-3">
-                            <label for="roomSelect" class="form-label">Select Room</label>
-                            <select id="roomSelect" name="room_id" class="form-select" required>
-                                <option value="">Loading rooms...</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="facultySelect" class="form-label">Select Faculty/Adviser</label>
-                            <select id="facultySelect" name="faculty_id" class="form-select" required>
-                                <option value="">Loading faculty...</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="dateSelect" class="form-label">Select Date</label>
-                            <input type="date" id="dateSelect" name="date" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="startTime" class="form-label">Start Time</label>
-                            <input type="time" id="startTime" name="start_time" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="endTime" class="form-label">End Time</label>
-                            <input type="time" id="endTime" name="end_time" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="purpose" class="form-label">Purpose / Activity</label>
-                            <textarea id="purpose" name="purpose" class="form-control" rows="3" required></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-bsu-red">Submit Request</button>
-                        <p class="mt-2 text-muted">Notice: Request needs faculty or admin approval.</p>
-                    </form>
+    <div class="container-fluid mt-4">
+        <div class="card-custom">
+            <form id="bookingForm">
+                <div id="feedbackMsg"></div>
+                <div class="mb-3">
+                    <label for="roomSelect" class="form-label">Select Room</label>
+                    <select id="roomSelect" name="room_id" class="form-select" required>
+                        <option value="">Loading rooms...</option>
+                    </select>
                 </div>
-            </div>
+
+                <div class="mb-3">
+                    <label for="facultySelect" class="form-label">Select Faculty/Adviser</label>
+                    <select id="facultySelect" name="faculty_id" class="form-select" required>
+                        <option value="">Loading faculty...</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="dateSelect" class="form-label">Select Date</label>
+                    <input type="date" id="dateSelect" name="date" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="startTime" class="form-label">Start Time</label>
+                    <input type="time" id="startTime" name="start_time" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="endTime" class="form-label">End Time</label>
+                    <input type="time" id="endTime" name="end_time" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="purpose" class="form-label">Purpose / Activity</label>
+                    <textarea id="purpose" name="purpose" class="form-control" rows="3" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-bsu-red">Submit Request</button>
+                <p class="mt-2 text-muted">Notice: Request needs faculty or admin approval.</p>
+            </form>
         </div>
     </div>
+    </div>
+    </div>
 
-    <script src="../../../public/assets/js/student.js"></script>
+    <script src="assets/js/student.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

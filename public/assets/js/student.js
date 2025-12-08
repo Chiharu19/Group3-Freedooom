@@ -23,7 +23,7 @@ function initSubmitRequest() {
     const feedbackMsg = document.getElementById('feedbackMsg');
 
     // Fetch Rooms
-    fetch('../../../public/api.php', {
+    fetch('api.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'action=getRooms'
@@ -57,7 +57,7 @@ function initSubmitRequest() {
         .catch(err => console.error('Error fetching rooms:', err));
 
     // Fetch Faculty
-    fetch('../../../public/api.php', {
+    fetch('api.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'action=getFaculty'
@@ -83,7 +83,7 @@ function initSubmitRequest() {
         const formData = new FormData(form);
         formData.append('action', 'submitRequest');
 
-        fetch('../../../public/api.php', {
+        fetch('api.php', {
             method: 'POST',
             body: formData
         })
@@ -110,7 +110,7 @@ function initSubmitRequest() {
 function initMyRequests() {
     const tableBody = document.querySelector('#requestsTable tbody');
 
-    fetch('../../../public/api.php', {
+    fetch('api.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'action=myRequests'
