@@ -1,6 +1,6 @@
 <?php require __DIR__ . '/layouts/header.php'; ?>
 
-    <link rel="stylesheet" href="../../public/assets/css/login.css">
+<link rel="stylesheet" href="../../public/assets/css/login.css">
 </head>
 
 <body class="login-body">
@@ -36,38 +36,38 @@
         </div>
     </div>
 
-<script>
+    <script>
 
-const form = document.getElementById("login-form");
+        const form = document.getElementById("login-form");
 
-form.addEventListener("submit", function(e) {
-    e.preventDefault();
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-    const formData = new FormData(form);
-    formData.append("action", "logIn"); // tell API which action
+            const formData = new FormData(form);
+            formData.append("action", "logIn"); // tell API which action
 
-    fetch("/public/api.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // take user to the dashboard page of their role
-            window.location.href = `?page=${data.user.role}`;   
-        } else {
-            /* 
+            fetch("api.php", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // take user to the dashboard page of their role
+                        window.location.href = `?page=${data.user.role}`;
+                    } else {
+                        /* 
+                        
+                            CODE HERE WHEN THE LOG IN IS UNSUCCESSFUL
             
-                CODE HERE WHEN THE LOG IN IS UNSUCCESSFUL
+                            Note: you can do console.log(data.message) here to see why unsuccessful
+                        
+                        */
+                    }
+                })
+                .catch(err => console.error(err));
+        });
 
-                Note: you can do console.log(data.message) here to see why unsuccessful
-            
-            */
-        }
-    })
-    .catch(err => console.error(err));
-});
+    </script>
 
-</script>
-
-<?php require __DIR__ . '/layouts/footer.php'; ?>
+    <?php require __DIR__ . '/layouts/footer.php'; ?>
