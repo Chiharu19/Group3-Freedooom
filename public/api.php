@@ -22,12 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $action = $_POST['action'] ?? '';
 
 $routes = [
+    // Auth
     'logIn' => ['AuthApi', 'login'],
+
+    // Admin Routes
     'addRoom' => ['AdminApi', 'addRoom'],
     'updateRoom' => ['AdminApi', 'updateRoom'],
     'deleteRoom' => ['AdminApi', 'deleteRoom'],
     'deleteBooking' => ['AdminApi', 'deleteBooking'],
     'getBookingList' => ['AdminApi', 'getBookingList'],
+    'editBooking'   => ['AdminApi', 'editBooking'],
 
     // Student Routes
     'getRooms' => ['StudentApi', 'getRooms'],
@@ -37,6 +41,8 @@ $routes = [
     'myRequests' => ['StudentApi', 'myRequests'],
     'dashboard' => ['StudentApi', 'dashboard']
 
+    
+  
 ];
 
 if (!isset($routes[$action])) {

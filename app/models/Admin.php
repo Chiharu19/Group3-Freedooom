@@ -15,6 +15,9 @@ class Admin {
         return date("g:i A", strtotime($time));
     }
 
+
+    // GET METHODS
+
     // ------------------------------------------
     // 1. Total Rooms
     // ------------------------------------------
@@ -197,6 +200,9 @@ class Admin {
         return ["success" => false, "message" => $stmt->error];
     }
 
+
+    // UPDATING METHODS
+
     // ------------------------------------------
     // 8. edit existing room
     // ------------------------------------------
@@ -222,6 +228,48 @@ class Admin {
 
         return ["success" => false, "message" => $stmt->error];
     }
+
+    // ------------------------------------------
+    // 11. Edit Booking
+    // ------------------------------------------
+    public function editBooking($bookingId, $room, $date, $startTime, $duration, $faculty) {
+
+        // Get room id
+        $stmt = $this->conn->prepare("SELECT id FROM rooms WHERE room_name = ?");
+        $stmt->bind_param("s", $room);
+        $stmt->execute();
+        $roomResult = $stmt->get_result()->fetch_assoc();
+        $roomId = $roomResult['id'] ?? null;
+
+        if (!$roomId) {
+            return [
+                "success" => false,
+                "message" => "Invalid room",
+            ];
+        }
+
+        // Update booking
+        $sql = "UPDATE bookings 
+                SET user_id = ?, date = ?, start_time = ?, duration = ?
+                WHERE id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("issii", $faculty, $date, $startTime, $duration, $bookingId);
+
+        if ($stmt->execute()) {
+            return ["success" => true];
+        }
+
+        return [
+            "success" => false,
+            "message" => $stmt->error
+        ];
+    }
+
+
+
+    // DELETION METHODS
+
 
     // ------------------------------------------
     // 9. Delete room
@@ -274,4 +322,6 @@ class Admin {
             "message" => $stmt->error
         ];
     }
+
+
 }

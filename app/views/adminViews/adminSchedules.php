@@ -103,7 +103,7 @@
                             <input type="number" class="form-control mb-2" name="duration" id="edit-duration">
 
                             <label class="form-label">Faculty</label>
-                            <select class="form-select mb-2" name="faculty-name" id="edit-faculty-name">
+                            <select class="form-select mb-2" name="faculty-id" id="edit-faculty-name">
                                 <?php foreach ($allFacultyUserList as $user): ?>
                                     <option value="<?= htmlspecialchars($user['id']); ?>">
                                         <?= htmlspecialchars($user['full_name']); ?>
@@ -129,6 +129,7 @@
                                 <th>Room</th>
                                 <th>Date</th>
                                 <th>Time</th>
+                                <th>Duration</th>
                                 <th>Faculty</th>
                                 <th class="text-center">Actions</th>
                             </tr>
@@ -149,6 +150,40 @@
 </div>
 
 <script>
+
+    function toTimeValue(str) {
+        // str example: "9:00 AM"
+        const [time, meridiem] = str.split(" "); // ["9:00", "AM"]
+        let [hour, minute] = time.split(":").map(Number);
+
+        if (meridiem === "PM" && hour !== 12) {
+            hour += 12;
+        }
+
+        if (meridiem === "AM" && hour === 12) {
+            hour = 0;
+        }
+
+        // pad to "09" if single digit
+        hour = String(hour).padStart(2, "0");
+
+        return `${hour}:${minute.toString().padStart(2, "0")}`;
+    }
+
+    function attachEditEvent(){
+        document.querySelectorAll(".edit-booking-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+
+                document.getElementById("edit-booking-id").value = btn.dataset.id;
+                document.getElementById("edit-room-name").value = btn.dataset.roomName;
+                document.getElementById("edit-date").value = btn.dataset.date;
+                document.getElementById("edit-start-time").value = toTimeValue(btn.dataset.startTime);
+                document.getElementById("edit-duration").value = btn.dataset.duration;
+                document.getElementById("edit-faculty-name").value = btn.dataset.facultyId;
+
+            });
+        });
+    }
 
     function attachDeleteEvent() {
         document.querySelectorAll(".delete-booking-btn").forEach(btn => {
@@ -210,9 +245,17 @@
                     <td>${b.room_name}</td>
                     <td>${b.date}</td>
                     <td>${b.start_time} - ${b.end_time}</td>
+                    <td>${b.duration}</td>
                     <td>${b.full_name}</td>
                     <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary me-1 edit-booking-btn" data-bs-toggle="modal" data-bs-target="#editBookingModal" data-id="${b.id}">
+                        <button class="btn btn-sm btn-outline-primary me-1 edit-booking-btn" data-bs-toggle="modal" data-bs-target="#editBookingModal" 
+                            data-id="${b.id}"
+                            data-room-name="${b.room_name}"
+                            data-date="${b.date}"
+                            data-start-time="${b.start_time}"
+                            data-duration="${b.duration}"
+                            data-faculty-id="${b.user_id}"
+                        >
                             <i class="fa fa-edit"></i>
                         </button>
                         <button class="btn btn-sm btn-outline-danger delete-booking-btn" data-id="${b.id}">
@@ -222,9 +265,31 @@
                 </tr>
             `).join("");
 
+            attachEditEvent();
             attachDeleteEvent();
         });
     }
+
+    const editBookingForm = document.getElementById("editBookingForm");
+    editBookingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(editBookingForm);
+        formData.append("action", "editBooking");
+
+        fetch("/public/api.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "?page=admin-schedules";
+            } else {
+                console.log(data.message);
+            }
+        });
+    });
 
     document.getElementById("filter-btn").addEventListener('click', () => {
         loadBookings();
