@@ -1,12 +1,12 @@
-    <?php require __DIR__ . '/../layouts/header.php'; ?>
+<?php require __DIR__ . '/../layouts/header.php'; ?>
 
-        <link rel="stylesheet" href="../../../public/assets/css/admin/adminRooms.css">
+<link rel="stylesheet" href="../../../public/assets/css/admin/adminRooms.css">
 
-        <!-- Icons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    </head>
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
 
-    <body>
+<body>
 
     <div class="wrapper">
 
@@ -17,7 +17,7 @@
             <a href="#" class="active">Rooms</a>
             <a href="?page=admin-schedules">Schedules</a>
             <a href="?page=admin-users">Manage Users</a>
-            <a href="#">Logout</a>
+            <a href="?page=logout">Logout</a>
         </div>
 
         <!-- Main Content -->
@@ -75,7 +75,8 @@
                                 <input type="hidden" name="room-id" id="edit-room-id">
 
                                 <label class="form-label">Room Name</label>
-                                <input type="text" class="form-control mb-2" name="room-name" id="edit-room-name" required>
+                                <input type="text" class="form-control mb-2" name="room-name" id="edit-room-name"
+                                    required>
 
                                 <label class="form-label">Building</label>
                                 <select class="form-select mb-2" name="building" id="edit-building" required>
@@ -84,7 +85,8 @@
                                 </select>
 
                                 <label class="form-label">Capacity</label>
-                                <input type="number" class="form-control mb-2" name="capacity" id="edit-capacity" required>
+                                <input type="number" class="form-control mb-2" name="capacity" id="edit-capacity"
+                                    required>
 
                                 <label class="form-label">Status</label>
                                 <select class="form-select mb-2" name="status" id="edit-status">
@@ -119,48 +121,47 @@
                             </thead>
 
                             <tbody>
-                            <?php if (empty($allRoomsList)): ?>
-                                <tr>
-                                    <td colspan="5" class="text-center py-3 text-muted">
-                                        No rooms found
-                                    </td>
-                                </tr>
-                            <?php else: ?>
-                                <?php foreach ($allRoomsList as $room): ?>
+                                <?php if (empty($allRoomsList)): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($room['room_name']); ?></td>
-                                        <td><?= htmlspecialchars($room['capacity']); ?></td>
-                                        <td><?= htmlspecialchars($room['building']); ?></td>
-
-                                        <td>
-                                            <?php if ($room['status'] === 'available'): ?>
-                                                <span class="badge bg-success">Available</span>
-                                            <?php elseif ($room['status'] === 'maintenance'): ?>
-                                                <span class="badge bg-warning text-dark">Under Maintenance</span>
-                                            <?php else: ?>
-                                                <span class="badge bg-secondary">Booked</span>
-                                            <?php endif; ?>
-                                        </td>
-
-                                        <td class="text-center">
-                                            <button class="btn btn-sm btn-outline-primary me-1 edit-room-btn"
-                                                data-id="<?= $room['id']; ?>"
-                                                data-name="<?= htmlspecialchars($room['room_name']); ?>"
-                                                data-capacity="<?= htmlspecialchars($room['capacity']); ?>"
-                                                data-building="<?= htmlspecialchars($room['building']); ?>"
-                                                data-status="<?= htmlspecialchars($room['status']); ?>"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editRoomModal"
-                                            >
-                                                <i class="fa fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger delete-room-btn" data-id="<?= $room['id']; ?>">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
+                                        <td colspan="5" class="text-center py-3 text-muted">
+                                            No rooms found
                                         </td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                                <?php else: ?>
+                                    <?php foreach ($allRoomsList as $room): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($room['room_name']); ?></td>
+                                            <td><?= htmlspecialchars($room['capacity']); ?></td>
+                                            <td><?= htmlspecialchars($room['building']); ?></td>
+
+                                            <td>
+                                                <?php if ($room['status'] === 'available'): ?>
+                                                    <span class="badge bg-success">Available</span>
+                                                <?php elseif ($room['status'] === 'maintenance'): ?>
+                                                    <span class="badge bg-warning text-dark">Under Maintenance</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary">Booked</span>
+                                                <?php endif; ?>
+                                            </td>
+
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-outline-primary me-1 edit-room-btn"
+                                                    data-id="<?= $room['id']; ?>"
+                                                    data-name="<?= htmlspecialchars($room['room_name']); ?>"
+                                                    data-capacity="<?= htmlspecialchars($room['capacity']); ?>"
+                                                    data-building="<?= htmlspecialchars($room['building']); ?>"
+                                                    data-status="<?= htmlspecialchars($room['status']); ?>"
+                                                    data-bs-toggle="modal" data-bs-target="#editRoomModal">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger delete-room-btn"
+                                                    data-id="<?= $room['id']; ?>">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -175,113 +176,113 @@
 
     <script>
 
-    const form = document.getElementById("addRoomForm");
+        const form = document.getElementById("addRoomForm");
 
-    form.addEventListener("submit", function(e) {
-        e.preventDefault();
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-        const formData = new FormData(form);
-        formData.append("action", "addRoom"); // tell API which action
-
-        fetch("/public/api.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // redirect to the same page to refresh and update the rooms list
-                window.location.href = "?page=admin-rooms";
-            } else {
-                console.log(data.message);
-
-                /* 
-                
-                    CODE HERE WHEN UNSUCCESSFUL
-
-                    Note: you can do console.log(data.message) here to see why unsuccessful
-                
-                */
-            }
-        })
-        .catch(err => console.error(err));
-    });
-
-    // event listener to edit button per list
-    document.querySelectorAll(".edit-room-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-
-            document.getElementById("edit-room-id").value = btn.dataset.id;
-            document.getElementById("edit-room-name").value = btn.dataset.name;
-            document.getElementById("edit-capacity").value = btn.dataset.capacity;
-            document.getElementById("edit-building").value = btn.dataset.building;
-            document.getElementById("edit-status").value = btn.dataset.status;
-
-        });
-    });
-
-    const editForm = document.getElementById("editRoomForm");
-
-    editForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        const formData = new FormData(editForm);
-        formData.append("action", "updateRoom");
-
-        fetch("/public/api.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = "?page=admin-rooms";
-            } else {
-                console.log(data.message);
-
-                /* 
-                
-                    CODE HERE WHEN UNSUCCESSFUL
-
-                    Note: you can do console.log(data.message) here to see why unsuccessful
-                
-                */
-            }
-        });
-    });
-
-    // event listener to delete button per list
-    document.querySelectorAll(".delete-room-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-
-            const room_id = btn.dataset.id;
-            const formData = new FormData();
-            formData.append("action", "deleteRoom");    
-            formData.append("room-id", room_id);
+            const formData = new FormData(form);
+            formData.append("action", "addRoom"); // tell API which action
 
             fetch("/public/api.php", {
                 method: "POST",
                 body: formData
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = "?page=admin-rooms";
-                } else {
-                    console.log(data.message);
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // redirect to the same page to refresh and update the rooms list
+                        window.location.href = "?page=admin-rooms";
+                    } else {
+                        console.log(data.message);
 
-                    /* 
-                    
-                        CODE HERE WHEN UNSUCCESSFUL
-
-                        Note: you can do console.log(data.message) here to see why unsuccessful
-                    
-                    */
-                }
-            });
-
+                        /* 
+                        
+                            CODE HERE WHEN UNSUCCESSFUL
+        
+                            Note: you can do console.log(data.message) here to see why unsuccessful
+                        
+                        */
+                    }
+                })
+                .catch(err => console.error(err));
         });
-    });
+
+        // event listener to edit button per list
+        document.querySelectorAll(".edit-room-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+
+                document.getElementById("edit-room-id").value = btn.dataset.id;
+                document.getElementById("edit-room-name").value = btn.dataset.name;
+                document.getElementById("edit-capacity").value = btn.dataset.capacity;
+                document.getElementById("edit-building").value = btn.dataset.building;
+                document.getElementById("edit-status").value = btn.dataset.status;
+
+            });
+        });
+
+        const editForm = document.getElementById("editRoomForm");
+
+        editForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(editForm);
+            formData.append("action", "updateRoom");
+
+            fetch("/public/api.php", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = "?page=admin-rooms";
+                    } else {
+                        console.log(data.message);
+
+                        /* 
+                        
+                            CODE HERE WHEN UNSUCCESSFUL
+        
+                            Note: you can do console.log(data.message) here to see why unsuccessful
+                        
+                        */
+                    }
+                });
+        });
+
+        // event listener to delete button per list
+        document.querySelectorAll(".delete-room-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+
+                const room_id = btn.dataset.id;
+                const formData = new FormData();
+                formData.append("action", "deleteRoom");
+                formData.append("room-id", room_id);
+
+                fetch("/public/api.php", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = "?page=admin-rooms";
+                        } else {
+                            console.log(data.message);
+
+                            /* 
+                            
+                                CODE HERE WHEN UNSUCCESSFUL
+        
+                                Note: you can do console.log(data.message) here to see why unsuccessful
+                            
+                            */
+                        }
+                    });
+
+            });
+        });
 
 
     </script>
