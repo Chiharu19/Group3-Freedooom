@@ -331,13 +331,13 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    // window.location.href = "?page=admin-schedules";
+                    window.location.href = "?page=admin-schedules";
                     loadBookings();
                 } else {
                     console.log(data.message);
                 }
             });
-        })
+        });
 
         const editBookingForm = document.getElementById("editBookingForm");
         editBookingForm.addEventListener('submit', (e) => {

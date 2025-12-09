@@ -58,15 +58,15 @@
 
                 <form name="addUserForm" id="addUserForm">
                     <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control mb-2">
+                    <input type="text" name="full-name" class="form-control mb-2">
 
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-control mb-2">
+                    <input type="email" name="email" class="form-control mb-2">
 
                     <label class="form-label">Role</label>
-                    <select class="form-select mb-2">
-                        <option>Faculty</option>
-                        <option>Staff</option>
+                    <select class="form-select mb-2" required>
+                        <option value="faculty">Faculty/Staff</option>
+                        <option value="student">Student</option>
                     </select>
 
                     <button class="btn btn-danger w-100 mt-2">Add User</button>
@@ -155,7 +155,7 @@
                     <td>${safeRole}</td>
                     <td>${statusBadge}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="openEdit(${user.id})">Edit</button>
+                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
                         <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id})">
                             ${user.status === "active" ? "Deactivate" : "Activate"}
                         </button>
@@ -194,6 +194,10 @@
             '"': "&quot;",
             "'": "&#39;"
         }[char])) || "";
+    }
+
+    function toggleStatus(userId){
+        console.log(userId);
     }
 
     loadUsers();
