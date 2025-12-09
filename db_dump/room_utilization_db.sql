@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 08, 2025 at 09:49 AM
+-- Generation Time: Dec 09, 2025 at 08:46 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -104,7 +104,7 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`id`, `room_name`, `building`, `capacity`, `status`, `created_at`, `updated_at`) VALUES
-(9, '102', 'CICS', 25, 'available', '2025-12-01 19:09:40', '2025-12-02 15:30:34'),
+(9, '102', 'CICS', 30, 'available', '2025-12-01 19:09:40', '2025-12-02 15:30:34'),
 (14, '503', 'CICS', 50, 'available', '2025-12-04 14:17:14', '2025-12-04 14:17:14'),
 (15, '201', 'CICS', 20, 'available', '2025-12-04 14:17:23', '2025-12-04 14:17:23');
 
@@ -123,7 +123,7 @@ CREATE TABLE `student_booking_requests` (
   `end_time` time GENERATED ALWAYS AS (addtime(`start_time`,sec_to_time(`duration` * 3600))) STORED,
   `duration` int(11) NOT NULL DEFAULT 1,
   `purpose` text DEFAULT NULL,
-  `status` enum('pending','approved','denied') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','approved','denied','cancelled') NOT NULL DEFAULT 'pending',
   `faculty_id` int(11) NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp()
@@ -134,9 +134,9 @@ CREATE TABLE `student_booking_requests` (
 --
 
 INSERT INTO `student_booking_requests` (`id`, `student_id`, `room_id`, `date`, `start_time`, `duration`, `purpose`, `status`, `faculty_id`, `created_at`, `updated_at`) VALUES
-(1, 3, 14, '2025-12-13', '15:38:00', 4, 'gfrefdsgrgfse', '', 2, '2025-12-08 15:38:12', '2025-12-08 15:38:12'),
+(1, 3, 14, '2025-12-13', '15:38:00', 4, 'gfrefdsgrgfse', 'pending', 2, '2025-12-08 15:38:12', '2025-12-08 15:38:12'),
 (2, 3, 14, '2025-12-11', '16:39:00', 2, 'asfasdfdas', 'pending', 2, '2025-12-08 15:39:15', '2025-12-08 15:39:15'),
-(3, 3, 15, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', '', 4, '2025-12-08 16:17:20', '2025-12-08 16:17:20'),
+(3, 3, 15, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', 'pending', 4, '2025-12-08 16:17:20', '2025-12-08 16:17:20'),
 (4, 3, 9, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', 'pending', 4, '2025-12-08 16:19:24', '2025-12-08 16:19:24'),
 (5, 3, 9, '2025-12-11', '08:17:00', 12, 'dscdsfdsgsfgdfsa', 'pending', 4, '2025-12-08 16:21:07', '2025-12-08 16:21:07'),
 (6, 3, 15, '2025-12-17', '07:21:00', 9, 'asdfsadfsadfsda', 'pending', 2, '2025-12-08 16:21:32', '2025-12-08 16:21:32');

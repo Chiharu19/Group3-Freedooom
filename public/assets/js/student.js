@@ -90,8 +90,36 @@ function initDashboard() {
 function initSubmitRequest() {
     const roomSelect = document.getElementById('roomSelect');
     const facultySelect = document.getElementById('facultySelect');
+    const dateSelect = document.getElementById('dateSelect');
     const form = document.getElementById('bookingForm');
     const feedbackMsg = document.getElementById('feedbackMsg');
+
+    // Date Picker Logic
+    if (dateSelect) {
+        const handleFocus = () => {
+            dateSelect.type = 'date';
+            if (!dateSelect.value) dateSelect.classList.add('hide-date-text');
+            dateSelect.showPicker();
+        };
+
+        dateSelect.addEventListener('focus', handleFocus);
+        dateSelect.addEventListener('click', () => {
+            // If already date type, show picker (focus might not trigger if already focused)
+            if (dateSelect.type === 'date') dateSelect.showPicker();
+        });
+
+        dateSelect.addEventListener('input', () => {
+            if (dateSelect.value) dateSelect.classList.remove('hide-date-text');
+            else dateSelect.classList.add('hide-date-text');
+        });
+
+        dateSelect.addEventListener('blur', () => {
+            if (!dateSelect.value) {
+                dateSelect.type = 'text';
+                dateSelect.classList.remove('hide-date-text');
+            }
+        });
+    }
 
     // Fetch Rooms
     fetch('api.php', {
@@ -102,7 +130,7 @@ function initSubmitRequest() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                let html = '<option value="">-- Select a room --</option>';
+                let html = '<option value="">Select Room</option>';
                 // Grouping logic (optional, for now just list them)
                 // If we want optgroups we need building info. The data has it.
 
@@ -140,7 +168,7 @@ function initSubmitRequest() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                let html = '<option value="">-- Select Faculty --</option>';
+                let html = '<option value="">Select Faculty</option>';
                 data.data.forEach(f => {
                     html += `<option value="${f.id}">${f.full_name} (${f.email})</option>`;
                 });
