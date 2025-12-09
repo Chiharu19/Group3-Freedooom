@@ -76,7 +76,7 @@
 
                                 <label class="form-label">Room Name</label>
                                 <input type="text" class="form-control mb-2" name="room-name" id="edit-room-name"
-                                    required>
+                                    readonly>
 
                                 <label class="form-label">Building</label>
                                 <select class="form-select mb-2" name="building" id="edit-building" required>
