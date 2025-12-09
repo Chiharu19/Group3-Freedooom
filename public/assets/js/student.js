@@ -198,7 +198,7 @@ function initMyRequests() {
         .then(data => {
             if (data.success) {
                 if (data.data.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No requests found.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No requests found.</td></tr>';
                     return;
                 }
 
@@ -209,11 +209,6 @@ function initMyRequests() {
                     else if (req.status === 'denied') badgeClass = 'bg-danger';
                     else if (req.status === 'pending') badgeClass = 'bg-warning text-dark';
 
-                    let actionHtml = '-';
-                    if (req.status === 'pending') {
-                        actionHtml = `<button class="btn btn-sm btn-danger" onclick="cancelRequest(${req.id})">Cancel</button>`;
-                    }
-
                     html += `
                     <tr>
                         <td>#${req.id}</td>
@@ -222,7 +217,6 @@ function initMyRequests() {
                         <td>${req.start_time_formatted} - ${req.end_time_formatted}</td>
                         <td><span class="badge ${badgeClass}">${req.status.toUpperCase()}</span></td>
                         <td>${req.faculty_name || 'N/A'}</td>
-                        <td>${actionHtml}</td>
                     </tr>
                 `;
                 });
@@ -231,42 +225,15 @@ function initMyRequests() {
                 if (data.message === 'User not logged in') {
                     window.location.href = '?page=login';
                 } else {
-                    tableBody.innerHTML = `<tr><td colspan="7" class="text-danger text-center">Error: ${data.message}</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">Error: ${data.message}</td></tr>`;
                 }
             }
         })
 
         .catch(err => {
             console.error('Error fetching requests:', err);
-            tableBody.innerHTML = `<tr><td colspan="7" class="text-danger text-center">Network Error: ${err.message}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">Network Error: ${err.message}</td></tr>`;
         });
-
-    // Global Cancel Function
-    window.cancelRequest = function (requestId) {
-        if (!confirm('Are you sure you want to cancel this request?')) return;
-
-        const formData = new FormData();
-        formData.append('action', 'cancelRequest');
-        formData.append('request_id', requestId);
-
-        fetch('api.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Request cancelled!');
-                    initMyRequests(); // Reload table
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Network error while cancelling');
-            });
-    }
 }
 
 // ==========================================
@@ -370,7 +337,7 @@ function renderRooms(rooms) {
             // Create Room Box
             html += `
             <div class="room-box ${statusClass} p-3 border rounded text-center" 
-                 style="width: 120px; min-width: 120px; cursor: pointer; position:relative;"
+                 style="width: 100px; cursor: pointer; position:relative;"
                  onclick="showRoomDetails('${r.id}', '${r.room_name}', '${r.status}', ${r.capacity})">
                 <div class="fw-bold">${r.room_name}</div>
                 <div class="small">${(r.status || 'unknown').toUpperCase()}</div>
