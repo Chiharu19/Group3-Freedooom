@@ -97,20 +97,22 @@
 
 
 /* Custom Table Header */
+
+/* Custom Table Header */
 .table-custom-header thead {
   background-color: #9D1A1A;
-  color: white;
+  color: white !important;
 }
 
 .table-custom-header thead th {
   border-color: #9D1A1A;
   background-color: #9D1A1A;
   /* Force background */
-  color: white;
+  color: white !important;
 }
 
 /* Remove hover effect on header if any */
 .table-hover thead tr:hover th {
   background-color: #9D1A1A;
-  color: white;
+  color: white !important;
 }
