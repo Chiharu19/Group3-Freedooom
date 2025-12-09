@@ -9,15 +9,6 @@
 <body>
 
 <div class="wrapper">
-    
-    <div class="sidebar">
-        <h3 class="text-center mt-3 mb-4">Admin</h3>
-        <a href="#" class="active">Dashboard</a>
-        <a href="?page=admin-rooms">Rooms</a>
-        <a href="?page=admin-schedules">Schedules</a>
-        <a href="?page=admin-users">Manage Users</a>
-        <a href="?page=">Logout</a>
-    </div>
 
         <div class="sidebar">
             <h3 class="text-center mt-3 mb-4">Admin</h3>
