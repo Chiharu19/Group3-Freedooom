@@ -6,6 +6,13 @@ class AdminController {
 
     public function __construct() {
         $this->adminModel = new Admin();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            header('Location: index.php?page=login');
+            exit;
+        }
     }
 
     public function dashboard() {
