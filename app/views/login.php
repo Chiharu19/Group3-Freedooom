@@ -10,8 +10,8 @@
         <div class="login-card p-4 shadow rounded-4">
 
             <div class="text-center mb-3">
-                <img src="school_logo.png" alt="School Logo" class="login-logo">
-                <h4 class="fw-bold mt-2">Your School Name</h4>
+                <img src="../../public/assets/img/BSU_Logo.png" alt="School Logo" class="login-logo">
+                <h4 class="fw-bold mt-2">Batangas State University</h4>
             </div>
 
             <div id="errorMsg" class="alert alert-danger d-none"></div>

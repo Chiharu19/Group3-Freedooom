@@ -42,7 +42,16 @@ $routes = [
     'myRequests' => ['StudentApi', 'myRequests'],
     'dashboard' => ['StudentApi', 'dashboard'],
     'getRoomSchedule' => ['StudentApi', 'getRoomSchedule'],
-    'cancelRequest' => ['StudentApi', 'cancelRequest']
+    'getRoomSchedule' => ['StudentApi', 'getRoomSchedule'],
+    'cancelRequest' => ['StudentApi', 'cancelRequest'],
+
+    // Super Admin Routes
+    'superAdminLogin' => ['SuperAdminApi', 'login'],
+    'getAdminsList' => ['SuperAdminApi', 'getAdminsList'],
+    'addAdmin' => ['SuperAdminApi', 'addAdmin'],
+    'editAdmin' => ['SuperAdminApi', 'editAdmin'],
+    'toggleAdminStatus' => ['SuperAdminApi', 'toggleStatus'],
+
 
 
 

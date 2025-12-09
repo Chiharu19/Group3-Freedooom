@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 09, 2025 at 08:46 AM
+-- Generation Time: Dec 09, 2025 at 10:07 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -134,10 +134,10 @@ CREATE TABLE `student_booking_requests` (
 --
 
 INSERT INTO `student_booking_requests` (`id`, `student_id`, `room_id`, `date`, `start_time`, `duration`, `purpose`, `status`, `faculty_id`, `created_at`, `updated_at`) VALUES
-(1, 3, 14, '2025-12-13', '15:38:00', 4, 'gfrefdsgrgfse', 'pending', 2, '2025-12-08 15:38:12', '2025-12-08 15:38:12'),
+(1, 3, 14, '2025-12-13', '15:38:00', 4, 'gfrefdsgrgfse', 'cancelled', 2, '2025-12-08 15:38:12', '2025-12-08 15:38:12'),
 (2, 3, 14, '2025-12-11', '16:39:00', 2, 'asfasdfdas', 'pending', 2, '2025-12-08 15:39:15', '2025-12-08 15:39:15'),
 (3, 3, 15, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', 'pending', 4, '2025-12-08 16:17:20', '2025-12-08 16:17:20'),
-(4, 3, 9, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', 'pending', 4, '2025-12-08 16:19:24', '2025-12-08 16:19:24'),
+(4, 3, 9, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', 'cancelled', 4, '2025-12-08 16:19:24', '2025-12-08 16:19:24'),
 (5, 3, 9, '2025-12-11', '08:17:00', 12, 'dscdsfdsgsfgdfsa', 'pending', 4, '2025-12-08 16:21:07', '2025-12-08 16:21:07'),
 (6, 3, 15, '2025-12-17', '07:21:00', 9, 'asdfsadfsadfsda', 'pending', 2, '2025-12-08 16:21:32', '2025-12-08 16:21:32');
 
@@ -152,7 +152,7 @@ CREATE TABLE `users` (
   `full_name` varchar(150) NOT NULL,
   `email` varchar(150) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('admin','faculty','student') NOT NULL,
+  `role` enum('admin','faculty','student','super') NOT NULL,
   `status` enum('active','inactive') DEFAULT 'active',
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp()
@@ -166,7 +166,7 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `
 (1, 'chiharu', 'quijanoemman99@gmail.com', '$2y$12$MzXDBPqSnJpTFZp8mu0EFeiGgrnuew9Cu4jKejifm3wGhe5o6.9Hm', 'admin', 'active', '2025-11-30 06:54:09', '2025-11-30 11:16:22'),
 (2, 'tungtung sahur', 'emmanuelequijanoboss02@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50'),
 (3, 'Princess Shrek', 'blairrhoades9@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00'),
-(4, 'ven', 'ventralberry@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50');
+(4, 'ven', 'ventralberry@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'super', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50');
 
 --
 -- Indexes for dumped tables

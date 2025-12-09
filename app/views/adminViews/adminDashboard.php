@@ -30,28 +30,28 @@
 
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <div class="card shadow-sm p-3 text-center card-custom">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Total Rooms</h5>
                             <h3><?= $totalRooms ?></h3>
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <div class="card shadow-sm p-3 text-center card-custom">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Total Faculty/Staff</h5>
                             <h3><?= $totalFacultyStaff ?></h3>
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <div class="card shadow-sm p-3 text-center card-custom">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Pending Student Requests</h5>
                             <h3><?= $totalPendingStudentRequests ?></h3>
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <div class="card shadow-sm p-3 text-center card-custom">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Today's Bookings</h5>
                             <h3><?= $totalTodaysBookings ?></h3>
                         </div>

@@ -34,7 +34,14 @@ $routes = [
     'student-rooms' => ['StudentController', 'rooms'],
     'student-submit' => ['StudentController', 'submitRequest'],
     'student-requests' => ['StudentController', 'myRequests'],
-    'faculty' => ['FacultyController', 'dashboard']
+    'faculty' => ['FacultyController', 'dashboard'],
+
+    // Super Admin Routes
+    'super-admin' => ['SuperAdminController', 'dashboard'],
+    'super-admin-users' => ['SuperAdminController', 'users'],
+    'super-admin-login' => ['SuperAdminController', 'loginView'],
+    'super-admin-logout' => ['SuperAdminController', 'logout'],
+
 ];
 
 // 404 check
