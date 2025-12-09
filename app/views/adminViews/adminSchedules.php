@@ -30,6 +30,55 @@
 
             <!-- Page Content -->
             <div class="container py-4">
+            <!-- add booking window -->
+            <div class="modal fade" id="addBookingModal">
+                <div class="modal-dialog">
+                    <div class="modal-content p-3">
+
+                        <h5 class="fw-bold mb-3">Add Booking</h5>
+
+                        <form id="addBookingForm">
+
+                            <label class="form-label">Room Name</label>
+                            <select class="form-select mb-2" name="room-id" id="add-room-id" required>
+                                <?php foreach ($allRoomsList as $room): ?>
+                                    <option value="<?= htmlspecialchars($room['id']); ?>">
+                                        <?= htmlspecialchars($room['room_name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control mb-2" name="date" id="add-date" required>
+
+                            <label class="form-label">Start Time</label>
+                            <input type="time" class="form-control mb-2" name="start-time" id="add-start-time" required>
+                            
+                            <label class="form-label">Duration (Hours)</label>
+                            <input type="number" class="form-control mb-2" name="duration" id="add-duration" required>
+
+                            <label class="form-label">Faculty</label>
+                            <select class="form-select mb-2" name="faculty-id" id="add-faculty-name" required>
+                                <?php foreach ($allFacultyUserList as $user): ?>
+                                    <option value="<?= htmlspecialchars($user['id']); ?>">
+                                        <?= htmlspecialchars($user['full_name']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <button type="submit" class="btn btn-danger w-100 mt-2">Add Booking</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- edit booking window -->
+            <div class="modal fade" id="editBookingModal">
+                <div class="modal-dialog">
+                    <div class="modal-content p-3">
+
+                        <h5 class="fw-bold mb-3">Edit Booking</h5>
 
                 <!-- Filters -->
                 <div class="card p-3 shadow-sm mb-4">
@@ -117,6 +166,7 @@
                             </form>
 
                         </div>
+                        </form>
                     </div>
                 </div>
 
@@ -145,6 +195,30 @@
                         </table>
                     </div>
 
+            <!-- Bookings Table -->
+            <div class="card p-3 shadow-sm" style="height: 500px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Room Booking Overview</h5>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addBookingModal">Add Booking</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Room</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Duration</th>
+                                <th>Faculty</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="booking-table-body">
+                            <tr><td colspan="5" class="text-center py-3 text-muted">Loading...</td></tr>
+                        </tbody>
+
+                    </table>
                 </div>
 
             </div>
@@ -296,6 +370,47 @@
 
         document.getElementById("filter-btn").addEventListener('click', () => {
             loadBookings();
+    }
+
+    const addBookingForm = document.getElementById("addBookingForm");
+    addBookingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(addBookingForm);
+        formData.append("action", "addBooking");
+
+        fetch("/public/api.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // window.location.href = "?page=admin-schedules";
+                loadBookings();
+            } else {
+                console.log(data.message);
+            }
+        });
+    })
+    const editBookingForm = document.getElementById("editBookingForm");
+    editBookingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(editBookingForm);
+        formData.append("action", "editBooking");
+
+        fetch("/public/api.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "?page=admin-schedules";
+            } else {
+                console.log(data.message);
+            }
         });
 
         document.getElementById("reset-btn").addEventListener("click", () => {
