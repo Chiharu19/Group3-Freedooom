@@ -46,6 +46,11 @@
             const formData = new FormData(form);
             formData.append("action", "logIn"); // tell API which action
 
+            // clear error
+            const errDiv = document.getElementById('errorMsg');
+            errDiv.classList.add('d-none');
+            errDiv.textContent = '';
+
             fetch("api.php", {
                 method: "POST",
                 body: formData
@@ -53,19 +58,20 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
+                        console.log('Login successful', data.user);
                         // take user to the dashboard page of their role
                         window.location.href = `?page=${data.user.role}`;
                     } else {
-                        /* 
-                        
-                            CODE HERE WHEN THE LOG IN IS UNSUCCESSFUL
-            
-                            Note: you can do console.log(data.message) here to see why unsuccessful
-                        
-                        */
+                        errDiv.textContent = data.message || data.error || 'Login failed';
+                        errDiv.classList.remove('d-none');
+                        console.error('Login error:', data);
                     }
                 })
-                .catch(err => console.error(err));
+                .catch(err => {
+                    console.error('Network/Parse error:', err);
+                    errDiv.textContent = 'An error occurred. check console.';
+                    errDiv.classList.remove('d-none');
+                });
         });
 
     </script>

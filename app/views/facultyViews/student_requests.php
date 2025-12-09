@@ -17,6 +17,7 @@
     <a href="index.php?page=faculty-book">Book a Room</a>
     <a href="index.php?page=faculty-my-bookings">My Bookings</a>
     <a href="index.php?page=faculty-requests" class="active">Student Requests</a>
+    <a href="index.php?page=logout" class="mt-3">Logout</a>
   </nav>
 
   <main class="main-content">

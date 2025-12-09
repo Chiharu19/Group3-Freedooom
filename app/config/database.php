@@ -9,4 +9,3 @@ try {
 } catch (Exception $e) {
     $conn = null;
 }
-?>

@@ -2,6 +2,9 @@
 
 class AdminApi {
 
+    private $adminModel;
+    private $data;
+
     public function __construct($data) {
         $this->adminModel = new Admin();
         $this->data = $data;

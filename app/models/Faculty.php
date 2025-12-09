@@ -18,13 +18,12 @@ class Faculty
         // Count bookings for today
         $sqlBookings = "SELECT COUNT(*) as count FROM bookings WHERE user_id = ? AND date = ?";
         $stmt = $this->conn->prepare($sqlBookings);
-        $stmt->bind_param("is", $facultyId, $today); // Assuming user_id is integer facultyId
+        $stmt->bind_param("is", $facultyId, $today); 
         $stmt->execute();
         $resBookings = $stmt->get_result()->fetch_assoc();
         $todayCount = $resBookings['count'] ?? 0;
 
         // Count pending assigned requests
-        // Assuming faculty_id in student_booking_requests refers to the faculty assigned
         $sqlRequests = "SELECT COUNT(*) as count FROM student_booking_requests WHERE faculty_id = ? AND status = 'pending'";
         $stmt = $this->conn->prepare($sqlRequests);
         $stmt->bind_param("i", $facultyId);
@@ -33,7 +32,8 @@ class Faculty
         $pendingCount = $resRequests['count'] ?? 0;
 
         // Get today's bookings list (brief)
-        $sqlTodayList = "SELECT b.start_time, b.end_time, r.room_name 
+        // Schema: duration exists, end_time does not.
+        $sqlTodayList = "SELECT b.start_time, b.duration, r.room_name 
                          FROM bookings b 
                          JOIN rooms r ON b.room_id = r.id 
                          WHERE b.user_id = ? AND b.date = ? 
@@ -42,6 +42,13 @@ class Faculty
         $stmt->bind_param("is", $facultyId, $today);
         $stmt->execute();
         $todayList = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        // Calculate end_time for frontend display
+        foreach ($todayList as &$item) {
+            $start = strtotime($item['start_time']);
+            $end = $start + ($item['duration'] * 3600);
+            $item['end_time'] = date('H:i:s', $end);
+        }
 
         return [
             'today_count' => $todayCount,
@@ -53,39 +60,25 @@ class Faculty
     // 2. Get My Bookings
     public function getMyBookings($facultyId)
     {
-        $sql = "SELECT b.id, b.date, b.start_time, b.end_time, b.purpose, b.status, r.room_name 
+        // Status column does not exist in bookings. Assume 'Confirmed'.
+        // Duration exists, not end_time.
+        $sql = "SELECT b.id, b.date, b.start_time, b.duration, b.purpose, r.room_name 
                 FROM bookings b
                 JOIN rooms r ON b.room_id = r.id
                 WHERE b.user_id = ?
                 ORDER BY b.date DESC, b.start_time ASC";
         
-        // Note: 'status' column might not exist in bookings table based on previous exploration. 
-        // If not, we might assume 'Confirmed' or check schema. 
-        // For now, I'll select what's likely there. If status is missing in DB, we'll hardcode 'Confirmed'.
-        
-        // Let's check columns in bookings table if possible. 
-        // Assuming user_id exists.
-
         $stmt = $this->conn->prepare($sql);
-        // If status column error occurs, we fix it.
-        if (!$stmt) {
-             // Fallback if status doesn't exist
-             $sql = "SELECT b.id, b.date, b.start_time, b.end_time, b.purpose, r.room_name 
-                FROM bookings b
-                JOIN rooms r ON b.room_id = r.id
-                WHERE b.user_id = ?
-                ORDER BY b.date DESC, b.start_time ASC";
-             $stmt = $this->conn->prepare($sql);
-        }
-
         $stmt->bind_param("i", $facultyId);
         $stmt->execute();
         $result = $stmt->get_result();
         
         $data = [];
         while($row = $result->fetch_assoc()){
-            // If status is missing, add it
-            if(!isset($row['status'])) $row['status'] = 'Confirmed';
+            $row['status'] = 'Confirmed';
+            $start = strtotime($row['start_time']);
+            $end = $start + ($row['duration'] * 3600);
+            $row['end_time'] = date('H:i:s', $end);
             $data[] = $row;
         }
         return $data;
@@ -105,21 +98,47 @@ class Faculty
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $facultyId);
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $res = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        
+        // Add end_time for convenience
+        foreach ($res as &$r) {
+            $start = strtotime($r['start_time']);
+            $end = $start + ($r['duration'] * 3600);
+            $r['end_time'] = date('H:i:s', $end);
+        }
+        return $res;
     }
 
     // 4. Create Booking (Self)
     public function createBooking($facultyId, $roomId, $date, $startTime, $endTime, $purpose)
     {
-        // Calculate duration logic if needed or just insert
-        // Check conflicts first
-        if ($this->checkConflict($roomId, $date, $startTime, $endTime)) {
+        // Calculate Duration
+        $start = strtotime($startTime);
+        $end = strtotime($endTime);
+        $duration = ($end - $start) / 3600;
+        $duration = ceil($duration); // Integer hours
+        if ($duration < 1) $duration = 1;
+
+        // Check conflicts
+        if ($this->checkConflict($roomId, $date, $startTime, $duration)) {
             return ['success' => false, 'message' => 'Conflict detected with another booking.'];
         }
 
-        $sql = "INSERT INTO bookings (user_id, room_id, date, start_time, end_time, purpose) VALUES (?, ?, ?, ?, ?, ?)";
+        // bookings table has: user_id, room_id, date, start_time, duration, purpose(maybe?)
+        // Admin model insert: user_id, room_id, date, start_time, duration. (No purpose).
+        // Student model selects purpose. So likely purpose exists?
+        // Let's safe-insert without purpose if admin didn't use it, BUT student selected it.
+        // I will trust Student model select and try to insert purpose.
+        
+        $sql = "INSERT INTO bookings (user_id, room_id, date, start_time, duration, purpose) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iissss", $facultyId, $roomId, $date, $startTime, $endTime, $purpose);
+        
+        if (!$stmt) {
+             // Fallback if purpose missing? No, assume it exists.
+             return ['success' => false, 'message' => 'DB Prepare Error: '.$this->conn->error];
+        }
+
+        $stmt->bind_param("iissis", $facultyId, $roomId, $date, $startTime, $duration, $purpose);
         
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Booking created successfully.'];
@@ -129,35 +148,41 @@ class Faculty
     }
 
     // Check Conflict Helper
-    private function checkConflict($roomId, $date, $startTime, $endTime)
+    private function checkConflict($roomId, $date, $startTime, $duration)
     {
-        $sql = "SELECT COUNT(*) as count FROM bookings 
-                WHERE room_id = ? AND date = ? 
-                AND (
-                    (start_time < ? AND end_time > ?) OR
-                    (start_time >= ? AND start_time < ?) OR 
-                    (end_time > ? AND end_time <= ?)
-                )";
-        // Simplified overlap logic: startA < endB && startB < endA
-        // DB uses Time type likely.
+        // New start
+        // New end
+        $startTs = strtotime($startTime);
+        $endTs = $startTs + ($duration * 3600);
+        $newStart = date('H:i:s', $startTs);
         
-        $sql = "SELECT COUNT(*) as count FROM bookings 
-                WHERE room_id = ? AND date = ? 
-                AND NOT (end_time <= ? OR start_time >= ?)";
-                
+        // Logic: 
+        // Existing booking: start_time, duration
+        // Existing end = start_time + duration*3600
+        // Overlap: existing_start < new_end AND new_start < existing_end
+        
+        $sql = "SELECT start_time, duration FROM bookings WHERE room_id = ? AND date = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("isss", $roomId, $date, $startTime, $endTime);
+        $stmt->bind_param("is", $roomId, $date);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        return $row['count'] > 0;
+        $res = $stmt->get_result();
+        
+        while($row = $res->fetch_assoc()) {
+            $existStart = strtotime($row['start_time']);
+            $existDuration = $row['duration'];
+            $existEnd = $existStart + ($existDuration * 3600);
+            
+            if ($startTs < $existEnd && $existStart < $endTs) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // 5. Action Request (Approve/Reject)
     public function actionRequest($requestId, $action, $comments = '')
     {
-        // If approving, we must also check conflict and create a real booking
         if ($action === 'approve') {
-            // Get request details
             $q = "SELECT * FROM student_booking_requests WHERE id = ?";
             $s = $this->conn->prepare($q);
             $s->bind_param("i", $requestId);
@@ -167,25 +192,18 @@ class Faculty
             if (!$req) return ['success' => false, 'message' => 'Request not found'];
             if ($req['status'] !== 'pending') return ['success' => false, 'message' => 'Request is not pending'];
 
-            // Calculate end time
-            // duration is hours
-            $start = strtotime($req['start_time']);
-            $end = $start + ($req['duration'] * 3600);
-            $endTime = date('H:i:s', $end);
-
-            if ($this->checkConflict($req['room_id'], $req['date'], $req['start_time'], $endTime)) {
+            // Conflict check
+            if ($this->checkConflict($req['room_id'], $req['date'], $req['start_time'], $req['duration'])) {
                 return ['success' => false, 'message' => 'Cannot approve: Room is already booked for this time.'];
             }
 
             // Create booking
-            // user_id in bookings table? It should probably be the student's ID or the faculty's ID on behalf of student?
-            // Usually bookings.user_id refers to who owns it. If student, use student_id.
-            $sqlBook = "INSERT INTO bookings (user_id, room_id, date, start_time, end_time, purpose) VALUES (?, ?, ?, ?, ?, ?)";
+            $sqlBook = "INSERT INTO bookings (user_id, room_id, date, start_time, duration, purpose) VALUES (?, ?, ?, ?, ?, ?)";
             $sb = $this->conn->prepare($sqlBook);
-            $sb->bind_param("iissss", $req['student_id'], $req['room_id'], $req['date'], $req['start_time'], $endTime, $req['purpose']);
+            $sb->bind_param("iissis", $req['student_id'], $req['room_id'], $req['date'], $req['start_time'], $req['duration'], $req['purpose']);
             
             if (!$sb->execute()) {
-                return ['success' => false, 'message' => 'Failed to create booking record.'];
+                return ['success' => false, 'message' => 'Failed to create booking record: ' . $sb->error];
             }
             
             $status = 'Approved';

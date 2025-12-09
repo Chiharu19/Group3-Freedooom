@@ -13,14 +13,14 @@ class FacultyApi
 
         if (session_status() === PHP_SESSION_NONE) session_start();
         
-        // Mock user id if not logged in for testing, or ensure login
         $this->userId = $_SESSION['user']['id'] ?? 0;
-        if ($this->userId === 0) {
-            // For now, if no user, return error or mock?
-            // echo json_encode(['success' => false, 'message' => 'Not logged in']);
-            // exit;
-            // Allow mock for now as per previous dev habits if session not set
-             $this->userId = 1; // Default fallback for dev
+        
+        // Strict check: if no user, return error (except for login endpoints, but this is FacultyApi)
+        if ($this->userId === 0 || ($_SESSION['user']['role'] ?? '') !== 'faculty') {
+             // For API, we should return JSON error or 401
+             // But existing code structure might require clean exit
+             echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please login.']);
+             exit;
         }
     }
 

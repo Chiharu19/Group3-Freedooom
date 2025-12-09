@@ -8,11 +8,9 @@ class FacultyController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        // Basic auth check
-        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'faculty') {
-            // header('Location: index.php?page=login');
-            // exit;
-            // For dev/demo if login is bypassed, comment out. But should be active.
+        if (!isset($_SESSION['user']) || strtolower($_SESSION['user']['role']) !== 'faculty') {
+            header('Location: index.php?page=login');
+            exit;
         }
     }
 

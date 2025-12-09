@@ -33,7 +33,7 @@
     <a href="index.php?page=faculty-book">Book a Room</a>
     <a href="index.php?page=faculty-my-bookings">My Bookings</a>
     <a href="index.php?page=faculty-requests">Student Requests</a>
-    <a href="#" class="mt-3">Logout</a>
+    <a href="index.php?page=logout" class="mt-3">Logout</a>
   </nav>
 
   <!-- Main Content -->
