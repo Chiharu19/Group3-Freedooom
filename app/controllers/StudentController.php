@@ -3,6 +3,17 @@
 class StudentController
 {
 
+    public function __construct()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'student') {
+            header('Location: index.php?page=login');
+            exit;
+        }
+    }
+
     public function dashboard()
     {
         // While the proper way is to use .php views, the current existing student views are .html

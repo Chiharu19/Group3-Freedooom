@@ -179,4 +179,32 @@ class Student
         }
         return $schedule;
     }
+
+    // ==========================================
+    // 7. Cancel Booking Request
+    // ==========================================
+    public function cancelRequest($requestId, $studentId)
+    {
+        // Only allow cancelling if status is 'pending'
+        $sql = "UPDATE student_booking_requests 
+                SET status = 'cancelled' 
+                WHERE id = ? AND student_id = ? AND status = 'pending'";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            return ['success' => false, 'message' => 'Database error'];
+        }
+
+        $stmt->bind_param("ii", $requestId, $studentId);
+        
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                return ['success' => true, 'message' => 'Request cancelled successfully'];
+            } else {
+                return ['success' => false, 'message' => 'Request not found or not pending'];
+            }
+        } else {
+            return ['success' => false, 'message' => 'Execute error: ' . $stmt->error];
+        }
+    }
 }

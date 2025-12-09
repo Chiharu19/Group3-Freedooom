@@ -26,23 +26,21 @@ $routes = [
     'logIn' => ['AuthApi', 'login'],
 
     // Admin Routes
-    'getUsersList' => ['AdminApi', 'getUsersList'],
     'addRoom' => ['AdminApi', 'addRoom'],
     'updateRoom' => ['AdminApi', 'updateRoom'],
     'deleteRoom' => ['AdminApi', 'deleteRoom'],
     'deleteBooking' => ['AdminApi', 'deleteBooking'],
     'getBookingList' => ['AdminApi', 'getBookingList'],
-    'addBooking'    => ['AdminApi', 'addBooking'],
     'editBooking' => ['AdminApi', 'editBooking'],
 
     // Student Routes
     'getRooms' => ['StudentApi', 'getRooms'],
     'getFaculty' => ['StudentApi', 'getFaculty'],
     'submitRequest' => ['StudentApi', 'submitRequest'],
-    'submitRequest' => ['StudentApi', 'submitRequest'],
     'myRequests' => ['StudentApi', 'myRequests'],
     'dashboard' => ['StudentApi', 'dashboard'],
-    'getRoomSchedule' => ['StudentApi', 'getRoomSchedule']
+    'getRoomSchedule' => ['StudentApi', 'getRoomSchedule'],
+    'cancelRequest' => ['StudentApi', 'cancelRequest']
 
 
 
