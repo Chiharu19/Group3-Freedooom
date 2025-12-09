@@ -99,7 +99,7 @@ class Admin {
             $sql .= " AND b.user_id = '" . $this->conn->real_escape_string($faculty) . "'";
         }
 
-        $sql .= " ORDER BY b.start_time ASC";
+        $sql .= " ORDER BY b.date ASC";
 
         $res = $this->conn->query($sql);
         $data = [];
@@ -199,6 +199,103 @@ class Admin {
 
         return ["success" => false, "message" => $stmt->error];
     }
+
+    // ------------------------------------------
+    // 8. Add new booking
+    // ------------------------------------------
+    public function addBooking($roomId, $date, $startTime, $duration, $facultyId) {
+        // normalize start_time input to HH:MM:SS
+        if (preg_match('/^\d{2}:\d{2}$/', $startTime)) {
+            $startTime .= ":00";
+        }
+
+        // 1. Validate room ID
+        $stmt = $this->conn->prepare("SELECT id FROM rooms WHERE id = ?");
+        $stmt->bind_param("i", $roomId);
+        $stmt->execute();
+        $roomResult = $stmt->get_result()->fetch_assoc();
+
+        if (!$roomResult) {
+            return [
+                "success" => false,
+                "message" => "Invalid room"
+            ];
+        }
+
+        // 2. Validate faculty (must exist + role must be faculty)
+        $stmt = $this->conn->prepare("SELECT id FROM users WHERE id = ? AND role = 'faculty'");
+        $stmt->bind_param("i", $facultyId);
+        $stmt->execute();
+        $facultyResult = $stmt->get_result()->fetch_assoc();
+
+        if (!$facultyResult) {
+            return [
+                "success" => false,
+                "message" => "Invalid faculty ID"
+            ];
+        }
+
+        $conflictSql = "
+            SELECT id
+            FROM bookings
+            WHERE room_id = ?
+            AND date = ?
+            AND (
+                    ? < end_time
+                AND start_time < ADDTIME(?, SEC_TO_TIME(? * 3600))
+            )
+        ";
+
+        $conflictStmt = $this->conn->prepare($conflictSql);
+        $conflictStmt->bind_param(
+            "isssi",
+            $roomId,
+            $date,
+            $startTime,   // new booking start < existing end_time
+            $startTime,   // existing start_time < new booking end_time
+            $duration     // duration IN HOURS (correct!)
+        );
+
+
+        $conflictStmt->execute();
+        $conflictResult = $conflictStmt->get_result();
+
+        if ($conflictResult->num_rows > 0) {
+            return [
+                "success" => false,
+                "message" => "Schedule overlaps with an existing booking"
+            ];
+        }
+
+        // 4. Insert booking (SQL computes end_time)
+        $sql = "INSERT INTO bookings (user_id, room_id, date, start_time, duration)
+                VALUES (?, ?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param(
+            "iissi",
+            $facultyId,
+            $roomId,
+            $date,
+            $startTime,
+            $duration
+        );
+
+        if ($stmt->execute()) {
+            return [
+                "success" => true,
+                "message" => "Booking added successfully",
+                'data'      => $startTime
+            ];
+        }
+
+        return [
+            "success" => false,
+            "message" => $stmt->error
+        ];
+    }
+
+
 
 
     // UPDATING METHODS
