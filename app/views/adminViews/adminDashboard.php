@@ -16,7 +16,7 @@
         <a href="?page=admin-rooms">Rooms</a>
         <a href="?page=admin-schedules">Schedules</a>
         <a href="?page=admin-users">Manage Users</a>
-        <a href="#">Logout</a>
+        <a href="?page=">Logout</a>
     </div>
 
     <div class="main-content">
