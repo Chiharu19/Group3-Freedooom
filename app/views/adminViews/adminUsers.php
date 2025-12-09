@@ -1,6 +1,6 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
-<link rel="stylesheet" href="../../../public/assets/css/admin/adminUsers.css">
+<link rel="stylesheet" href="../../../public/assets/css/admin/adminDashboard.css">
 </head>
 
 <body>
@@ -30,8 +30,8 @@
                 <div class="card p-3 shadow-sm">
                     <h5 class="fw-bold mb-3">Faculty/Staff Accounts</h5>
 
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-danger">
+                    <table class="table table-bordered table-striped table-custom-header">
+                        <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>

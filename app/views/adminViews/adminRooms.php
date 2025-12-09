@@ -1,6 +1,6 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
-<link rel="stylesheet" href="../../../public/assets/css/admin/adminRooms.css">
+<link rel="stylesheet" href="../../../public/assets/css/admin/adminDashboard.css">
 
 <!-- Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -109,8 +109,8 @@
                     <h5 class="fw-bold mb-3">Room List</h5>
 
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-secondary">
+                        <table class="table table-hover align-middle table-custom-header">
+                            <thead>
                                 <tr>
                                     <th>Room Number</th>
                                     <th>Capacity</th>
