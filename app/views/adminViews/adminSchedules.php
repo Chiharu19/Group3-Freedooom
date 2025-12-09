@@ -79,6 +79,49 @@
                 </div>
             </div>
 
+            <!-- add booking window -->
+            <div class="modal fade" id="addBookingModal">
+                <div class="modal-dialog">
+                    <div class="modal-content p-3">
+
+                            <?php foreach ($allRoomsList as $room): ?>
+                                <option value="<?= htmlspecialchars($room['id']); ?>">
+                                    <?= htmlspecialchars($room['room_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Faculty</label>
+                        <select class="form-select" name="filter-faculty">
+                            <option value="">All</option>
+                            
+                            <?php foreach ($allFacultyUserList as $user): ?>
+                                <option value="<?= htmlspecialchars($user['id']); ?>">
+                                    <?= htmlspecialchars($user['full_name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="text-end mt-3">
+                    <button class="btn btn-secondary px-4 me-2" id="reset-btn">
+                        <i class="fa fa-rotate-left me-2"></i>Reset
+                    </button>
+                    <button class="btn btn-danger px-4" id="filter-btn">
+                        <i class="fa fa-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+
             <!-- edit booking window -->
             <div class="modal fade" id="editBookingModal">
                 <div class="modal-dialog">

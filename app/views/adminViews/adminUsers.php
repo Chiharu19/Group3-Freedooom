@@ -16,14 +16,14 @@
         <a href="#">Logout</a>
     </div>
 
-        <div class="main-content">
+    <div class="main-content">
 
-            <div class="topbar d-flex justify-content-between align-items-center px-4">
-                <h4 class="fw-bold">Manage Users</h4>
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                    + Add User
-                </button>
-            </div>
+        <div class="topbar d-flex justify-content-between align-items-center px-4">
+            <h4 class="fw-bold">Manage Users</h4>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                + Add User
+            </button>
+        </div>
 
         <div class="container mt-4">
 
@@ -122,5 +122,102 @@
 <script>
 
     </script>
+
+    const formData = new FormData();
+    formData.append("action", "getUsersList");
+
+    fetch("/public/api.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        // If API structure expected is { status: true/false, data: [...] }
+        if (!data || !data.data) {
+            renderEmpty();
+            return;
+        }
+
+        const users = data.data;
+
+        if (users.length === 0) {
+            renderEmpty();
+            return;
+        }
+
+        renderUsers(users);
+    })
+    .catch(err => {
+        console.error(err);
+        renderError();
+    });
+}
+
+function renderUsers(users) {
+    const tbody = document.getElementById("userTableBody");
+    tbody.innerHTML = "";
+
+    users.forEach(user => {
+
+        const safeName = escapeHTML(user.full_name);
+        const safeEmail = escapeHTML(user.email);
+        const safeRole = escapeHTML(user.role);
+
+        const statusBadge = user.status === "active"
+            ? `<span class="badge bg-success">Active</span>`
+            : `<span class="badge bg-secondary">Inactive</span>`;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${safeName}</td>
+                <td>${safeEmail}</td>
+                <td>${safeRole}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="openEdit(${user.id})">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id})">
+                        ${user.status === "active" ? "Deactivate" : "Activate"}
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderEmpty() {
+    document.getElementById("userTableBody").innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center text-muted py-3">
+                No users found.
+            </td>
+        </tr>
+    `;
+}
+
+function renderError() {
+    document.getElementById("userTableBody").innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center text-danger py-3">
+                Failed to load users.
+            </td>
+        </tr>
+    `;
+}
+
+// Basic HTML escaping to prevent XSS
+function escapeHTML(str) {
+    return str?.replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[char])) || "";
+}
+
+loadUsers();
+
+</script>
 
 <?php require __DIR__ . '/../layouts/footer.php'; ?>
