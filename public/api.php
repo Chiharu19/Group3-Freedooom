@@ -26,11 +26,13 @@ $routes = [
     'logIn' => ['AuthApi', 'login'],
 
     // Admin Routes
+    'getUsersList' => ['AdminApi', 'getUsersList'],
     'addRoom' => ['AdminApi', 'addRoom'],
     'updateRoom' => ['AdminApi', 'updateRoom'],
     'deleteRoom' => ['AdminApi', 'deleteRoom'],
     'deleteBooking' => ['AdminApi', 'deleteBooking'],
     'getBookingList' => ['AdminApi', 'getBookingList'],
+    'addBooking'    => ['AdminApi', 'addBooking'],
     'editBooking' => ['AdminApi', 'editBooking'],
 
     // Student Routes

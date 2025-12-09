@@ -40,29 +40,10 @@
                             <th width="160">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Maria Santos</td>
-                            <td>maria.santos@bsu.edu.ph</td>
-                            <td>Faculty</td>
-                            <td><span class="badge bg-success">Active</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
-                                <button class="btn btn-sm btn-danger">Deactivate</button>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>Juan Cruz</td>
-                            <td>juan.cruz@bsu.edu.ph</td>
-                            <td>Staff</td>
-                            <td><span class="badge bg-secondary">Inactive</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
-                                <button class="btn btn-sm btn-danger">Deactivate</button>
-                            </td>
-                        </tr>
+                    <tbody id="userTableBody">
+                        <!-- JS will inject rows here -->
                     </tbody>
+
                 </table>
             </div>
 
@@ -120,6 +101,103 @@
 </div>
 
 <script>
+
+function loadUsers() {
+
+    const formData = new FormData();
+    formData.append("action", "getUsersList");
+
+    fetch("/public/api.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        // If API structure expected is { status: true/false, data: [...] }
+        if (!data || !data.data) {
+            renderEmpty();
+            return;
+        }
+
+        const users = data.data;
+
+        if (users.length === 0) {
+            renderEmpty();
+            return;
+        }
+
+        renderUsers(users);
+    })
+    .catch(err => {
+        console.error(err);
+        renderError();
+    });
+}
+
+function renderUsers(users) {
+    const tbody = document.getElementById("userTableBody");
+    tbody.innerHTML = "";
+
+    users.forEach(user => {
+
+        const safeName = escapeHTML(user.full_name);
+        const safeEmail = escapeHTML(user.email);
+        const safeRole = escapeHTML(user.role);
+
+        const statusBadge = user.status === "active"
+            ? `<span class="badge bg-success">Active</span>`
+            : `<span class="badge bg-secondary">Inactive</span>`;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${safeName}</td>
+                <td>${safeEmail}</td>
+                <td>${safeRole}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="openEdit(${user.id})">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id})">
+                        ${user.status === "active" ? "Deactivate" : "Activate"}
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderEmpty() {
+    document.getElementById("userTableBody").innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center text-muted py-3">
+                No users found.
+            </td>
+        </tr>
+    `;
+}
+
+function renderError() {
+    document.getElementById("userTableBody").innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center text-danger py-3">
+                Failed to load users.
+            </td>
+        </tr>
+    `;
+}
+
+// Basic HTML escaping to prevent XSS
+function escapeHTML(str) {
+    return str?.replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[char])) || "";
+}
+
+loadUsers();
 
 </script>
 
