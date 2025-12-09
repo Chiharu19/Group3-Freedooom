@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 09, 2025 at 09:59 AM
+-- Generation Time: Dec 09, 2025 at 10:07 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -166,7 +166,7 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `
 (1, 'chiharu', 'quijanoemman99@gmail.com', '$2y$12$MzXDBPqSnJpTFZp8mu0EFeiGgrnuew9Cu4jKejifm3wGhe5o6.9Hm', 'admin', 'active', '2025-11-30 06:54:09', '2025-11-30 11:16:22'),
 (2, 'tungtung sahur', 'emmanuelequijanoboss02@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50'),
 (3, 'Princess Shrek', 'blairrhoades9@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00'),
-(4, 'ven', 'ventralberry@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50');
+(4, 'ven', 'ventralberry@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'super', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50');
 
 --
 -- Indexes for dumped tables
