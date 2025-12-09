@@ -26,6 +26,11 @@ class SuperAdminController {
 
         $totalAdmins = $this->superAdminModel->getTotalAdmins();
         $totalUsers = $this->superAdminModel->getTotalUsers();
+        
+        // New Stats
+        $totalRooms = $this->superAdminModel->getTotalRooms();
+        $totalBookings = $this->superAdminModel->getTotalBookings();
+        $pendingRequests = $this->superAdminModel->getPendingRequests();
 
         require __DIR__ . '/../views/superAdminViews/superAdminDashboard.php';
     }

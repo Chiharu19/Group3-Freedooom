@@ -28,6 +28,28 @@ class SuperAdmin {
     }
 
     // ------------------------------------------
+    // New Stats
+    // ------------------------------------------
+    public function getTotalRooms() {
+        $sql = "SELECT COUNT(*) AS total FROM rooms";
+        $res = $this->conn->query($sql);
+        return $res->fetch_assoc()['total'];
+    }
+
+    public function getTotalBookings() {
+        $sql = "SELECT COUNT(*) AS total FROM bookings";
+        $res = $this->conn->query($sql);
+        return $res->fetch_assoc()['total'];
+    }
+
+    public function getPendingRequests() {
+        $sql = "SELECT COUNT(*) AS total FROM student_booking_requests WHERE status = 'pending'";
+        $res = $this->conn->query($sql);
+        return $res->fetch_assoc()['total'];
+    }
+
+
+    // ------------------------------------------
     // 3. Get All Admins
     // ------------------------------------------
     public function getAllAdmins() {

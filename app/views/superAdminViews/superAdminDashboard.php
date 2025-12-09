@@ -24,17 +24,43 @@
             <div class="container mt-4">
 
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="card shadow-sm p-3 text-center card-custom">
+                    <!-- Total Admins -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Total Admins</h5>
                             <h3><?= $totalAdmins ?></h3>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="card shadow-sm p-3 text-center card-custom">
+                    <!-- Total Users -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Total System Users</h5>
                             <h3><?= $totalUsers ?></h3>
+                        </div>
+                    </div>
+
+                    <!-- Total Rooms -->
+                    <div class="col-md-4">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
+                            <h5>Total Rooms</h5>
+                            <h3><?= $totalRooms ?></h3>
+                        </div>
+                    </div>
+
+                    <!-- Total Bookings -->
+                    <div class="col-md-6 mt-3">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
+                            <h5>Total Bookings</h5>
+                            <h3><?= $totalBookings ?></h3>
+                        </div>
+                    </div>
+
+                    <!-- Pending Requests -->
+                    <div class="col-md-6 mt-3">
+                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
+                            <h5>Pending Requests</h5>
+                            <h3><?= $pendingRequests ?></h3>
                         </div>
                     </div>
                 </div>
