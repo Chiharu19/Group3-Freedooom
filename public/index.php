@@ -40,6 +40,7 @@ $routes = [
     'super-admin' => ['SuperAdminController', 'dashboard'],
     'super-admin-users' => ['SuperAdminController', 'users'],
     'super-admin-login' => ['SuperAdminController', 'loginView'],
+    'super-admin-logout' => ['SuperAdminController', 'logout'],
 
 ];
 

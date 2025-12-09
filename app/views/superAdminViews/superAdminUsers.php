@@ -1,8 +1,6 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
-<style>
-    .sidebar { background: #1a1a2e; } 
-</style>
+<link rel="stylesheet" href="../../../public/assets/css/superAdmin.css">
 </head>
 
 <body>
@@ -13,7 +11,7 @@
             <h3 class="text-center mt-3 mb-4 text-white">Super Admin</h3>
             <a href="?page=super-admin">Dashboard</a>
             <a href="#" class="active">Manage Admins</a>
-            <a href="?page=logout">Logout</a>
+            <a href="?page=super-admin-logout">Logout</a>
         </div>
 
         <div class="main-content">

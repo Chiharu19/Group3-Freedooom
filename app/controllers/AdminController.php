@@ -9,7 +9,7 @@ class AdminController {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] !== 'admin' && $_SESSION['user']['role'] !== 'super_admin')) {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
             header('Location: index.php?page=login');
             exit;
         }

@@ -35,7 +35,19 @@ class SuperAdminController {
         require __DIR__ . '/../views/superAdminViews/superAdminUsers.php';
     }
 
+    public function logout() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        session_destroy();
+        header('Location: ?page=super-admin-login');
+        exit;
+    }
+
     private function checkSession() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'super_admin') {
             header('Location: ?page=super-admin-login');
             exit;
