@@ -52,6 +52,14 @@ $routes = [
     'editAdmin' => ['SuperAdminApi', 'editAdmin'],
     'toggleAdminStatus' => ['SuperAdminApi', 'toggleStatus'],
 
+    // Faculty Routes
+    'facultyDashboard' => ['FacultyApi', 'getDashboard'],
+    'facultyRooms' => ['FacultyApi', 'getRooms'],
+    'facultyMyBookings' => ['FacultyApi', 'myBookings'],
+    'facultyRequests' => ['FacultyApi', 'studentRequests'],
+    'facultyActionRequest' => ['FacultyApi', 'actionRequest'],
+    'facultyCreateBooking' => ['FacultyApi', 'createBooking'],
+
 
 
 

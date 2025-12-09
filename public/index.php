@@ -34,7 +34,13 @@ $routes = [
     'student-rooms' => ['StudentController', 'rooms'],
     'student-submit' => ['StudentController', 'submitRequest'],
     'student-requests' => ['StudentController', 'myRequests'],
+    
+    // Faculty Pages
     'faculty' => ['FacultyController', 'dashboard'],
+    'faculty-rooms' => ['FacultyController', 'rooms'],
+    'faculty-book' => ['FacultyController', 'bookRoom'],
+    'faculty-my-bookings' => ['FacultyController', 'myBookings'],
+    'faculty-requests' => ['FacultyController', 'studentRequests'],
 
     // Super Admin Routes
     'super-admin' => ['SuperAdminController', 'dashboard'],
