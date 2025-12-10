@@ -72,6 +72,7 @@ try {
         'getBookingList' => ['AdminApi', 'getBookingList'],
         'addBooking'    => ['AdminApi', 'addBooking'],
         'editBooking' => ['AdminApi', 'editBooking'],
+        'editUser'      => ['AdminApi', 'editUser'],
         'getStudentRequests' => ['AdminApi', 'getStudentRequests'],
         'adminActionRequest' => ['AdminApi', 'actionRequest'],
 
