@@ -206,6 +206,7 @@
 
     function toggleStatus(userId, newStatus){
         
+        if(!confirm("Are you sure?")) return;
         const formData = new FormData();
         formData.append("action", "changeUserStatus");
         formData.append("user-id", userId);
