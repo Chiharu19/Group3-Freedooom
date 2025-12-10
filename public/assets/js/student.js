@@ -220,6 +220,11 @@ function initSubmitRequest() {
         formData.append('action', 'submitRequest');
         formData.append('csrf_token', getCsrfToken());
 
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting...';
+
         fetch('api.php', {
             method: 'POST',
             body: formData
@@ -231,11 +236,15 @@ function initSubmitRequest() {
                     window.location.href = '?page=student-requests';
                 } else {
                     alert('Error: ' + (data.message || 'Unknown error'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
                 }
             })
             .catch(err => {
                 console.error('Error submitting request:', err);
                 alert('A network error occurred.');
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
             });
     });
 }
