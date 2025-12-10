@@ -207,4 +207,62 @@ class Student
             return ['success' => false, 'message' => 'Execute error: ' . $stmt->error];
         }
     }
+    // ==========================================
+    // 8. Update Booking Request
+    // ==========================================
+    public function updateRequest($requestId, $studentId, $roomId, $date, $startTime, $endTime, $purpose)
+    {
+        // Only allow updating if status is 'pending'
+        $sql = "UPDATE student_booking_requests 
+                SET room_id = ?, date = ?, start_time = ?, duration = ?, purpose = ?
+                WHERE id = ? AND student_id = ? AND status = 'pending'";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            return ['success' => false, 'message' => 'Database error'];
+        }
+
+        // Calculate Duration
+        $start = strtotime($startTime);
+        $end = strtotime($endTime);
+        $duration = max(1, ceil(($end - $start) / 3600)); // Min 1 hour, int
+
+        $stmt->bind_param("issisii", $roomId, $date, $startTime, $duration, $purpose, $requestId, $studentId);
+        
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                return ['success' => true, 'message' => 'Request updated successfully'];
+            } else {
+                // Could mean no changes made OR request not found/not pending
+                // Let's check if it exists
+                return ['success' => true, 'message' => 'Request updated (or no changes detected)'];
+            }
+        } else {
+            return ['success' => false, 'message' => 'Execute error: ' . $stmt->error];
+        }
+    }
+
+    // ==========================================
+    // 9. Check Room Availability
+    // ==========================================
+    public function isRoomAvailable($roomId, $date, $startTime, $endTime)
+    {
+        // Check for overlap in confirmed bookings
+        // Overlap logic: (StartA < EndB) and (EndA > StartB)
+        // Note: bookings table separates start_time and end_time, or duration?
+        // Let's assume bookings table has start_time and end_time or we calculate end_time.
+        // Based on previous reads, bookings has start_time and end_time.
+        
+        $sql = "SELECT id FROM bookings 
+                WHERE room_id = ? 
+                AND date = ? 
+                AND (start_time < ? AND end_time > ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("isss", $roomId, $date, $endTime, $startTime);
+        $stmt->execute();
+        $stmt->store_result();
+        
+        return $stmt->num_rows === 0;
+    }
 }

@@ -71,6 +71,7 @@ try {
         'getRooms' => ['StudentApi', 'getRooms'],
         'getFaculty' => ['StudentApi', 'getFaculty'],
         'submitRequest' => ['StudentApi', 'submitRequest'],
+        'editRequest'   => ['StudentApi', 'editRequest'],
         'myRequests' => ['StudentApi', 'myRequests'],
         'dashboard' => ['StudentApi', 'dashboard'],
         'getRoomSchedule' => ['StudentApi', 'getRoomSchedule'],
