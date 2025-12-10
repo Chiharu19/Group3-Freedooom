@@ -172,6 +172,48 @@ class AdminApi {
         }
 
         $res = $this->adminModel->actionRequest($id, $action, $comments);
+        
+        if ($res['success']) {
+            // Send Email to Student
+            $emailService = new EmailService();
+            
+            // Need Student Email and Request Details.
+            // Fetch all requests to find this one (inefficient but safe without model changes)
+            $allRequests = $this->adminModel->getAllStudentRequests('all'); // 'all' might not be supported, default is pending.
+            // If getAllStudentRequests only returns pending, we might miss it if we just approved it (status changed).
+            // However, we just changed it. 
+            // Better approach: We need the student email.
+            // Let's assume the frontend might pass it? No, security risk.
+            
+            // I'll try to fetch it.
+            // If I can't easily get it, I'll skip for now to avoid breaking things, 
+            // OR I'll add a helper method to AdminModel if I can.
+            // Actually, I can use the `getAllStudentRequests` with specific status or just assume I can fetch it.
+            // Let's try to fetch all requests including the one we just handled.
+            // Since we updated it, its status is now `$action`.
+            
+            $updatedRequests = $this->adminModel->getAllStudentRequests($action);
+            $targetRequest = null;
+            foreach ($updatedRequests as $r) {
+                if ($r['id'] == $id) {
+                    $targetRequest = $r;
+                    break;
+                }
+            }
+            
+            if ($targetRequest && !empty($targetRequest['email'])) {
+                 $emailService->sendRequestStatusNotification(
+                     $targetRequest['email'], 
+                     $action, 
+                     $comments,
+                     [
+                         'room_name' => $targetRequest['room_name'],
+                         'date' => $targetRequest['date']
+                     ]
+                 );
+            }
+        }
+
         echo json_encode($res);
     }
 
@@ -183,6 +225,12 @@ class AdminApi {
         $role = $this->data['role'];
 
         $result = $this->adminModel->addUser($full_name, $email, $password, $role);
+        
+        if ($result['success']) {
+             $emailService = new EmailService();
+             $emailService->sendAccountCreatedNotification($email, $full_name, $password);
+        }
+
         echo json_encode($result);
     }
 

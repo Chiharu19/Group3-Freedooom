@@ -200,9 +200,18 @@ function initSubmitRequest() {
 
         // Time Validation (7am - 7pm)
         const startTime = document.getElementById('startTime').value;
-        const endTime = document.getElementById('endTime').value;
+        const duration = parseInt(document.getElementById('duration').value) || 1;
 
-        if (startTime < "07:00" || startTime > "19:00" || endTime < "07:00" || endTime > "19:00") {
+        if (!startTime) {
+            alert("Please select a start time.");
+            return;
+        }
+
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        const endHour = startHour + duration;
+
+        // Check bounds: Start >= 7, End <= 19 (7 PM)
+        if (startHour < 7 || startHour > 19 || endHour > 19 || (endHour === 19 && startMinute > 0)) {
             alert("Booking times must be between 7:00 AM and 7:00 PM.");
             return;
         }

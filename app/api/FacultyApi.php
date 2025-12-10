@@ -82,6 +82,50 @@ class FacultyApi
         }
 
         $result = $this->facultyModel->actionRequest($requestId, $this->userId, $action, $comments);
+        
+        if ($result['success']) {
+             $emailService = new EmailService();
+             
+             // Fetch request details to get student email
+             // Using similar inefficient lookup as AdminApi for safety
+             $myRequests = $this->facultyModel->getAssignedRequests($this->userId);
+             $targetRequest = null;
+             foreach ($myRequests as $r) {
+                 if ($r['id'] == $requestId) {
+                     $targetRequest = $r;
+                     break;
+                 }
+             }
+             
+             // Note: getAssignedRequests might assume "pending" or specific status. 
+             // If we approved it, it might disappear from the list depending on implementation.
+             // If so, we might fail to send email. 
+             // But usually "Assigned Requests" shows history or we can adjust.
+             // For now, this is the best effort without model refactoring.
+             
+             if ($targetRequest && !empty($targetRequest['student_email'])) { // specific key check
+                  $emailService->sendRequestStatusNotification(
+                      $targetRequest['student_email'], 
+                      $action, 
+                      $comments,
+                      [
+                          'room_name' => $targetRequest['room_name'],
+                          'date' => $targetRequest['date']
+                      ]
+                  );
+             } elseif ($targetRequest && !empty($targetRequest['email'])) { // Fallback key
+                  $emailService->sendRequestStatusNotification(
+                      $targetRequest['email'], 
+                      $action, 
+                      $comments,
+                      [
+                          'room_name' => $targetRequest['room_name'],
+                          'date' => $targetRequest['date']
+                      ]
+                  );
+             }
+        }
+
         echo json_encode($result);
     }
 

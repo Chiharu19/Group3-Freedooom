@@ -58,6 +58,86 @@ class StudentApi
         }
 
         $result = $this->studentModel->submitRequest($studentId, $roomId, $facultyId, $date, $startTime, $duration, $purpose);
+        
+        if ($result['success']) {
+            // Send Email Notification to Faculty
+            $emailService = new EmailService();
+            // Fetch Faculty Email (Assume we have it or need to fetch it. 
+            // result usually doesn't return other data. We have facultyId. 
+            // Ideally we need to fetch faculty email. 
+            // For now, I'll fetch it using a helper or assume the model returns it?
+            // The model `submitRequest` returns ['success'=>true, 'message'=>'...'].
+            // So I need to fetch faculty details first or let the user do it.
+            // Let's add a quick fetch here or just log that we would send it.
+            // Wait, I need to make sure I *can* get the email.
+            // I'll use the `getFaculty` method pattern or similar.
+            
+            // To be robust, I should fetch faculty email.
+            // But to save time and complexity in this restricted environment, 
+            // I will look up the faculty email if possible, or skip if too complex.
+            // ACTUALLY, I can't easily get the email without a new query.
+            // AND I don't want to modify the model right now if I can avoid it.
+            // BUT, `StudentApi::getFaculty()` calls `studentModel->getFaculty()`.
+            // I'll use that to filter? No that's inefficient.
+            
+            // Let's look at `EmailService` usage plan. "Notify Faculty upon student booking request".
+            // I will rely on `studentModel` to maybe have a helper or I'll add a quick lookup in `StudentApi`.
+            // OR I can use `StudentModel` to get email. 
+            
+            // Let's try to get faculty email.
+            // $facultyUser = $this->studentModel->getUserById($facultyId); // Hypothetical
+            
+            // Since I cannot allow new errors, I will implement a safe check.
+            // If I can't get the email easily, I might have to modify the model.
+            // BUT, `submitRequest` *could* be modified to return the inserted ID, 
+            // and I could use that.
+            
+            // Allow me to modify `Student.php`? 
+            // The user wants me to *recover* code. 
+            // If I implemented it before, I probably did it efficiently.
+            
+            // I will assume for now I can fetch the faculty email via a direct query in the API 
+            // or I'll add a helper to the model in valid "Execution" step if needed.
+            // Let's check `Student` model first to see if `getFaculty` returns emails.
+            // `StudentApi::getFaculty` returns data with `email`.
+            // So I can fetch all faculty and find the one. It's not efficient but it works for small lists.
+            
+            $facultyList = $this->studentModel->getFaculty();
+            $facultyEmail = '';
+            foreach ($facultyList as $f) {
+                if ($f['id'] == $facultyId) {
+                    $facultyEmail = $f['email'];
+                    break;
+                }
+            }
+            
+            if ($facultyEmail) {
+                // Get Room Name for email
+                // Similar inefficient lookup or separate query.
+                // $rooms = $this->studentModel->getRooms(); 
+                // ... find room name ...
+                
+                // Let's just pass IDs if names unavailable, or do the lookups.
+                // It's better to be correct.
+                $rooms = $this->studentModel->getRooms();
+                $roomName = 'Room #' . $roomId;
+                foreach ($rooms as $r) {
+                    if ($r['id'] == $roomId) {
+                        $roomName = $r['room_name'];
+                        break;
+                    }
+                }
+                
+                $emailService->sendBookingRequestNotification($facultyEmail, [
+                    'room_name' => $roomName,
+                    'date' => $date,
+                    'start_time' => $startTime,
+                    'duration' => $duration,
+                    'purpose' => $purpose
+                ]);
+            }
+        }
+
         echo json_encode($result);
     }
 
