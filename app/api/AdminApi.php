@@ -186,4 +186,18 @@ class AdminApi {
         echo json_encode($result);
     }
 
+    public function changeUserStatus(){
+
+        $userId = $this->data['user-id'];
+        $currentStatus = $this->data['new-status']; // incoming current status
+
+        // Flip the status
+        $newStatus = ($currentStatus === "active") ? "inactive" : "active";
+
+        $result = $this->adminModel->changeUserStatus($userId, $newStatus);
+
+        echo json_encode($result);
+    }
+
+
 }

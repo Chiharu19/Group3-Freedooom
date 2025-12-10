@@ -401,6 +401,49 @@ class Admin {
         ];
     }
 
+    public function changeUserStatus($userId, $newStatus) {
+        // Validate allowed status values (optional but recommended)
+        $allowed = ["active", "inactive"];
+        if (!in_array($newStatus, $allowed)) {
+            return [
+                "success" => false,
+                "message" => "Invalid status value"
+            ];
+        }
+
+        // Check if user exists
+        $check = $this->conn->prepare("SELECT id FROM users WHERE id = ?");
+        $check->bind_param("i", $userId);
+        $check->execute();
+        $result = $check->get_result();
+
+        if ($result->num_rows === 0) {
+            return [
+                "success" => false,
+                "message" => "User not found"
+            ];
+        }
+
+        // Update status
+        $sql = "UPDATE users SET status = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("si", $newStatus, $userId);
+
+        if ($stmt->execute()) {
+            return [
+                "success" => true,
+                "message" => "User status updated successfully",
+                'data' => [$userId, $newStatus]
+            ];
+        }
+
+        return [
+            "success" => false,
+            "message" => $stmt->error
+        ];
+    }
+
+
 
 
     // DELETION METHODS
