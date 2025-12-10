@@ -95,6 +95,12 @@
   font-weight: bold;
 }
 
+.fc-col-header-cell,
+.fc-col-header-cell * {
+  color: white !important;
+  text-decoration: none !important;
+}
+
 
 /* Custom Table Header */
 
