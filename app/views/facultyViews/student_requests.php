@@ -18,7 +18,7 @@
     <a href="index.php?page=faculty-book">Book a Room</a>
     <a href="index.php?page=faculty-my-bookings">My Bookings</a>
     <a href="index.php?page=faculty-requests" class="active">Student Requests</a>
-    <a href="index.php?page=logout" class="mt-3">Logout</a>
+    <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();" class="mt-3">Logout</a>
   </nav>
 
   <main class="main-content">
@@ -37,6 +37,27 @@
       </div>
     </div>
   </main>
+</div>
+
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">Confirm Logout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to logout?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="index.php?page=logout" class="btn btn-primary">Logout</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Bootstrap & app -->

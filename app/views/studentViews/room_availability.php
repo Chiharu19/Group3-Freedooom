@@ -23,7 +23,7 @@
             <a href="?page=student-rooms" class="active">Rooms</a>
             <a href="?page=student-submit">Submit Booking</a>
             <a href="?page=student-requests">My Requests</a>
-            <a href="?page=logout">Logout</a>
+            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('studentLogoutModal')).show();">Logout</a>
         </div>
 
         <div class="main-content">
@@ -33,22 +33,8 @@
             </div>
 
             <div class="container-fluid mt-4">
-                <!-- Search -->
-                <div class="search-row-container">
-                    <form class="row g-3 align-items-end mb-4" id="roomSearchForm">
-                        <div class="col-12 col-md-5">
-                            <input type="text" id="searchRoomName" class="form-control"
-                                placeholder="Search by Room Name">
-                        </div>
-                        <div class="col-12 col-md-5">
-                            <input type="text" id="searchBuilding" class="form-control"
-                                placeholder="Search by Building">
-                        </div>
-                        <div class="col-12 col-md-2">
-                            <button type="submit" class="btn btn-bsu-red w-100">Search</button>
-                        </div>
-                    </form>
-                </div>
+                <!-- Search Removed as per requirements -->
+
 
                 <!-- Building Selection -->
                 <div class="select-building-area" id="buildingFilterButtons">
@@ -109,8 +95,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/student.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

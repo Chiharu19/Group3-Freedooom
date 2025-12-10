@@ -13,8 +13,8 @@
             <a href="?page=admin-rooms">Rooms</a>
             <a href="?page=admin-schedules">Schedules</a>
             <a href="?page=admin-requests">Student Requests</a>
-            <a href="?page=admin-users" class="active">Manage Users</a>
-            <a href="?page=logout">Logout</a>
+            <a href="#" class="active">Manage Users</a>
+            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
         </div>
 
         <div class="main-content">

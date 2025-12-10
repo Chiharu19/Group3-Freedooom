@@ -59,11 +59,16 @@ function initDashboard() {
                         else if (req.status === 'denied') badgeClass = 'bg-danger';
                         else if (req.status === 'pending') badgeClass = 'bg-warning text-dark';
 
+                        // Format Date: "Full month name day, Year"
+                        const dateObj = new Date(req.date);
+                        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                        const formattedDate = dateObj.toLocaleDateString('en-US', dateOptions);
+
                         requestsHtml += `
                     <tr>
                         <td>#${req.id}</td>
                         <td>${req.room_name}</td>
-                        <td>${req.date}</td>
+                        <td>${formattedDate}</td>
                         <td><span class="badge ${badgeClass}">${req.status.toUpperCase()}</span></td>
                     </tr>
                     `;
@@ -193,6 +198,15 @@ function initSubmitRequest() {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
+        // Time Validation (7am - 7pm)
+        const startTime = document.getElementById('startTime').value;
+        const endTime = document.getElementById('endTime').value;
+
+        if (startTime < "07:00" || startTime > "19:00" || endTime < "07:00" || endTime > "19:00") {
+            alert("Booking times must be between 7:00 AM and 7:00 PM.");
+            return;
+        }
+
         const formData = new FormData(form);
         formData.append('action', 'submitRequest');
         formData.append('csrf_token', getCsrfToken());
@@ -255,15 +269,21 @@ function initMyRequests() {
 
                         actionHtml = `
                             <button class="btn btn-sm btn-primary me-1" 
-                                onclick="openEditModal(${req.id}, ${req.room_id}, '${safeRoom}', '${safeDate}', '${safeStart}', '${safeEnd}', '${safePurp}')">
+                                onclick="event.stopPropagation(); openEditModal(${req.id}, ${req.room_id}, '${safeRoom}', '${safeDate}', '${safeStart}', '${safeEnd}', '${safePurp}')">
                                 Edit
                             </button>
-                            <button class="btn btn-sm btn-danger" onclick="cancelRequest(${req.id})">Cancel</button>
+                            <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); cancelRequest(${req.id})">Cancel</button>
                         `;
                     }
 
+                    // Prepare data for read-only view
+                    const safeReason = (req.admin_feedback || req.rejection_reason || '').replace(/'/g, "\\'");
+                    const safePurpose = (req.purpose || '').replace(/'/g, "\\'");
+                    const safeStatus = req.status;
+                    const safeFaculty = (req.faculty_name || 'N/A').replace(/'/g, "\\'");
+
                     html += `
-                    <tr>
+                    <tr style="cursor: pointer;" onclick="viewRequestDetails('${req.room_name}', '${req.date}', '${req.start_time_formatted} - ${req.end_time_formatted}', '${safeStatus}', '${safeFaculty}', '${safePurpose}', '${safeReason}')">
                         <td>#${req.id}</td>
                         <td>${req.room_name}</td>
                         <td>${req.date}</td>
@@ -317,6 +337,27 @@ function initMyRequests() {
             });
     }
 
+    // View Request Details Function
+    window.viewRequestDetails = function (room, date, time, status, faculty, purpose, notes) {
+        document.getElementById('viewRoom').innerText = room;
+        document.getElementById('viewDate').innerText = date;
+        document.getElementById('viewTime').innerText = time;
+        document.getElementById('viewStatus').innerText = status.toUpperCase();
+        document.getElementById('viewFaculty').innerText = faculty;
+        document.getElementById('viewPurpose').innerText = purpose;
+
+        const notesSection = document.getElementById('viewNotesSection');
+        if (status === 'denied' || status === 'rejected') {
+            document.getElementById('viewNotes').innerText = notes || 'No reason provided.';
+            notesSection.classList.remove('d-none');
+        } else {
+            notesSection.classList.add('d-none');
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('viewRequestModal'));
+        modal.show();
+    };
+
     // Edit Request Functions
     window.openEditModal = function (id, roomId, roomName, date, start, end, purpose) {
         document.getElementById('editReqId').value = id;
@@ -369,9 +410,6 @@ let allRooms = []; // Global to store fetched rooms for filtering
 
 function initRoomAvailability() {
     const container = document.getElementById('room-display-container');
-    const searchName = document.getElementById('searchRoomName');
-    const searchBuilding = document.getElementById('searchBuilding');
-    const searchForm = document.getElementById('roomSearchForm');
     const buildingButtonsContainer = document.getElementById('buildingButtonsContainer');
 
     // 1. Fetch Rooms
@@ -398,15 +436,7 @@ function initRoomAvailability() {
             container.innerHTML = `<div class="text-danger text-center">Network Error: ${err.message}</div>`;
         });
 
-    // 2. Setup Search Listeners
-    searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        filterRooms();
-    });
-
-    // Real-time search (optional)
-    searchName.addEventListener('keyup', filterRooms);
-    searchBuilding.addEventListener('keyup', filterRooms);
+    // 2. Setup Search Listeners - REMOVED (Search inputs removed from view)
 
     window.filterRoomsByBuilding = function (building) {
         if (building === 'ALL') {
@@ -418,19 +448,9 @@ function initRoomAvailability() {
     }
 }
 
-function filterRooms() {
-    const nameVal = document.getElementById('searchRoomName').value.toLowerCase();
-    const buildVal = document.getElementById('searchBuilding').value.toLowerCase();
-
-    const filtered = allRooms.filter(r => {
-        const matchName = r.room_name.toLowerCase().includes(nameVal);
-        // checking building text or checking if building property includes text
-        const matchBuild = (r.building || '').toLowerCase().includes(buildVal);
-        return matchName && matchBuild;
-    });
-
-    renderRooms(filtered);
-}
+// Simplified or unused filter function since inputs are gone, 
+// but we might need it if we re-add search later. 
+// For now, filterRoomsByBuilding handles the buttons.
 
 function renderRooms(rooms) {
     const container = document.getElementById('room-display-container');

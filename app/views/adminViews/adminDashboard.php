@@ -17,14 +17,14 @@
             <a href="?page=admin-schedules">Schedules</a>
             <a href="?page=admin-requests">Student Requests</a>
             <a href="?page=admin-users">Manage Users</a>
-            <a href="?page=logout">Logout</a>
+            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
         </div>
 
         <div class="main-content">
 
             <div class="topbar d-flex justify-content-between align-items-center px-4">
                 <h4 class="fw-bold">Dashboard</h4>
-                <span class="fw-semibold">Welcome, Administrator</span>
+                <span class="fw-semibold">Welcome, <?= htmlspecialchars($_SESSION['user']['full_name'] ?? 'Administrator') ?></span>
             </div>
 
             <div class="container mt-4">

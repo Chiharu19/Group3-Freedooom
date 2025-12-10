@@ -21,7 +21,7 @@ class SuperAdminApi {
             return;
         }
 
-        $result = $this->auth->login($email, $password);
+        $result = $this->auth->login($email, $password, true); // true = allow super admin
 
         if ($result['success']) {
             if ($result['user']['role'] === 'super' || $result['user']['role'] === 'super_admin') {

@@ -33,7 +33,7 @@
             <a href="?page=student-rooms">Rooms</a>
             <a href="?page=student-submit" class="active">Submit Booking</a>
             <a href="?page=student-requests">My Requests</a>
-            <a href="?page=logout">Logout</a>
+            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('studentLogoutModal')).show();">Logout</a>
         </div>
 
         <div class="main-content">
@@ -67,12 +67,12 @@
 
                         <div class="mb-3">
                             <label for="startTime" class="form-label">Start Time</label>
-                            <input type="time" id="startTime" name="start_time" class="form-control" required>
+                            <input type="time" id="startTime" name="start_time" min="07:00" max="19:00" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="endTime" class="form-label">End Time</label>
-                            <input type="time" id="endTime" name="end_time" class="form-control" required>
+                            <input type="time" id="endTime" name="end_time" min="07:00" max="19:00" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
@@ -86,6 +86,27 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    </div>
+
+    <!-- Student Logout Modal -->
+    <div class="modal fade" id="studentLogoutModal" tabindex="-1">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Confirm Logout</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to logout?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <a href="?page=logout" class="btn btn-primary">Logout</a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="assets/js/student.js?v=<?php echo time(); ?>"></script>

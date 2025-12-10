@@ -12,22 +12,27 @@ class Auth{
     // ======================
     // LOGIN (EMAIL + PASSWORD)
     // ======================
-    public function login($email, $password) {
+    public function login($email, $password, $isSuperAdminLogin = false) {
         $user = $this->getUserByEmail($email);
 
         // checks if email is present
         if (!$user) {
-            return ['success' => false, 'message' => 'Email not found'];
+            return ['success' => false, 'message' => 'Email or Password is incorrect'];
         }
 
         // checks password
         if (!password_verify($password, $user['password'])) {
-            return ['success' => false, 'message' => 'Incorrect password'];
+            return ['success' => false, 'message' => 'Email or Password is incorrect'];
         }
 
         // checks if its active
         if ($user['status'] !== 'active') {
             return ['success' => false, 'message' => 'Account inactive'];
+        }
+
+        // Block Super Admin from general login unless strictly allowed
+        if (!$isSuperAdminLogin && ($user['role'] === 'super_admin' || $user['role'] === 'super')) {
+             return ['success' => false, 'message' => 'Email or Password is incorrect'];
         }
 
         return [

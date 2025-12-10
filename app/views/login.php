@@ -37,20 +37,43 @@
         </div>
     </div>
 
-    <script>
+    <!-- Error Modal -->
+    <div class="modal fade" id="loginErrorModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Login Failed</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p id="modalErrorText" class="fw-bold mt-2"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
         const form = document.getElementById("login-form");
+        const errorModalEl = document.getElementById('loginErrorModal');
+        const modalErrorText = document.getElementById('modalErrorText');
+        // Initialize modal if bootstrap is loaded
+        // We need to ensure bootstrap is available. header.php likely has it, or we added it above.
+        // If not, we added the script tag above.
 
         form.addEventListener("submit", function (e) {
             e.preventDefault();
 
             const formData = new FormData(form);
-            formData.append("action", "logIn"); // tell API which action
+            formData.append("action", "logIn");
 
             // clear error
             const errDiv = document.getElementById('errorMsg');
-            errDiv.classList.add('d-none');
-            errDiv.textContent = '';
+            if(errDiv) errDiv.classList.add('d-none');
 
             fetch("api.php", {
                 method: "POST",
@@ -59,22 +82,35 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        console.log('Login successful', data.user);
-                        // take user to the dashboard page of their role
-                        window.location.href = `?page=${data.user.role}`;
+                        try {
+                             window.location.href = `?page=${data.user.role}`;
+                        } catch(e) {
+                             console.error('Role redirection error', e); 
+                             window.location.reload(); 
+                        }
                     } else {
-                        errDiv.textContent = data.message || data.error || 'Login failed';
-                        errDiv.classList.remove('d-none');
-                        console.error('Login error:', data);
+                        // Show Modal
+                        if (typeof bootstrap !== 'undefined') {
+                            modalErrorText.textContent = data.message || data.error || 'Incorrect Email or Password';
+                            let loginModal = bootstrap.Modal.getOrCreateInstance(errorModalEl);
+                            loginModal.show();
+                        } else {
+                            // Fallback if bootstrap fails
+                            alert(data.message || data.error || 'Login failed');
+                        }
                     }
                 })
                 .catch(err => {
                     console.error('Network/Parse error:', err);
-                    errDiv.textContent = 'An error occurred. check console.';
-                    errDiv.classList.remove('d-none');
+                    modalErrorText.textContent = 'A network error occurred.';
+                    if (typeof bootstrap !== 'undefined') {
+                        let loginModal = bootstrap.Modal.getOrCreateInstance(errorModalEl);
+                        loginModal.show();
+                    } else {
+                        alert('Network Error');
+                    }
                 });
         });
-
     </script>
 
     <?php require __DIR__ . '/layouts/footer.php'; ?>

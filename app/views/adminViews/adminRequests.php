@@ -16,7 +16,7 @@
             <a href="?page=admin-schedules">Schedules</a>
             <a href="#" class="active">Student Requests</a>
             <a href="?page=admin-users">Manage Users</a>
-            <a href="?page=logout">Logout</a>
+            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
         </div>
 
         <div class="main-content">

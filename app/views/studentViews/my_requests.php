@@ -25,7 +25,7 @@
             <a href="?page=student-rooms">Rooms</a>
             <a href="?page=student-submit">Submit Booking</a>
             <a href="?page=student-requests" class="active">My Requests</a>
-            <a href="?page=logout">Logout</a>
+            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('studentLogoutModal')).show();">Logout</a>
         </div>
 
         <!-- Main content -->
@@ -103,6 +103,55 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- View Details Modal (New) -->
+    <div class="modal fade" id="viewRequestModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Request Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+             <p><strong>Room:</strong> <span id="viewRoom"></span></p>
+             <p><strong>Date:</strong> <span id="viewDate"></span></p>
+             <p><strong>Time:</strong> <span id="viewTime"></span></p>
+             <p><strong>Status:</strong> <span id="viewStatus"></span></p>
+             <p><strong>Faculty:</strong> <span id="viewFaculty"></span></p>
+             <p><strong>Purpose:</strong></p>
+             <p id="viewPurpose" class="bg-light p-2 rounded"></p>
+             
+             <!-- Notes Section (Hidden by default) -->
+             <div id="viewNotesSection" class="d-none">
+                 <p class="text-danger fw-bold mt-3">Rejection/Notes:</p>
+                 <p id="viewNotes" class="bg-danger-subtle p-2 rounded border border-danger"></p>
+             </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Logout Modal -->
+    <div class="modal fade" id="studentLogoutModal" tabindex="-1">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Confirm Logout</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to logout?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <a href="?page=logout" class="btn btn-primary">Logout</a>
+          </div>
+        </div>
       </div>
     </div>
 

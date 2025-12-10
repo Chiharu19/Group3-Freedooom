@@ -35,7 +35,7 @@
     <a href="index.php?page=faculty-book">Book a Room</a>
     <a href="index.php?page=faculty-my-bookings">My Bookings</a>
     <a href="index.php?page=faculty-requests">Student Requests</a>
-    <a href="index.php?page=logout" class="mt-3">Logout</a>
+    <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();" class="mt-3">Logout</a>
   </nav>
 
   <!-- Main Content -->
@@ -43,7 +43,7 @@
 
     <div class="topbar d-flex justify-content-between align-items-center px-4">
       <h4 class="fw-bold m-0">Dashboard</h4>
-      <span class="fw-semibold">Welcome, Instructor</span>
+      <span class="fw-semibold">Welcome, <?= htmlspecialchars($_SESSION['user']['full_name'] ?? 'Instructor') ?></span>
     </div>
 
     <div class="container mt-3">
@@ -102,6 +102,25 @@
         <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">Confirm Logout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to logout?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="index.php?page=logout" class="btn btn-primary">Logout</a>
+      </div>
     </div>
   </div>
 </div>
