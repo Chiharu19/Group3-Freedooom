@@ -43,21 +43,21 @@ class StudentApi
         $facultyId = $this->data['faculty_id'] ?? '';
         $date = $this->data['date'] ?? '';
         $startTime = $this->data['start_time'] ?? '';
-        $endTime = $this->data['end_time'] ?? '';
+        $duration = $this->data['duration'] ?? 1;
         $purpose = $this->data['purpose'] ?? '';
 
-        if (!$roomId || !$facultyId || !$date || !$startTime || !$endTime || !$purpose) {
+        if (!$roomId || !$facultyId || !$date || !$startTime || !$duration || !$purpose) {
             echo json_encode(['success' => false, 'message' => 'Missing required fields']);
             return;
         }
 
-        // Conflict Check
-        if (!$this->studentModel->isRoomAvailable($roomId, $date, $startTime, $endTime)) {
+        // Conflict Check (needs update to use duration)
+        if (!$this->studentModel->isRoomAvailable($roomId, $date, $startTime, $duration)) {
              echo json_encode(['success' => false, 'message' => 'Room is already booked for this time slot.']);
              return;
         }
 
-        $result = $this->studentModel->submitRequest($studentId, $roomId, $facultyId, $date, $startTime, $endTime, $purpose);
+        $result = $this->studentModel->submitRequest($studentId, $roomId, $facultyId, $date, $startTime, $duration, $purpose);
         echo json_encode($result);
     }
 
@@ -69,21 +69,21 @@ class StudentApi
         $roomId = $this->data['room_id'] ?? '';
         $date = $this->data['date'] ?? '';
         $startTime = $this->data['start_time'] ?? '';
-        $endTime = $this->data['end_time'] ?? '';
+        $duration = $this->data['duration'] ?? 1;
         $purpose = $this->data['purpose'] ?? '';
 
-        if (!$requestId || !$roomId || !$date || !$startTime || !$endTime || !$purpose) {
+        if (!$requestId || !$roomId || !$date || !$startTime || !$duration || !$purpose) {
             echo json_encode(['success' => false, 'message' => 'Missing required fields']);
             return;
         }
 
         // Optional: Conflict check on edit? Yes, ideally.
-        if (!$this->studentModel->isRoomAvailable($roomId, $date, $startTime, $endTime)) {
+        if (!$this->studentModel->isRoomAvailable($roomId, $date, $startTime, $duration)) {
              echo json_encode(['success' => false, 'message' => 'Room is already booked for this time slot.']);
              return;
         }
 
-        $result = $this->studentModel->updateRequest($requestId, $studentId, $roomId, $date, $startTime, $endTime, $purpose);
+        $result = $this->studentModel->updateRequest($requestId, $studentId, $roomId, $date, $startTime, $duration, $purpose);
         echo json_encode($result);
     }
 

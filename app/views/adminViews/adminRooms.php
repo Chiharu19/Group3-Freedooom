@@ -93,7 +93,6 @@
                                 <select class="form-select mb-2" name="status" id="edit-status">
                                     <option value="available">Available</option>
                                     <option value="maintenance">Under Maintenance</option>
-                                    <option value="booked">Booked</option>
                                 </select>
 
                                 <button type="submit" class="btn btn-danger w-100 mt-2">Save Changes</button>

@@ -52,8 +52,8 @@
             </div>
 
             <div class="col-6 col-md-3">
-              <label for="booking-end" class="form-label">End time</label>
-              <input id="booking-end" name="booking_end" data-field="booking_end" class="form-control" type="time" required>
+              <label for="booking-duration" class="form-label">Duration (Hours)</label>
+              <input id="booking-duration" name="duration" data-field="duration" class="form-control" type="number" min="1" max="5" value="1" required>
             </div>
 
             <div class="col-12">

@@ -110,5 +110,12 @@ class FacultyApi
         $duration = $this->params['duration'] ?? 1;
         $purpose = $this->params['purpose'] ?? '';
 
+        if (!$bookingId || !$roomId || !$date || !$startTime || !$duration) {
+             echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+             return;
+        }
+
+        $res = $this->facultyModel->updateBooking($bookingId, $this->userId, $roomId, $date, $startTime, $duration, $purpose);
+        echo json_encode($res);
     }
 }

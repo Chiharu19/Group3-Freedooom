@@ -269,7 +269,7 @@ function initMyRequests() {
 
                         actionHtml = `
                             <button class="btn btn-sm btn-primary me-1" 
-                                onclick="event.stopPropagation(); openEditModal(${req.id}, ${req.room_id}, '${safeRoom}', '${safeDate}', '${safeStart}', '${safeEnd}', '${safePurp}')">
+                                onclick="event.stopPropagation(); openEditModal(${req.id}, ${req.room_id}, '${safeRoom}', '${safeDate}', '${safeStart}', ${req.duration}, '${safePurp}')">
                                 Edit
                             </button>
                             <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); cancelRequest(${req.id})">Cancel</button>
@@ -359,13 +359,13 @@ function initMyRequests() {
     };
 
     // Edit Request Functions
-    window.openEditModal = function (id, roomId, roomName, date, start, end, purpose) {
+    window.openEditModal = function (id, roomId, roomName, date, start, duration, purpose) {
         document.getElementById('editReqId').value = id;
         document.getElementById('editRoomId').value = roomId;
         document.getElementById('editRoomName').value = roomName;
         document.getElementById('editDate').value = date;
         document.getElementById('editStart').value = start;
-        document.getElementById('editEnd').value = end;
+        document.getElementById('editDuration').value = duration;
         document.getElementById('editPurpose').value = purpose;
 
         const modal = new bootstrap.Modal(document.getElementById('editRequestModal'));

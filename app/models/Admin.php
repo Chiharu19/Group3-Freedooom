@@ -401,6 +401,27 @@ class Admin {
         ];
     }
 
+    public function updateUser($userId, $fullName, $email, $role) {
+        // 1. Check if email exists for *other* users
+        $check = $this->conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+        $check->bind_param("si", $email, $userId);
+        $check->execute();
+        if ($check->get_result()->num_rows > 0) {
+            return ["success" => false, "message" => "Email already in use by another user"];
+        }
+
+        // 2. Update
+        $sql = "UPDATE users SET full_name = ?, email = ?, role = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssi", $fullName, $email, $role, $userId);
+
+        if ($stmt->execute()) {
+            return ["success" => true, "message" => "User updated successfully"];
+        }
+
+        return ["success" => false, "message" => $stmt->error];
+    }
+
     public function changeUserStatus($userId, $newStatus) {
         // Validate allowed status values (optional but recommended)
         $allowed = ["active", "inactive"];

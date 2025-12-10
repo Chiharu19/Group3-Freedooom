@@ -186,6 +186,21 @@ class AdminApi {
         echo json_encode($result);
     }
 
+    public function editUser() {
+        $userId = $this->data['user-id'] ?? '';
+        $fullName = $this->data['full-name'] ?? '';
+        $email = $this->data['email'] ?? '';
+        $role = $this->data['role'] ?? '';
+
+        if (!$userId || !$fullName || !$email || !$role) {
+            echo json_encode(['success' => false, 'message' => 'Missing fields']);
+            return;
+        }
+
+        $res = $this->adminModel->updateUser($userId, $fullName, $email, $role);
+        echo json_encode($res);
+    }
+
     public function changeUserStatus(){
 
         $userId = $this->data['user-id'];

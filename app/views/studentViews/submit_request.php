@@ -71,8 +71,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="endTime" class="form-label">End Time</label>
-                            <input type="time" id="endTime" name="end_time" min="07:00" max="19:00" class="form-control" required>
+                            <label for="duration" class="form-label">Duration (Hours)</label>
+                            <input type="number" id="duration" name="duration" min="1" max="5" value="1" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
