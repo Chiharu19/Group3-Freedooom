@@ -1,0 +1,266 @@
+/* ==================== Color Palette ==================== */
+:root {
+    --bsu-red: #9D1A1A;
+    --bsu-dark-red: #7A0E0E;
+    --bg-light: #F4F4F4;
+    --card-border: #9D1A1A;
+    --text-dark: #333;
+}
+
+/* ==================== Layout ==================== */
+body {
+    background: var(--bg-light);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    color: var(--text-dark);
+}
+
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background: var(--bsu-red);
+    color: white;
+    flex-shrink: 0;
+    padding-top: 20px;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 1200;
+}
+
+.sidebar h3 {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    margin: 5px 0;
+    border-radius: 6px;
+}
+
+.sidebar a:hover {
+    background: var(--bsu-dark-red);
+}
+
+.sidebar a.active {
+    background: rgba(255,255,255,0.15);
+    font-weight: bold;
+}
+
+/* Main content */
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Topbar */
+.topbar {
+    background: white;
+    height: 60px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+/* Cards */
+.card-custom {
+    border-radius: 12px;
+    border-left: 6px solid var(--card-border);
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+.btn-bsu-red {
+    background-color: var(--bsu-red);
+    color: #fff;
+    border-radius: 8px;
+    border: none;
+}
+
+.btn-bsu-red:hover {
+    background-color: var(--bsu-dark-red);
+}
+
+/* Forms */
+form label {
+    font-weight: 600;
+}
+
+form textarea {
+    resize: none;
+}
+
+/* Rooms */
+.rooms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.room-box {
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    min-width: 120px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    transition: all 0.2s;
+}
+
+.room-box.status-free {
+    background-color: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+}
+
+.room-box.status-occupied {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+}
+
+.room-box.status-faulty {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+    cursor: not-allowed;
+}
+
+/* Buildings / Floors */
+.building h5 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.floor {
+    margin-bottom: 20px;
+}
+
+.floor-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* ==================== Sidebar Toggle for Mobile ==================== */
+.sidebar-toggle-label {
+    display: none;
+    font-size: 28px;
+    padding: 12px 20px;
+    background: var(--bsu-red);
+    color: white;
+    cursor: pointer;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1100;
+}
+
+#sidebar-toggle {
+    display: none;
+}
+
+/* ==================== Mobile Responsiveness ==================== */
+@media screen and (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+    }
+
+    /* Sidebar adjustments */
+    .sidebar {
+        width: 200px;
+        position: fixed;
+        left: -200px;
+        top: 0;
+        z-index: 1000;
+        height: 100vh;
+        padding-top: 60px;
+        transition: left 0.3s ease;
+    }
+
+    /* Sidebar toggle checked */
+    #sidebar-toggle:checked ~ .wrapper .sidebar {
+        left: 0;
+    }
+
+    /* Show toggle button */
+    .sidebar-toggle-label {
+        display: block;
+    }
+
+    /* Main content padding for mobile */
+    .main-content {
+        padding: 10px;
+        margin-top: 60px;
+    }
+
+    /* Rooms layout */
+    .rooms {
+        justify-content: flex-start;
+    }
+
+    .room-box {
+        min-width: 45%;
+        flex: 1 1 45%;
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    /* Floor labels */
+    .floor-label {
+        font-size: 14px;
+    }
+
+    /* Building selection buttons */
+    .select-building-area a.btn-sm {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    /* Topbar adjustments */
+    .topbar h4 {
+        font-size: 18px;
+    }
+
+    .topbar span {
+        font-size: 14px;
+    }
+
+    /* Modal table adjustments */
+    .table-responsive table {
+        font-size: 13px;
+    }
+
+    /* Forms adjustments */
+    form label {
+        font-size: 14px;
+    }
+
+    form input,
+    form select,
+    form textarea {
+        font-size: 14px;
+    }
+
+    button.btn-bsu-red {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}

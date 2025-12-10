@@ -1,6 +1,6 @@
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
-<link rel="stylesheet" href="../../../public/assets/css/admin/adminSchedules.css">
+<link rel="stylesheet" href="../../../public/assets/css/admin/adminDashboard.css">
 
 <!-- Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -170,8 +170,8 @@
                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addBookingModal">Add Booking</button>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-secondary">
+                        <table class="table table-hover align-middle table-custom-header">
+                            <thead>
                                 <tr>
                                     <th>Room</th>
                                     <th>Date</th>

@@ -2,38 +2,41 @@
 
 class FacultyController
 {
+
     public function __construct()
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-    }
-
-    private function checkAuth()
-    {
-        // Check if user is logged in and has the 'faculty' role
-        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'faculty') {
-            // Redirect to the login page if not authorized.
-            // Adjust the path if your login page is located elsewhere.
-            header('Location: /Group3-Freedooom/login.html');
+        if (!isset($_SESSION['user']) || strtolower($_SESSION['user']['role']) !== 'faculty') {
+            header('Location: index.php?page=login');
             exit;
         }
     }
 
     public function dashboard()
     {
-        $this->checkAuth(); // First, check for authorization
+        require __DIR__ . '/../views/facultyViews/faculty_dashboard.php';
+    }
 
-        // While the proper way is to use .php views, the current existing views might be .html
-        // and designed to be accessed directly. However, to support the routing in index.php:
+    public function rooms()
+    {
+        require __DIR__ . '/../views/facultyViews/room_availability.php';
+    }
 
-        // Check if html file exists, otherwise fallback or error
-        if (file_exists(__DIR__ . '/../views/facultyViews/dashboard.html')) {
-            require __DIR__ . '/../views/facultyViews/dashboard.html';
-        } else {
-            // Fallback or just let it fail naturally/create empty
-            echo "Faculty Dashboard not found.";
-        }
+    public function bookRoom()
+    {
+        require __DIR__ . '/../views/facultyViews/book_room.php';
+    }
+
+    public function myBookings()
+    {
+        require __DIR__ . '/../views/facultyViews/my_bookings.php';
+    }
+
+    public function studentRequests()
+    {
+        require __DIR__ . '/../views/facultyViews/student_requests.php';
     }
 }
 ?>
