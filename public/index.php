@@ -25,10 +25,11 @@ spl_autoload_register(function ($class) {
 });
 
 // Current page
-$page = $_GET['page'] ?? 'login';
+$page = $_GET['page'] ?? 'landing';
 
 // Page routes
 $routes = [
+    'landing' => ['AuthController', 'landing'],
     'login' => ['AuthController', 'login'],
     'logout' => ['AuthController', 'logout'],
     'admin' => ['AdminController', 'dashboard'],
