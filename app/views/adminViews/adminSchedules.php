@@ -236,6 +236,7 @@
         function attachDeleteEvent() {
             document.querySelectorAll(".delete-booking-btn").forEach(btn => {
                 btn.addEventListener("click", () => {
+                    if (!confirm("Are you sure you want to delete this booking?")) return;
                     const booking_id = btn.dataset.id;
 
                     const formData = new FormData();

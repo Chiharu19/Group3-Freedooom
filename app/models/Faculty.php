@@ -87,11 +87,11 @@ class Faculty
     // 3. Get Assigned Student Requests
     public function getAssignedRequests($facultyId)
     {
-        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.comments, 
+        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.notes as comments, 
                        rm.room_name, u.full_name as student_name
                 FROM student_booking_requests r
-                JOIN rooms rm ON r.room_id = rm.id
-                JOIN users u ON r.student_id = u.id
+                LEFT JOIN rooms rm ON r.room_id = rm.id
+                LEFT JOIN users u ON r.student_id = u.id
                 WHERE r.faculty_id = ?
                 ORDER BY r.created_at DESC";
         
@@ -212,7 +212,7 @@ class Faculty
             $newStatus = 'denied';
         }
 
-        $upd = "UPDATE student_booking_requests SET status = ?, comments = ? WHERE id = ?";
+        $upd = "UPDATE student_booking_requests SET status = ?, notes = ? WHERE id = ?";
         $u = $this->conn->prepare($upd);
         $u->bind_param("ssi", $newStatus, $comments, $requestId);
         if ($u->execute()) {

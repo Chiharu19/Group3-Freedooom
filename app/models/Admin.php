@@ -508,11 +508,11 @@ class Admin {
         // Status column in DB might be lowercase 'pending' or 'Pending'? 
         // Based on faculty_dashboard.js logic, it expects lowercase 'pending'.
         
-        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.comments, 
+        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.notes as comments, 
                        rm.room_name, u.full_name as student_name
                 FROM student_booking_requests r
-                JOIN rooms rm ON r.room_id = rm.id
-                JOIN users u ON r.student_id = u.id
+                LEFT JOIN rooms rm ON r.room_id = rm.id
+                LEFT JOIN users u ON r.student_id = u.id
                 WHERE r.status = ?
                 ORDER BY r.date ASC";
 
@@ -569,7 +569,7 @@ class Admin {
             $newStatus = 'denied';
         }
 
-        $upd = "UPDATE student_booking_requests SET status = ?, comments = ? WHERE id = ?";
+        $upd = "UPDATE student_booking_requests SET status = ?, notes = ? WHERE id = ?";
         $u = $this->conn->prepare($upd);
         $u->bind_param("ssi", $newStatus, $comments, $requestId);
         if ($u->execute()) return ['success' => true];
