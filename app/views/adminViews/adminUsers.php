@@ -159,7 +159,7 @@
                     <td>${statusBadge}</td>
                     <td>
                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id})">
+                        <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id}, '${user.status}')">
                             ${user.status === "active" ? "Deactivate" : "Activate"}
                         </button>
                     </td>
@@ -199,8 +199,29 @@
         }[char])) || "";
     }
 
-    function toggleStatus(userId){
-        console.log(userId);
+    function toggleStatus(userId, newStatus){
+        
+        const formData = new FormData();
+        formData.append("action", "changeUserStatus");
+        formData.append("user-id", userId);
+        formData.append("new-status", newStatus);
+
+        fetch("/public/api.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                window.location.href = "?page=admin-users";
+            }else{
+                console.log(data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+        });
+        
     }
 
     const addUserForm = document.getElementById('addUserForm');
