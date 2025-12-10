@@ -106,6 +106,25 @@
         </div>
     </div>
 
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <h5 class="fw-bold mb-3">Change Password</h5>
+                <form id="changePasswordForm">
+                    <input type="hidden" name="user_id" id="cp-user-id">
+                    
+                    <p>Changing password for: <span id="cp-user-name" class="fw-bold"></span></p>
+
+                    <label class="form-label">New Password</label>
+                    <input type="password" name="new_password" class="form-control mb-2" required minlength="6">
+                    
+                    <button type="submit" class="btn btn-warning w-100 mt-2">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
 
     function loadUsers() {
@@ -167,6 +186,7 @@
                     <td>${statusBadge}</td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="openEditUserModal(${user.id}, '${safeName}', '${safeEmail}', '${safeRole}')">Edit</button>
+                        <button class="btn btn-sm btn-warning" onclick="openChangePasswordModal(${user.id}, '${safeName}')">Pw</button>
                         <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id}, '${user.status}')">
                             ${user.status === "active" ? "Deactivate" : "Activate"}
                         </button>
@@ -250,6 +270,55 @@
         document.getElementById('edit-role').value = role;
         
         new bootstrap.Modal(document.getElementById('editUserModal')).show();
+    }
+
+    window.openChangePasswordModal = function(id, name) {
+        document.getElementById('cp-user-id').value = id;
+        document.getElementById('cp-user-name').innerText = name;
+        document.getElementById('changePasswordForm').reset();
+        
+        new bootstrap.Modal(document.getElementById('changePasswordModal')).show();
+    }
+
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const submitBtn = changePasswordForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Updating...';
+
+            const formData = new FormData(changePasswordForm);
+            formData.append("action", "changeUserPassword");
+
+            // CSRF
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if(csrfToken) formData.append('csrf_token', csrfToken);
+
+            fetch("/public/api.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success){
+                    alert("Password updated successfully");
+                    bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+                }else{
+                    alert(data.message || "Failed to update password");
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            })
+            .catch(err => {
+                console.error(err);
+                alert("An error occurred");
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            });
+        });
     }
 
     if (editUserForm) {

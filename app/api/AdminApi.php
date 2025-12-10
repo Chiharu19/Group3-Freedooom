@@ -150,7 +150,7 @@ class AdminApi {
 
     public function getUsersList(){
 
-        $result = $this->adminModel->getAllUsers();
+        $result = $this->adminModel->getManageableUsers();
         echo json_encode(['data' => $result]);
 
     }
@@ -259,6 +259,19 @@ class AdminApi {
 
         $result = $this->adminModel->changeUserStatus($userId, $newStatus);
 
+        echo json_encode($result);
+    }
+
+    public function changeUserPassword() {
+        $userId = $this->data['user_id'] ?? '';
+        $newPassword = $this->data['new_password'] ?? '';
+
+        if (!$userId || !$newPassword) {
+            echo json_encode(['success' => false, 'message' => 'Missing fields']);
+            return;
+        }
+
+        $result = $this->adminModel->changeUserPassword($userId, $newPassword);
         echo json_encode($result);
     }
 

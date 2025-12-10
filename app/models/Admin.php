@@ -169,6 +169,21 @@ class Admin {
         return $data;
     }
 
+    public function getManageableUsers() {
+        // Fetch only faculty and student roles
+        $sql = "SELECT * FROM users WHERE role IN ('faculty', 'student') ORDER BY full_name ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        $data = [];
+        while ($row = $res->fetch_assoc()) {
+            $data[] = $row;
+        }
+
+        return $data;
+    }
+
 
 
     
@@ -462,6 +477,21 @@ class Admin {
             "success" => false,
             "message" => $stmt->error
         ];
+    }
+
+    public function changeUserPassword($userId, $newPassword) {
+        // Hash the new password
+        $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        $sql = "UPDATE users SET password = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("si", $hashed, $userId);
+
+        if ($stmt->execute()) {
+            return ["success" => true, "message" => "Password updated successfully"];
+        }
+
+        return ["success" => false, "message" => $stmt->error];
     }
 
 

@@ -62,6 +62,7 @@ try {
         'getUsersList' => ['AdminApi', 'getUsersList'],
         'addUser'      => ['AdminApi', 'addUser'],
         'changeUserStatus' => ['AdminApi', 'changeUserStatus'],
+        'changeUserPassword' => ['AdminApi', 'changeUserPassword'],
         'addRoom' => ['AdminApi', 'addRoom'],
         'updateRoom' => ['AdminApi', 'updateRoom'],
         'deleteRoom' => ['AdminApi', 'deleteRoom'],
