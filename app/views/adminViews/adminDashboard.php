@@ -15,6 +15,7 @@
             <a href="#" class="active">Dashboard</a>
             <a href="?page=admin-rooms">Rooms</a>
             <a href="?page=admin-schedules">Schedules</a>
+            <a href="?page=admin-requests">Student Requests</a>
             <a href="?page=admin-users">Manage Users</a>
             <a href="?page=logout">Logout</a>
         </div>
@@ -46,7 +47,9 @@
                     <div class="col-md-3">
                         <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Pending Student Requests</h5>
-                            <h3><?= $totalPendingStudentRequests ?></h3>
+                            <a href="?page=admin-requests" class="text-decoration-none text-dark">
+                                <h3><?= $totalPendingStudentRequests ?></h3>
+                            </a>
                         </div>
                     </div>
 

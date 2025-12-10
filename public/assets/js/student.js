@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+// Helper for CSRF
+function getCsrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
+
 // ==========================================
 // DASHBOARD PAGE
 // ==========================================
@@ -26,7 +31,8 @@ function initDashboard() {
     fetch('api.php', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': getCsrfToken()
         },
         body: 'action=dashboard'
     })
@@ -124,7 +130,7 @@ function initSubmitRequest() {
     // Fetch Rooms
     fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
         body: 'action=getRooms'
     })
         .then(response => response.json())
@@ -162,7 +168,7 @@ function initSubmitRequest() {
     // Fetch Faculty
     fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
         body: 'action=getFaculty'
     })
         .then(response => response.json())
@@ -189,6 +195,7 @@ function initSubmitRequest() {
 
         const formData = new FormData(form);
         formData.append('action', 'submitRequest');
+        formData.append('csrf_token', getCsrfToken());
 
         fetch('api.php', {
             method: 'POST',
@@ -219,7 +226,7 @@ function initMyRequests() {
 
     fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
         body: 'action=myRequests'
     })
         .then(response => response.json())
@@ -239,7 +246,20 @@ function initMyRequests() {
 
                     let actionHtml = '-';
                     if (req.status === 'pending') {
-                        actionHtml = `<button class="btn btn-sm btn-danger" onclick="cancelRequest(${req.id})">Cancel</button>`;
+                        // Pass safe strings
+                        const safeRoom = (req.room_name || '').replace(/'/g, "\\'");
+                        const safePurp = (req.purpose || '').replace(/'/g, "\\'");
+                        const safeDate = req.date;
+                        const safeStart = req.start_time;
+                        const safeEnd = req.end_time;
+
+                        actionHtml = `
+                            <button class="btn btn-sm btn-primary me-1" 
+                                onclick="openEditModal(${req.id}, ${req.room_id}, '${safeRoom}', '${safeDate}', '${safeStart}', '${safeEnd}', '${safePurp}')">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="cancelRequest(${req.id})">Cancel</button>
+                        `;
                     }
 
                     html += `
@@ -276,6 +296,7 @@ function initMyRequests() {
         const formData = new FormData();
         formData.append('action', 'cancelRequest');
         formData.append('request_id', requestId);
+        formData.append('csrf_token', getCsrfToken());
 
         fetch('api.php', {
             method: 'POST',
@@ -295,6 +316,50 @@ function initMyRequests() {
                 alert('Network error while cancelling');
             });
     }
+
+    // Edit Request Functions
+    window.openEditModal = function (id, roomId, roomName, date, start, end, purpose) {
+        document.getElementById('editReqId').value = id;
+        document.getElementById('editRoomId').value = roomId;
+        document.getElementById('editRoomName').value = roomName;
+        document.getElementById('editDate').value = date;
+        document.getElementById('editStart').value = start;
+        document.getElementById('editEnd').value = end;
+        document.getElementById('editPurpose').value = purpose;
+
+        const modal = new bootstrap.Modal(document.getElementById('editRequestModal'));
+        modal.show();
+    };
+
+    const editForm = document.getElementById('editRequestForm');
+    if (editForm) {
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(editForm);
+            formData.append('action', 'editRequest');
+            formData.append('csrf_token', getCsrfToken());
+
+            fetch('api.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Request updated successfully');
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editRequestModal'));
+                        modal.hide();
+                        initMyRequests();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Network error during update');
+                });
+        });
+    }
 }
 
 // ==========================================
@@ -313,7 +378,8 @@ function initRoomAvailability() {
     fetch('api.php', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': getCsrfToken()
         },
         body: 'action=getRooms'
     })
@@ -447,7 +513,7 @@ function showRoomDetails(id, name, status, capacity) {
 
     fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
         body: `action=getRoomSchedule&room_id=${id}&date=${today}`
     })
         .then(res => res.json())

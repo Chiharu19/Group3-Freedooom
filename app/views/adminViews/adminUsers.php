@@ -12,7 +12,8 @@
             <a href="?page=admin">Dashboard</a>
             <a href="?page=admin-rooms">Rooms</a>
             <a href="?page=admin-schedules">Schedules</a>
-            <a href="#" class="active">Manage Users</a>
+            <a href="?page=admin-requests">Student Requests</a>
+            <a href="?page=admin-users" class="active">Manage Users</a>
             <a href="?page=logout">Logout</a>
         </div>
 
@@ -108,6 +109,10 @@
 
         const formData = new FormData();
         formData.append("action", "getUsersList");
+        
+        // CSRF
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if(csrfToken) formData.append('csrf_token', csrfToken);
 
         fetch("/public/api.php", {
             method: "POST",
@@ -230,6 +235,10 @@
 
         const formData = new FormData(addUserForm);
         formData.append("action", "addUser");
+        
+        // CSRF
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if(csrfToken) formData.append('csrf_token', csrfToken);
 
         fetch("/public/api.php", {
             method: "POST",

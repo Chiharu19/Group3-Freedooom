@@ -180,16 +180,17 @@ class Faculty
     }
 
     // 5. Action Request (Approve/Reject)
-    public function actionRequest($requestId, $action, $comments = '')
+    public function actionRequest($requestId, $facultyId, $action, $comments = '')
     {
         if ($action === 'approve') {
-            $q = "SELECT * FROM student_booking_requests WHERE id = ?";
+            // IDOR FIX: Check faculty_id
+            $q = "SELECT * FROM student_booking_requests WHERE id = ? AND faculty_id = ?";
             $s = $this->conn->prepare($q);
-            $s->bind_param("i", $requestId);
+            $s->bind_param("ii", $requestId, $facultyId);
             $s->execute();
             $req = $s->get_result()->fetch_assoc();
 
-            if (!$req) return ['success' => false, 'message' => 'Request not found'];
+            if (!$req) return ['success' => false, 'message' => 'Request not found or not assigned to you'];
             if ($req['status'] !== 'pending') return ['success' => false, 'message' => 'Request is not pending'];
 
             // Conflict check
@@ -206,18 +207,68 @@ class Faculty
                 return ['success' => false, 'message' => 'Failed to create booking record: ' . $sb->error];
             }
             
-            $status = 'Approved';
+            $newStatus = 'approved';
         } else {
-            $status = 'Rejected';
+            $newStatus = 'denied';
         }
 
-        $sqlUpdate = "UPDATE student_booking_requests SET status = ?, comments = ? WHERE id = ?";
-        $su = $this->conn->prepare($sqlUpdate);
-        $su->bind_param("ssi", $status, $comments, $requestId);
-        
-        if ($su->execute()) {
-            return ['success' => true, 'message' => "Request $status successfully"];
+        $upd = "UPDATE student_booking_requests SET status = ?, comments = ? WHERE id = ?";
+        $u = $this->conn->prepare($upd);
+        $u->bind_param("ssi", $newStatus, $comments, $requestId);
+        if ($u->execute()) {
+            return ['success' => true, 'message' => "Request $newStatus successfully"];
         }
         return ['success' => false, 'message' => 'Database update error'];
+    }
+
+    // 6. Cancel Booking (Own bookings only)
+    public function cancelBooking($bookingId, $facultyId) {
+        // Verify ownership
+        $chk = $this->conn->prepare("SELECT id FROM bookings WHERE id = ? AND user_id = ?");
+        $chk->bind_param("ii", $bookingId, $facultyId);
+        $chk->execute();
+        if ($chk->get_result()->num_rows === 0) {
+            return ['success' => false, 'message' => 'Booking not found or access denied'];
+        }
+
+        $del = $this->conn->prepare("DELETE FROM bookings WHERE id = ?");
+        $del->bind_param("i", $bookingId);
+        return $del->execute() ? ['success' => true, 'message' => 'Booking cancelled successfully'] : ['success' => false, 'message' => $del->error];
+    }
+
+    // 7. Update Booking (Own bookings only)
+    public function updateBooking($bookingId, $facultyId, $roomId, $date, $startTime, $duration, $purpose) {
+         // Verify ownership
+        $chk = $this->conn->prepare("SELECT id FROM bookings WHERE id = ? AND user_id = ?");
+        $chk->bind_param("ii", $bookingId, $facultyId);
+        $chk->execute();
+        if ($chk->get_result()->num_rows === 0) {
+            return ['success' => false, 'message' => 'Booking not found or access denied'];
+        }
+
+        // Conflict check (exclude self)
+        // This conflict check is more robust than the simple checkConflict helper
+        // It checks for overlap with other bookings, excluding the one being updated.
+        // ADDTIME(start_time, SEC_TO_TIME(duration * 3600)) calculates the end time of existing bookings.
+        // The condition ( ? < existing_end AND new_end > existing_start ) checks for overlap.
+        $sqlOverlap = "SELECT id FROM bookings 
+                       WHERE room_id = ? AND date = ? 
+                       AND id != ?
+                       AND ( ? < ADDTIME(start_time, SEC_TO_TIME(duration * 3600)) 
+                       AND ADDTIME(?, SEC_TO_TIME(?*3600)) > start_time )";
+        
+        $so = $this->conn->prepare($sqlOverlap);
+        $so->bind_param("isissii", $roomId, $date, $bookingId, $startTime, $startTime, $duration);
+        $so->execute();
+        if ($so->get_result()->num_rows > 0) {
+             return ['success' => false, 'message' => 'Conflict with existing booking'];
+        }
+
+        // Update
+        $sql = "UPDATE bookings SET room_id = ?, date = ?, start_time = ?, duration = ?, purpose = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("issisi", $roomId, $date, $startTime, $duration, $purpose, $bookingId);
+        
+        return $stmt->execute() ? ['success' => true, 'message' => 'Booking updated successfully'] : ['success' => false, 'message' => $stmt->error];
     }
 }

@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+// Generate CSRF Token if not exists
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // load database and config
 require_once __DIR__ . '/../app/config/config.php';
 require_once __DIR__ . '/../app/config/database.php';
@@ -30,6 +35,7 @@ $routes = [
     'admin-rooms' => ['AdminController', 'rooms'],
     'admin-schedules' => ['AdminController', 'schedules'],
     'admin-users' => ['AdminController', 'users'],
+    'admin-requests' => ['AdminController', 'requests'],
     'student' => ['StudentController', 'dashboard'],
     'student-rooms' => ['StudentController', 'rooms'],
     'student-submit' => ['StudentController', 'submitRequest'],

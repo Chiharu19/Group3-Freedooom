@@ -147,6 +147,26 @@ class AdminApi {
 
     }
 
+    public function getStudentRequests() {
+        $status = $_POST['status'] ?? 'pending';
+        $data = $this->adminModel->getAllStudentRequests($status);
+        echo json_encode(['success' => true, 'data' => $data]);
+    }
+
+    public function actionRequest() {
+        $id = $_POST['request_id'] ?? '';
+        $action = $_POST['req_action'] ?? '';
+        $comments = $_POST['comments'] ?? '';
+
+        if (!$id || !$action) {
+            echo json_encode(['success' => false, 'error' => 'Missing ID or Action']);
+            return;
+        }
+
+        $res = $this->adminModel->actionRequest($id, $action, $comments);
+        echo json_encode($res);
+    }
+
     public function addUser(){
 
         $full_name = $this->data['full-name'];

@@ -51,7 +51,39 @@ class StudentApi
             return;
         }
 
+        // Conflict Check
+        if (!$this->studentModel->isRoomAvailable($roomId, $date, $startTime, $endTime)) {
+             echo json_encode(['success' => false, 'message' => 'Room is already booked for this time slot.']);
+             return;
+        }
+
         $result = $this->studentModel->submitRequest($studentId, $roomId, $facultyId, $date, $startTime, $endTime, $purpose);
+        echo json_encode($result);
+    }
+
+    public function editRequest()
+    {
+        $studentId = $this->checkAuth();
+        
+        $requestId = $this->data['request_id'] ?? '';
+        $roomId = $this->data['room_id'] ?? '';
+        $date = $this->data['date'] ?? '';
+        $startTime = $this->data['start_time'] ?? '';
+        $endTime = $this->data['end_time'] ?? '';
+        $purpose = $this->data['purpose'] ?? '';
+
+        if (!$requestId || !$roomId || !$date || !$startTime || !$endTime || !$purpose) {
+            echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+            return;
+        }
+
+        // Optional: Conflict check on edit? Yes, ideally.
+        if (!$this->studentModel->isRoomAvailable($roomId, $date, $startTime, $endTime)) {
+             echo json_encode(['success' => false, 'message' => 'Room is already booked for this time slot.']);
+             return;
+        }
+
+        $result = $this->studentModel->updateRequest($requestId, $studentId, $roomId, $date, $startTime, $endTime, $purpose);
         echo json_encode($result);
     }
 
