@@ -20,6 +20,13 @@ try {
         require_once __DIR__ . '/../vendor/autoload.php';
     }
 
+    require_once __DIR__ . '/../app/config/database.php';
+    
+    // CSRF Token Generation
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
     spl_autoload_register(function ($class) {
         $paths = [
             __DIR__ . '/../app/api/' . $class . '.php',

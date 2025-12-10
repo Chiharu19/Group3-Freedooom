@@ -322,6 +322,13 @@ class Admin {
         $stmt->bind_param("ssss", $name, $email, $hashed, $role);
 
         if ($stmt->execute()) {
+            // --- Send Welcome Email ---
+             if (class_exists('EmailService')) {
+                $emailService = new EmailService();
+                $emailService->sendAccountCreatedNotification($email, $name, $password);
+            }
+            // --------------------------
+
             return [
                 "success" => true,
                 "message" => "User added successfully"
@@ -593,7 +600,37 @@ class Admin {
         $upd = "UPDATE student_booking_requests SET status = ?, notes = ? WHERE id = ?";
         $u = $this->conn->prepare($upd);
         $u->bind_param("ssi", $newStatus, $comments, $requestId);
-        if ($u->execute()) return ['success' => true];
+        if ($u->execute()) {
+            // --- Send Status Notification ---
+             if (class_exists('EmailService')) {
+                // Fetch student email
+                $stSql = "SELECT email FROM users WHERE id = ?";
+                $stStmt = $this->conn->prepare($stSql);
+                $stStmt->bind_param("i", $req['student_id']);
+                $stStmt->execute();
+                $stRes = $stStmt->get_result()->fetch_assoc();
+
+                if ($stRes) {
+                     // Get Room Name for details
+                    $rmSql = "SELECT room_name FROM rooms WHERE id = ?";
+                    $rmStmt = $this->conn->prepare($rmSql);
+                    $rmStmt->bind_param("i", $req['room_id']);
+                    $rmStmt->execute();
+                    $rmRes = $rmStmt->get_result()->fetch_assoc();
+                    
+                     $details = [
+                        'room_name' => $rmRes['room_name'] ?? 'Unknown Room',
+                        'date' => $req['date']
+                    ];
+
+                    $emailService = new EmailService();
+                    $emailHtml = $emailService->sendRequestStatusNotification($stRes['email'], $newStatus, $comments, $details);
+                }
+            }
+            // -------------------------------
+            
+            return ['success' => true];
+        }
         return ['success' => false, 'message' => 'Update failed'];
     }
 

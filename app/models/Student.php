@@ -75,6 +75,33 @@ class Student
         $stmt->bind_param("iiissis", $studentId, $roomId, $facultyId, $date, $startTime, $durationInt, $purpose);
 
         if ($stmt->execute()) {
+            // --- Send Email Notification ---
+            $facSql = "SELECT email, full_name FROM users WHERE id = ?";
+            $facStmt = $this->conn->prepare($facSql);
+            $facStmt->bind_param("i", $facultyId);
+            $facStmt->execute();
+            $facRes = $facStmt->get_result()->fetch_assoc();
+
+            if ($facRes && class_exists('EmailService')) {
+                $roomSql = "SELECT room_name FROM rooms WHERE id = ?";
+                $rStmt = $this->conn->prepare($roomSql);
+                $rStmt->bind_param("i", $roomId);
+                $rStmt->execute();
+                $rRes = $rStmt->get_result()->fetch_assoc();
+
+                $details = [
+                    'room_name' => $rRes['room_name'] ?? 'Unknown Room',
+                    'date' => $date,
+                    'start_time' => $startTime,
+                    'duration' => $durationInt,
+                    'purpose' => $purpose
+                ];
+
+                $emailService = new EmailService();
+                $emailService->sendBookingRequestNotification($facRes['email'], $details);
+            }
+            // -------------------------------
+
             return ['success' => true, 'message' => 'Request submitted successfully'];
         } else {
             return ['success' => false, 'message' => 'Execute error: ' . $stmt->error];
