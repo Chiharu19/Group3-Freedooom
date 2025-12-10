@@ -99,4 +99,34 @@ class EmailService {
         ";
         return $this->sendEmail($to, $subject, $body);
     }
+
+    public function sendPasswordResetLink($to, $token) {
+        $subject = "Password Reset Request";
+        // Assuming typical XAMPP path, can be adjusted or moved to config
+        $link = "http://" . $_SERVER['HTTP_HOST'] . "/public/reset_password.php?token=" . $token;
+        
+        $body = "
+            <h3>Password Reset Request</h3>
+            <p>We received a request to reset your password.</p>
+            <p>Click the link below to reset it:</p>
+            <p><a href='$link'>$link</a></p>
+            <p>This link will expire in 1 hour.</p>
+            <p>If you did not request this, you can ignore this email.</p>
+        ";
+        return $this->sendEmail($to, $subject, $body);
+    }
+
+    public function sendBookingCancellationNotification($to, $details) {
+        $subject = "Booking Request Cancelled";
+        $body = "
+            <h3>Booking Request Cancelled</h3>
+            <p>A student has cancelled their booking request.</p>
+            <p><strong>Room:</strong> {$details['room_name']}</p>
+            <p><strong>Date:</strong> {$details['date']}</p>
+            <p><strong>Time:</strong> {$details['start_time']} ({$details['duration']} hrs)</p>
+            <p><strong>Purpose:</strong> {$details['purpose']}</p>
+            <p>No action is required from you.</p>
+        ";
+        return $this->sendEmail($to, $subject, $body);
+    }
 }

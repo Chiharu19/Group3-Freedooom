@@ -57,6 +57,8 @@ try {
     $routes = [
         // Auth
         'logIn' => ['AuthApi', 'login'],
+        'requestPasswordReset' => ['AuthApi', 'requestReset'],
+        'resetPassword' => ['AuthApi', 'resetPassword'],
 
         // Admin Routes
         'getUsersList' => ['AdminApi', 'getUsersList'],

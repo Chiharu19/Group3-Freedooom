@@ -26,6 +26,9 @@
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Password</label>
                     <input type="password" class="form-control" name="password" required>
+                    <div class="text-end mt-1">
+                        <a href="forgot_password.php" class="text-decoration-none small" style="color: #0d6efd;">Forgot Password?</a>
+                    </div>
                 </div>
 
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

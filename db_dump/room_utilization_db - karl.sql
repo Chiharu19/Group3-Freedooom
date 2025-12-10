@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 10, 2025 at 11:19 AM
+-- Generation Time: Dec 10, 2025 at 12:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -63,7 +63,10 @@ INSERT INTO `bookings` (`id`, `room_id`, `user_id`, `date`, `start_time`, `durat
 (5, 15, 2, '2025-12-09', '10:28:00', 1, 'afwefewf', '2025-12-09 19:28:56', '2025-12-09 19:28:56'),
 (7, 24, 2, '2025-12-10', '07:00:00', 5, NULL, '2025-12-10 15:57:25', '2025-12-10 15:57:25'),
 (8, 9, 3, '2025-12-10', '07:00:00', 12, 'vfdvfdvd', '2025-12-10 17:14:44', '2025-12-10 17:14:44'),
-(9, 42, 3, '2025-12-10', '08:00:00', 5, 'ertyjmbvfrtyuj', '2025-12-10 18:10:26', '2025-12-10 18:10:26');
+(9, 42, 3, '2025-12-10', '08:00:00', 5, 'ertyjmbvfrtyuj', '2025-12-10 18:10:26', '2025-12-10 18:10:26'),
+(10, 45, 3, '2025-12-10', '09:00:00', 5, 'qwikmnbvcs', '2025-12-10 18:56:53', '2025-12-10 18:56:53'),
+(11, 42, 3, '2025-12-10', '07:00:00', 1, 'qwertyuiop', '2025-12-10 18:57:07', '2025-12-10 18:57:07'),
+(12, 42, 3, '2025-12-10', '09:00:00', 1, '345678765eyuyfd', '2025-12-10 18:58:10', '2025-12-10 18:58:10');
 
 -- --------------------------------------------------------
 
@@ -186,11 +189,12 @@ INSERT INTO `student_booking_requests` (`id`, `student_id`, `room_id`, `date`, `
 (9, 3, 9, '2025-12-10', '07:00:00', 12, 'dsdfgyhh', 'denied', 2, 'asdfg', '2025-12-10 13:48:56', '2025-12-10 13:48:56'),
 (10, 3, 42, '2025-12-10', '07:00:00', 12, 'juytrew', 'denied', 2, '', '2025-12-10 15:47:45', '2025-12-10 15:47:45'),
 (11, 3, 63, '2025-12-10', '10:00:00', 1, 'Testing Fix', 'denied', 0, 'iuytrew', '2025-12-10 15:55:07', '2025-12-10 15:55:07'),
-(13, 3, 42, '2025-12-10', '07:00:00', 1, 'qwertyuiop', 'pending', 2, NULL, '2025-12-10 17:25:46', '2025-12-10 17:25:46'),
-(14, 3, 42, '2025-12-10', '09:00:00', 1, '345678765eyuyfd', 'pending', 2, NULL, '2025-12-10 17:28:45', '2025-12-10 17:28:45'),
+(13, 3, 42, '2025-12-10', '07:00:00', 1, 'qwertyuiop', 'approved', 2, '', '2025-12-10 17:25:46', '2025-12-10 17:25:46'),
+(14, 3, 42, '2025-12-10', '09:00:00', 1, '345678765eyuyfd', 'approved', 2, '', '2025-12-10 17:28:45', '2025-12-10 17:28:45'),
 (15, 3, 51, '2026-01-07', '07:00:00', 5, 'qwertyuilmnbvcxz', 'pending', 2, NULL, '2025-12-10 17:52:11', '2025-12-10 17:52:11'),
 (16, 3, 42, '2025-12-10', '08:00:00', 5, 'ertyjmbvfrtyuj', 'approved', 2, '', '2025-12-10 17:56:36', '2025-12-10 17:56:36'),
-(17, 3, 45, '2025-12-10', '09:00:00', 5, 'qwikmnbvcs', 'pending', 2, NULL, '2025-12-10 18:12:19', '2025-12-10 18:12:19');
+(17, 3, 45, '2025-12-10', '09:00:00', 5, 'qwikmnbvcs', 'approved', 2, '', '2025-12-10 18:12:19', '2025-12-10 18:12:19'),
+(18, 3, 49, '2025-12-10', '07:00:00', 1, 'sresthgrafe', 'pending', 5, NULL, '2025-12-10 18:54:03', '2025-12-10 18:54:03');
 
 -- --------------------------------------------------------
 
@@ -206,18 +210,21 @@ CREATE TABLE `users` (
   `role` enum('admin','faculty','student','super') NOT NULL,
   `status` enum('active','inactive') DEFAULT 'active',
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp()
+  `updated_at` datetime DEFAULT current_timestamp(),
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_expires` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'chiharu', 'admin@venb.top', '$2y$12$MzXDBPqSnJpTFZp8mu0EFeiGgrnuew9Cu4jKejifm3wGhe5o6.9Hm', 'admin', 'active', '2025-11-30 06:54:09', '2025-11-30 11:16:22'),
-(2, 'tungtung sahur', 'faculty@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50'),
-(3, 'Princess Shrek', 'student@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00'),
-(4, 'ven', 'super@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'super', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50');
+INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `created_at`, `updated_at`, `reset_token`, `reset_expires`) VALUES
+(1, 'chiharu', 'admin@venb.top', '$2y$12$MzXDBPqSnJpTFZp8mu0EFeiGgrnuew9Cu4jKejifm3wGhe5o6.9Hm', 'admin', 'active', '2025-11-30 06:54:09', '2025-11-30 11:16:22', NULL, NULL),
+(2, 'tungtung sahur', 'faculty@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50', NULL, NULL),
+(3, 'Princess Shrek', 'student@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00', '072ccc00bf008012c80fb0190436cd72528383d6f4500b9fdc2620e5a9f112bc', '2025-12-10 13:20:07'),
+(4, 'ven', 'super@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'super', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50', NULL, NULL),
+(5, 'quijano', 'emmanuelequijanoboss02@gmail.com', '$2y$10$xKJ3ZL3G/D8FVNQbAaYekO/5yUP3SywuSNSwHCHDBwkOnYVLpyDci', 'faculty', 'active', '2025-12-10 18:53:26', '2025-12-10 18:53:26', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -273,7 +280,7 @@ ALTER TABLE `activity_logs`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `booking_modification_requests`
@@ -291,13 +298,13 @@ ALTER TABLE `rooms`
 -- AUTO_INCREMENT for table `student_booking_requests`
 --
 ALTER TABLE `student_booking_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

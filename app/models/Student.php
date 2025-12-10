@@ -207,6 +207,23 @@ class Student
     // ==========================================
     // 7. Cancel Booking Request
     // ==========================================
+    public function getRequestById($requestId, $studentId) {
+        $sql = "SELECT r.*, rm.room_name, u.full_name, u.email as faculty_email 
+                FROM student_booking_requests r
+                JOIN rooms rm ON r.room_id = rm.id
+                JOIN users u ON r.faculty_id = u.id
+                WHERE r.id = ? AND r.student_id = ?";
+        
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return null;
+
+        $stmt->bind_param("ii", $requestId, $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        return $result->fetch_assoc();
+    }
+
     public function cancelRequest($requestId, $studentId)
     {
         // Only allow cancelling if status is 'pending'

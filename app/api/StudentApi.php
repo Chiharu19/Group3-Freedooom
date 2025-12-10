@@ -224,7 +224,19 @@ class StudentApi
             return;
         }
 
+        // Fetch request details before cancelling
+        $requestDetails = $this->studentModel->getRequestById($requestId, $studentId);
+
         $result = $this->studentModel->cancelRequest($requestId, $studentId);
+        
+        if ($result['success'] && $requestDetails && isset($requestDetails['faculty_email'])) {
+             // Send Email to Faculty
+             if (class_exists('EmailService')) {
+                 $emailService = new EmailService();
+                 $emailService->sendBookingCancellationNotification($requestDetails['faculty_email'], $requestDetails);
+             }
+        }
+
         echo json_encode($result);
     }
 }
