@@ -87,11 +87,11 @@ class Faculty
     // 3. Get Assigned Student Requests
     public function getAssignedRequests($facultyId)
     {
-        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.comments, 
+        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.notes as comments, 
                        rm.room_name, u.full_name as student_name
                 FROM student_booking_requests r
-                JOIN rooms rm ON r.room_id = rm.id
-                JOIN users u ON r.student_id = u.id
+                LEFT JOIN rooms rm ON r.room_id = rm.id
+                LEFT JOIN users u ON r.student_id = u.id
                 WHERE r.faculty_id = ?
                 ORDER BY r.created_at DESC";
         
@@ -110,13 +110,9 @@ class Faculty
     }
 
     // 4. Create Booking (Self)
-    public function createBooking($facultyId, $roomId, $date, $startTime, $endTime, $purpose)
+    public function createBooking($facultyId, $roomId, $date, $startTime, $duration, $purpose)
     {
-        // Calculate Duration
-        $start = strtotime($startTime);
-        $end = strtotime($endTime);
-        $duration = ($end - $start) / 3600;
-        $duration = ceil($duration); // Integer hours
+        // Validation
         if ($duration < 1) $duration = 1;
 
         // Check conflicts
@@ -124,17 +120,10 @@ class Faculty
             return ['success' => false, 'message' => 'Conflict detected with another booking.'];
         }
 
-        // bookings table has: user_id, room_id, date, start_time, duration, purpose(maybe?)
-        // Admin model insert: user_id, room_id, date, start_time, duration. (No purpose).
-        // Student model selects purpose. So likely purpose exists?
-        // Let's safe-insert without purpose if admin didn't use it, BUT student selected it.
-        // I will trust Student model select and try to insert purpose.
-        
         $sql = "INSERT INTO bookings (user_id, room_id, date, start_time, duration, purpose) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
         
         if (!$stmt) {
-             // Fallback if purpose missing? No, assume it exists.
              return ['success' => false, 'message' => 'DB Prepare Error: '.$this->conn->error];
         }
 
@@ -212,7 +201,7 @@ class Faculty
             $newStatus = 'denied';
         }
 
-        $upd = "UPDATE student_booking_requests SET status = ?, comments = ? WHERE id = ?";
+        $upd = "UPDATE student_booking_requests SET status = ?, notes = ? WHERE id = ?";
         $u = $this->conn->prepare($upd);
         $u->bind_param("ssi", $newStatus, $comments, $requestId);
         if ($u->execute()) {

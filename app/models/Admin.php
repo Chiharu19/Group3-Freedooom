@@ -322,6 +322,13 @@ class Admin {
         $stmt->bind_param("ssss", $name, $email, $hashed, $role);
 
         if ($stmt->execute()) {
+            // --- Send Welcome Email ---
+             if (class_exists('EmailService')) {
+                $emailService = new EmailService();
+                $emailService->sendAccountCreatedNotification($email, $name, $password);
+            }
+            // --------------------------
+
             return [
                 "success" => true,
                 "message" => "User added successfully"
@@ -399,6 +406,27 @@ class Admin {
             "success" => false,
             "message" => $stmt->error
         ];
+    }
+
+    public function updateUser($userId, $fullName, $email, $role) {
+        // 1. Check if email exists for *other* users
+        $check = $this->conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+        $check->bind_param("si", $email, $userId);
+        $check->execute();
+        if ($check->get_result()->num_rows > 0) {
+            return ["success" => false, "message" => "Email already in use by another user"];
+        }
+
+        // 2. Update
+        $sql = "UPDATE users SET full_name = ?, email = ?, role = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssi", $fullName, $email, $role, $userId);
+
+        if ($stmt->execute()) {
+            return ["success" => true, "message" => "User updated successfully"];
+        }
+
+        return ["success" => false, "message" => $stmt->error];
     }
 
     public function changeUserStatus($userId, $newStatus) {
@@ -508,11 +536,11 @@ class Admin {
         // Status column in DB might be lowercase 'pending' or 'Pending'? 
         // Based on faculty_dashboard.js logic, it expects lowercase 'pending'.
         
-        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.comments, 
+        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.notes as comments, 
                        rm.room_name, u.full_name as student_name
                 FROM student_booking_requests r
-                JOIN rooms rm ON r.room_id = rm.id
-                JOIN users u ON r.student_id = u.id
+                LEFT JOIN rooms rm ON r.room_id = rm.id
+                LEFT JOIN users u ON r.student_id = u.id
                 WHERE r.status = ?
                 ORDER BY r.date ASC";
 
@@ -569,10 +597,40 @@ class Admin {
             $newStatus = 'denied';
         }
 
-        $upd = "UPDATE student_booking_requests SET status = ?, comments = ? WHERE id = ?";
+        $upd = "UPDATE student_booking_requests SET status = ?, notes = ? WHERE id = ?";
         $u = $this->conn->prepare($upd);
         $u->bind_param("ssi", $newStatus, $comments, $requestId);
-        if ($u->execute()) return ['success' => true];
+        if ($u->execute()) {
+            // --- Send Status Notification ---
+             if (class_exists('EmailService')) {
+                // Fetch student email
+                $stSql = "SELECT email FROM users WHERE id = ?";
+                $stStmt = $this->conn->prepare($stSql);
+                $stStmt->bind_param("i", $req['student_id']);
+                $stStmt->execute();
+                $stRes = $stStmt->get_result()->fetch_assoc();
+
+                if ($stRes) {
+                     // Get Room Name for details
+                    $rmSql = "SELECT room_name FROM rooms WHERE id = ?";
+                    $rmStmt = $this->conn->prepare($rmSql);
+                    $rmStmt->bind_param("i", $req['room_id']);
+                    $rmStmt->execute();
+                    $rmRes = $rmStmt->get_result()->fetch_assoc();
+                    
+                     $details = [
+                        'room_name' => $rmRes['room_name'] ?? 'Unknown Room',
+                        'date' => $req['date']
+                    ];
+
+                    $emailService = new EmailService();
+                    $emailHtml = $emailService->sendRequestStatusNotification($stRes['email'], $newStatus, $comments, $details);
+                }
+            }
+            // -------------------------------
+            
+            return ['success' => true];
+        }
         return ['success' => false, 'message' => 'Update failed'];
     }
 

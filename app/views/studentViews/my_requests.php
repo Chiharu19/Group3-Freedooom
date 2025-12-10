@@ -87,8 +87,8 @@
                     <input type="time" id="editStart" name="start_time" class="form-control" required>
                 </div>
                 <div class="col">
-                    <label>End Time</label>
-                    <input type="time" id="editEnd" name="end_time" class="form-control" required>
+                    <label>Duration (Hours)</label>
+                    <input type="number" id="editDuration" name="duration" min="1" max="5" value="1" class="form-control" required>
                 </div>
             </div>
 

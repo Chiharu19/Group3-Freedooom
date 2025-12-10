@@ -85,19 +85,22 @@
                 <h5 class="fw-bold mb-3">Edit User</h5>
 
                 <form name="editUserForm" id="editUserForm">
+                    <input type="hidden" name="user-id" id="edit-user-id">
+                    
                     <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control mb-2" value="Maria Santos">
+                    <input type="text" name="full-name" id="edit-full-name" class="form-control mb-2" required>
 
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-control mb-2" value="maria.santos@bsu.edu.ph">
+                    <input type="email" name="email" id="edit-email" class="form-control mb-2" required>
 
                     <label class="form-label">Role</label>
-                    <select class="form-select mb-2">
-                        <option selected>Faculty</option>
-                        <option>Staff</option>
+                    <select class="form-select mb-2" name="role" id="edit-role">
+                        <option value="faculty">Faculty</option>
+                        <option value="student">Student</option>
+                        <option value="admin">Admin</option>
                     </select>
 
-                    <button class="btn btn-danger w-100 mt-2">Save Changes</button>
+                    <button type="submit" class="btn btn-danger w-100 mt-2">Save Changes</button>
                 </form>
             </div>
         </div>
@@ -163,7 +166,7 @@
                     <td>${safeRole}</td>
                     <td>${statusBadge}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
+                        <button class="btn btn-sm btn-primary" onclick="openEditUserModal(${user.id}, '${safeName}', '${safeEmail}', '${safeRole}')">Edit</button>
                         <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id}, '${user.status}')">
                             ${user.status === "active" ? "Deactivate" : "Activate"}
                         </button>
@@ -232,6 +235,52 @@
             console.error(err);
         });
         
+    }
+
+    function attachEditListeners() {
+        // We need to attach listeners to the edit buttons dynamically or via delegation.
+        // Or simpler: just updating the onclick in renderUsers to pass all data or select row.
+    }
+
+    // Attach to window so we can call it from HTML onclick
+    window.openEditUserModal = function(id, name, email, role) {
+        document.getElementById('edit-user-id').value = id;
+        document.getElementById('edit-full-name').value = name;
+        document.getElementById('edit-email').value = email;
+        document.getElementById('edit-role').value = role;
+        
+        new bootstrap.Modal(document.getElementById('editUserModal')).show();
+    }
+
+    const editUserForm = document.getElementById('editUserForm');
+    if (editUserForm) {
+        editUserForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(editUserForm);
+            formData.append("action", "editUser");
+
+            // CSRF
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if(csrfToken) formData.append('csrf_token', csrfToken);
+
+            fetch("/public/api.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success){
+                    alert("User updated successfully");
+                    location.reload(); // or just loadUsers()
+                }else{
+                    alert(data.message || "Failed to update user");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("An error occurred");
+            });
+        });
     }
 
     const addUserForm = document.getElementById('addUserForm');

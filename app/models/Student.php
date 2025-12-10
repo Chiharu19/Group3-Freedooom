@@ -48,16 +48,13 @@ class Student
     // ==========================================
     // 3. Submit Booking Request
     // ==========================================
-    public function submitRequest($studentId, $roomId, $facultyId, $date, $startTime, $endTime, $purpose)
+    public function submitRequest($studentId, $roomId, $facultyId, $date, $startTime, $duration, $purpose)
     {
-        // Calculate Duration (in hours) because end_time is a GENERATED column in DB
-        $start = strtotime($startTime);
-        $end = strtotime($endTime);
-        $duration = ($end - $start) / 3600;
+        // Validation? Duration is already int from controller?
+        if ($duration < 1) $duration = 1;
 
-        // Ensure duration is at least 1 hour or valid
-        if ($duration < 0)
-            $duration = 1;
+        // Basic validation: Check if room is already booked/requested for overlapping time? 
+        // For now, we will just insert as 'pending'. Admin/Faculty handles approval/conflict.
 
         // Basic validation: Check if room is already booked/requested for overlapping time? 
         // For now, we will just insert as 'pending'. Admin/Faculty handles approval/conflict.
@@ -78,6 +75,33 @@ class Student
         $stmt->bind_param("iiissis", $studentId, $roomId, $facultyId, $date, $startTime, $durationInt, $purpose);
 
         if ($stmt->execute()) {
+            // --- Send Email Notification ---
+            $facSql = "SELECT email, full_name FROM users WHERE id = ?";
+            $facStmt = $this->conn->prepare($facSql);
+            $facStmt->bind_param("i", $facultyId);
+            $facStmt->execute();
+            $facRes = $facStmt->get_result()->fetch_assoc();
+
+            if ($facRes && class_exists('EmailService')) {
+                $roomSql = "SELECT room_name FROM rooms WHERE id = ?";
+                $rStmt = $this->conn->prepare($roomSql);
+                $rStmt->bind_param("i", $roomId);
+                $rStmt->execute();
+                $rRes = $rStmt->get_result()->fetch_assoc();
+
+                $details = [
+                    'room_name' => $rRes['room_name'] ?? 'Unknown Room',
+                    'date' => $date,
+                    'start_time' => $startTime,
+                    'duration' => $durationInt,
+                    'purpose' => $purpose
+                ];
+
+                $emailService = new EmailService();
+                $emailService->sendBookingRequestNotification($facRes['email'], $details);
+            }
+            // -------------------------------
+
             return ['success' => true, 'message' => 'Request submitted successfully'];
         } else {
             return ['success' => false, 'message' => 'Execute error: ' . $stmt->error];
@@ -245,21 +269,38 @@ class Student
     // ==========================================
     // 9. Check Room Availability
     // ==========================================
-    public function isRoomAvailable($roomId, $date, $startTime, $endTime)
+    public function isRoomAvailable($roomId, $date, $startTime, $duration)
     {
-        // Check for overlap in confirmed bookings
-        // Overlap logic: (StartA < EndB) and (EndA > StartB)
-        // Note: bookings table separates start_time and end_time, or duration?
-        // Let's assume bookings table has start_time and end_time or we calculate end_time.
-        // Based on previous reads, bookings has start_time and end_time.
+        // Calculate End Time based on duration
+        // We need to compare strict overlap.
+        // New Request: [NewStart, NewEnd]
+        // Existing:    [OldStart, OldEnd]
+        // Overlap if: NewStart < OldEnd AND NewEnd > OldStart
+        
+        // SQL: 
+        // start_time < ADDTIME(?, SEC_TO_TIME(?*3600))  (NewEnd)
+        // AND end_time > ? (NewStart)
         
         $sql = "SELECT id FROM bookings 
                 WHERE room_id = ? 
                 AND date = ? 
-                AND (start_time < ? AND end_time > ?)";
+                AND (start_time < ADDTIME(?, SEC_TO_TIME(?*3600)) 
+                     AND ADDTIME(start_time, SEC_TO_TIME(duration*3600)) > ?)";
+
+        // Note: Booking table has start_time and duration (based on `addBooking` in Admin.php)
+        // Wait, schema says `bookings` has `start_time` and `duration`? Or `end_time`?
+        // Admin.php `addBooking` inserts into `duration`.
+        // Let's check schema/previous file read.
+        // Previous `addBooking` in `Admin.php`:
+        // INSERT INTO bookings ... VALUES (..., start_time, duration)
+        // So bookings table likely has `duration`. `end_time` logic in `Admin.php` getBookingList was calculated or selected?
+        // Admin.php `getBookingList` selects `end_time`. It might be a generated column or just PHP formatTime12 calls it.
+        // Let's assume `end_time` is generated in DB OR we must calculate it in SQL comparisons.
+        // To be safe, I will use ADDTIME logic given `duration` is what we have.
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("isss", $roomId, $date, $endTime, $startTime);
+        // params: i (room), s (date), s (start_time), i (duration), s (start_time)
+        $stmt->bind_param("issis", $roomId, $date, $startTime, $duration, $startTime);
         $stmt->execute();
         $stmt->store_result();
         

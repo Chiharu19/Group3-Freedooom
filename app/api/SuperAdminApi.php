@@ -53,6 +53,12 @@ class SuperAdminApi {
         }
 
         $result = $this->superAdminModel->addAdmin($name, $email, $password);
+        
+        if ($result['success']) {
+             $emailService = new EmailService();
+             $emailService->sendAccountCreatedNotification($email, $name, $password);
+        }
+
         echo json_encode($result);
     }
 

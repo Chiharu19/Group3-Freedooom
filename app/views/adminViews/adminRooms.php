@@ -93,7 +93,6 @@
                                 <select class="form-select mb-2" name="status" id="edit-status">
                                     <option value="available">Available</option>
                                     <option value="maintenance">Under Maintenance</option>
-                                    <option value="booked">Booked</option>
                                 </select>
 
                                 <button type="submit" class="btn btn-danger w-100 mt-2">Save Changes</button>
@@ -259,6 +258,7 @@
         // event listener to delete button per list
         document.querySelectorAll(".delete-room-btn").forEach(btn => {
             btn.addEventListener("click", () => {
+                if (!confirm("Are you sure you want to delete this room?")) return;
 
                 const room_id = btn.dataset.id;
                 const formData = new FormData();
@@ -276,15 +276,7 @@
                         if (data.success) {
                             window.location.href = "?page=admin-rooms";
                         } else {
-                            console.log(data.message);
-
-                            /* 
-                            
-                                CODE HERE WHEN UNSUCCESSFUL
-        
-                                Note: you can do console.log(data.message) here to see why unsuccessful
-                            
-                            */
+                            alert(data.message || 'Error deleting room');
                         }
                     });
 

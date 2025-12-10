@@ -15,6 +15,11 @@ set_error_handler("jsonErrorHandler");
 try {
     session_start();
 
+    // Composer Autoload
+    if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+        require_once __DIR__ . '/../vendor/autoload.php';
+    }
+
     require_once __DIR__ . '/../app/config/database.php';
     
     // CSRF Token Generation
@@ -26,6 +31,7 @@ try {
         $paths = [
             __DIR__ . '/../app/api/' . $class . '.php',
             __DIR__ . '/../app/models/' . $class . '.php',
+            __DIR__ . '/../app/core/' . $class . '.php',
         ];
         foreach ($paths as $p)
             if (file_exists($p))
