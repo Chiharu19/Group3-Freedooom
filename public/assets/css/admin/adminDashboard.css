@@ -95,6 +95,10 @@
   font-weight: bold;
 }
 
+.fc .fc-col-header th .fc-col-header-cell-cushion {
+  color: white !important;   /* your color here */
+}
+
 
 /* Custom Table Header */
 

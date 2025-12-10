@@ -2,8 +2,6 @@
 
 <link rel="stylesheet" href="../../../public/assets/css/admin/adminDashboard.css">
 
-<!-- for calendar -->
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 </head>
 
 <body>
