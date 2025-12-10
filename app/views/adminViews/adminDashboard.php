@@ -2,8 +2,6 @@
 
 <link rel="stylesheet" href="../../../public/assets/css/admin/adminDashboard.css">
 
-<!-- for calendar -->
-
 </head>
 
 <body>

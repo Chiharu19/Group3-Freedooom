@@ -132,7 +132,7 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <!-- Your App Logic -->
-<script src="assets/js/faculty/app.js"></script>
+<script src="assets/js/faculty/app.js?v=<?= time() ?>"></script>
 <script src="assets/js/faculty/faculty_dashboard.js"></script>
 
 </body>

@@ -306,7 +306,7 @@ async function initStudentRequests() {
                     <div class="d-flex flex-column gap-2">
                         ${r.status === 'pending' ? `
                         <button class="btn btn-sm btn-success" onclick="handleRequest(${r.id}, 'approve')">Approve</button>
-                        <button class="btn btn-sm btn-danger" onclick="handleRequest(${r.id}, 'reject')">Reject</button>
+                        <button class="btn btn-sm btn-danger" onclick="handleRequest(${r.id}, 'reject')">Deny</button>
                         ` : ''}
                     </div>
                 </div>
@@ -317,9 +317,19 @@ async function initStudentRequests() {
 }
 
 async function handleRequest(id, action) {
+  let comments = '';
+  if (action === 'reject') {
+    comments = prompt("Reason for denial:");
+    if (comments === null) return; // Cancelled
+    if (!comments.trim()) {
+      alert("Reason is required for denial.");
+      return;
+    }
+  }
+
   if (!confirm(`Are you sure you want to ${action} this request?`)) return;
 
-  const res = await apiCall('facultyActionRequest', { request_id: id, req_action: action });
+  const res = await apiCall('facultyActionRequest', { request_id: id, req_action: action, comments: comments });
   if (res.success) {
     alert(res.message);
     initStudentRequests(); // Refresh

@@ -98,8 +98,15 @@
         }
 
         function handleRequest(id, action) {
-            const comments = action === 'reject' ? prompt("Reason for denial (optional):") : '';
-            if (action === 'reject' && comments === null) return; // Cancelled
+            let comments = '';
+            if (action === 'reject') {
+                comments = prompt("Reason for denial:");
+                if (comments === null) return; // Cancelled
+                if (!comments.trim()) {
+                    alert("Reason is required for denial.");
+                    return;
+                }
+            }
 
             if (!confirm(`Are you sure you want to ${action} this request?`)) return;
 
