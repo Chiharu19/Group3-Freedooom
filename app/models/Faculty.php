@@ -88,7 +88,7 @@ class Faculty
     public function getAssignedRequests($facultyId)
     {
         $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.notes as comments, 
-                       rm.room_name, u.full_name as student_name
+                       rm.room_name, u.full_name as student_name, u.email as student_email
                 FROM student_booking_requests r
                 LEFT JOIN rooms rm ON r.room_id = rm.id
                 LEFT JOIN users u ON r.student_id = u.id
