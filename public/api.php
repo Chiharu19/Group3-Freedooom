@@ -15,17 +15,16 @@ set_error_handler("jsonErrorHandler");
 try {
     session_start();
 
-    require_once __DIR__ . '/../app/config/database.php';
-    
-    // CSRF Token Generation
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    // Composer Autoload
+    if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+        require_once __DIR__ . '/../vendor/autoload.php';
     }
 
     spl_autoload_register(function ($class) {
         $paths = [
             __DIR__ . '/../app/api/' . $class . '.php',
             __DIR__ . '/../app/models/' . $class . '.php',
+            __DIR__ . '/../app/core/' . $class . '.php',
         ];
         foreach ($paths as $p)
             if (file_exists($p))
