@@ -295,7 +295,45 @@ class Admin {
         ];
     }
     
-    
+    public function addUser($name, $email, $password, $role) {
+
+        // 1. Check if email already exists
+        $checkSql = "SELECT id FROM users WHERE email = ?";
+        $checkStmt = $this->conn->prepare($checkSql);
+        $checkStmt->bind_param("s", $email);
+        $checkStmt->execute();
+        $checkResult = $checkStmt->get_result();
+
+        if ($checkResult->num_rows > 0) {
+            return [
+                "success" => false,
+                "message" => "Email is already registered"
+            ];
+        }
+
+        // 2. Hash password
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+
+        // 3. Insert new user
+        $sql = "INSERT INTO users (full_name, email, password, role) 
+                VALUES (?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssss", $name, $email, $hashed, $role);
+
+        if ($stmt->execute()) {
+            return [
+                "success" => true,
+                "message" => "User added successfully"
+            ];
+        }
+
+        return [
+            "success" => false,
+            "message" => $stmt->error
+        ];
+    }
+
 
 
     // UPDATING METHODS

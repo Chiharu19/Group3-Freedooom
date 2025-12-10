@@ -40,6 +40,7 @@ try {
 
         // Admin Routes
         'getUsersList' => ['AdminApi', 'getUsersList'],
+        'addUser'      => ['AdminApi', 'addUser'],
         'addRoom' => ['AdminApi', 'addRoom'],
         'updateRoom' => ['AdminApi', 'updateRoom'],
         'deleteRoom' => ['AdminApi', 'deleteRoom'],

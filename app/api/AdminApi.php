@@ -147,4 +147,15 @@ class AdminApi {
 
     }
 
+    public function addUser(){
+
+        $full_name = $this->data['full-name'];
+        $email = $this->data['email'];
+        $password = $this->data['password'];
+        $role = $this->data['role'];
+
+        $result = $this->adminModel->addUser($full_name, $email, $password, $role);
+        echo json_encode($result);
+    }
+
 }

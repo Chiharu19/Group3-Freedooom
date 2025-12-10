@@ -63,13 +63,16 @@
                     <label class="form-label">Email</label>
                     <input type="email" name="email" class="form-control mb-2">
 
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control mb-2">
+
                     <label class="form-label">Role</label>
-                    <select class="form-select mb-2" required>
+                    <select class="form-select mb-2" name="role" required>
                         <option value="faculty">Faculty/Staff</option>
                         <option value="student">Student</option>
                     </select>
 
-                    <button class="btn btn-danger w-100 mt-2">Add User</button>
+                    <button type="submit" class="btn btn-danger w-100 mt-2">Add User</button>
                 </form>
             </div>
         </div>
@@ -199,6 +202,30 @@
     function toggleStatus(userId){
         console.log(userId);
     }
+
+    const addUserForm = document.getElementById('addUserForm');
+    addUserForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(addUserForm);
+        formData.append("action", "addUser");
+
+        fetch("/public/api.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                window.location.href = "?page=admin-users";
+            }else{
+                console.log(data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    });
 
     loadUsers();
 
