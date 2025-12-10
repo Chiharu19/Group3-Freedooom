@@ -10,8 +10,16 @@ class AdminApi {
         $this->data = $data;
     }
 
-    public function addRoom() {
+    private function checkAuth() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            exit;
+        }
+    }
 
+    public function addRoom() {
+        $this->checkAuth();
         $roomName = $this->data['room-name'] ?? '';
         $building = $this->data['building'] ?? '';
         $capacity = $this->data['capacity'] ?? '';
@@ -27,7 +35,7 @@ class AdminApi {
     }
 
     public function updateRoom() {
-
+        $this->checkAuth();
         $roomId   = $this->data['room-id'] ?? '';
         $roomName = $this->data['room-name'] ?? '';
         $building = $this->data['building'] ?? '';
@@ -47,7 +55,7 @@ class AdminApi {
     }
 
     public function deleteRoom(){
-
+        $this->checkAuth();
         $roomId   = $this->data['room-id'] ?? '';
         
         if (!$roomId) {
