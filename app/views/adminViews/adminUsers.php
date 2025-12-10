@@ -211,6 +211,10 @@
         formData.append("user-id", userId);
         formData.append("new-status", newStatus);
 
+        // CSRF
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if(csrfToken) formData.append('csrf_token', csrfToken);
+
         fetch("/public/api.php", {
             method: "POST",
             body: formData
