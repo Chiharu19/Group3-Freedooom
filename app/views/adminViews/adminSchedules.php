@@ -15,7 +15,8 @@
             <h3 class="text-center mt-3 mb-4">Admin</h3>
             <a href="?page=admin">Dashboard</a>
             <a href="?page=admin-rooms">Rooms</a>
-            <a href="#" class="active">Schedules</a>
+            <a href="?page=admin-schedules" class="active">Schedules</a>
+            <a href="?page=admin-requests">Student Requests</a>
             <a href="?page=admin-users">Manage Users</a>
             <a href="?page=logout">Logout</a>
         </div>
@@ -240,6 +241,9 @@
                     const formData = new FormData();
                     formData.append("action", "deleteBooking");
                     formData.append("booking-id", booking_id);
+                    // CSRF
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    if(csrfToken) formData.append('csrf_token', csrfToken);
 
                     fetch("/public/api.php", {
                         method: "POST",
@@ -268,6 +272,10 @@
             formData.append("room", room);
             formData.append("date", date);
             formData.append("faculty", faculty);
+            
+            // CSRF
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if(csrfToken) formData.append('csrf_token', csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
@@ -323,6 +331,10 @@
 
             const formData = new FormData(addBookingForm);
             formData.append("action", "addBooking");
+            
+            // CSRF
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if(csrfToken) formData.append('csrf_token', csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
@@ -345,6 +357,10 @@
 
             const formData = new FormData(editBookingForm);
             formData.append("action", "editBooking");
+            
+            // CSRF
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if(csrfToken) formData.append('csrf_token', csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",

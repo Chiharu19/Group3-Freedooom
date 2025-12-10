@@ -16,10 +16,19 @@ async function apiCall(action, data = {}) {
     formData.append(key, data[key]);
   }
 
+  // CSRF Token
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+  if (csrfToken) {
+    formData.append('csrf_token', csrfToken);
+  }
+
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRF-TOKEN': csrfToken || ''
+      },
       body: formData
     });
     return await res.json();
@@ -36,15 +45,6 @@ async function fetchRooms() {
   if (res.success) {
     rooms = res.data;
     return rooms;
-  }
-  return [];
-}
-
-async function fetchMyBookings() {
-  const res = await apiCall('facultyMyBookings');
-  if (res.success) {
-    myBookings = res.data;
-    return myBookings;
   }
   return [];
 }
@@ -208,12 +208,15 @@ async function initCreateBooking() {
 // ------------------ My Bookings ------------------
 
 async function initMyBookings() {
-  const list = await fetchMyBookings();
+  const res = await apiCall('facultyMyBookings');
+  // Handle empty or error
+  const list = res.success ? res.data : [];
+
   const tbody = document.querySelector('#bookings-table tbody');
   if (!tbody) return;
 
   tbody.innerHTML = '';
-  if (list.length === 0) {
+  if (!list || list.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" class="text-center">No bookings found.</td></tr>';
     return;
   }
@@ -227,12 +230,40 @@ async function initMyBookings() {
             <td>${b.purpose}</td>
             <td>${b.status}</td>
             <td>
-                <!-- Edit/Cancel logic to be implemented if API supports it -->
-                <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                <button class="btn btn-sm btn-primary me-1" 
+                    onclick="openEditModal(${b.id}, '${b.room_id}', '${b.date}', '${b.start_time}', ${b.duration || 1}, '${b.purpose}')">
+                    Edit
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="cancelBooking(${b.id})">Cancel</button>
             </td>
         `;
     tbody.appendChild(tr);
   });
+
+  // Init Edit Form listener (once)
+  const editForm = document.getElementById('editBookingForm');
+  if (editForm && !editForm.dataset.listenerAttached) {
+    editForm.dataset.listenerAttached = 'true';
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(editForm);
+      fd.append('action', 'facultyEditBooking');
+
+      // Helper to map form to object
+      const data = {};
+      fd.forEach((value, key) => data[key] = value);
+
+      const res = await apiCall('facultyEditBooking', data);
+      if (res.success) {
+        alert('Booking updated');
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editBookingModal'));
+        modal.hide();
+        initMyBookings();
+      } else {
+        alert(res.message || 'Update failed');
+      }
+    });
+  }
 }
 
 // ------------------ Student Requests ------------------
@@ -298,3 +329,93 @@ document.addEventListener('DOMContentLoaded', () => {
   else if (page.includes('faculty-requests')) initStudentRequests();
   else if (page.includes('faculty')) initDashboard();
 });
+
+window.openEditModal = function (id, roomId, date, startTime, duration, purpose) {
+  const hiddenId = document.getElementById('editBookingId');
+  if (hiddenId) hiddenId.value = id;
+
+  // We might need to select the room in dropdown if exists, or just keep ID
+  // Assuming the modal has inputs matching these IDs
+  const dateInput = document.getElementById('editDate');
+  if (dateInput) dateInput.value = date;
+
+  const startInput = document.getElementById('editStartTime');
+  if (startInput) startInput.value = startTime;
+
+  // Try to find duration input if passed
+  const durInput = document.getElementById('editDuration');
+  if (durInput) durInput.value = duration;
+
+  const purp = document.getElementById('editPurpose');
+  if (purp) purp.value = purpose;
+
+  const modalEl = document.getElementById('editBookingModal');
+  if (modalEl) {
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
+};
+
+window.cancelBooking = async function (id) {
+  if (!confirm('Cancel this booking?')) return;
+  const res = await apiCall('facultyCancelBooking', { booking_id: id });
+  if (res.success) {
+    alert('Booking cancelled');
+    initMyBookings();
+  } else {
+    alert(res.message || 'Failed to cancel');
+  }
+};
+
+window.viewRoomSchedule = async function (roomId, roomName) {
+  const modalEl = document.getElementById('roomScheduleModal');
+  if (!modalEl) return;
+
+  // Set title
+  const titleEl = modalEl.querySelector('.modal-title');
+  if (titleEl) titleEl.textContent = `Schedule: ${roomName}`;
+
+  const tbody = document.getElementById('roomScheduleTableBody');
+  tbody.innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
+
+  const modal = new bootstrap.Modal(modalEl);
+  modal.show();
+
+  // Fetch schedule (using Student API endpoint which is public)
+  const formData = new FormData();
+  formData.append('action', 'getRoomSchedule');
+  formData.append('room_id', roomId);
+  formData.append('date', document.getElementById('filterDate')?.value || new Date().toISOString().split('T')[0]);
+
+  // Add CSRF
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+  if (csrfToken) formData.append('csrf_token', csrfToken); // although getRoomSchedule is public, api.php might enforce it on POST
+
+  try {
+    const res = await fetch('/public/api.php', {
+      method: 'POST',
+      headers: { 'X-CSRF-TOKEN': csrfToken || '' },
+      body: formData
+    }).then(r => r.json());
+
+    if (res.success && res.data) {
+      if (res.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No bookings for this date.</td></tr>';
+      } else {
+        tbody.innerHTML = res.data.map(s => `
+                    <tr>
+                        <td>${s.start_time} - ${s.end_time}</td>
+                        <td>${s.full_name || 'Faculty'}</td>
+                        <td>${s.purpose}</td>
+                        <td><span class="badge bg-secondary">Booked</span></td>
+                    </tr>
+                 `).join('');
+      }
+    } else {
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load schedule</td></tr>';
+    }
+  } catch (e) {
+    console.error(e);
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading schedule</td></tr>';
+  }
+};

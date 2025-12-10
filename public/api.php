@@ -16,6 +16,11 @@ try {
     session_start();
 
     require_once __DIR__ . '/../app/config/database.php';
+    
+    // CSRF Token Generation
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
 
     spl_autoload_register(function ($class) {
         $paths = [
@@ -26,6 +31,15 @@ try {
             if (file_exists($p))
                 require $p;
     });
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // CSRF Check
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!hash_equals($_SESSION['csrf_token'], $token)) {
+             echo json_encode(['success' => false, 'error' => 'CSRF Token Validation Failed']);
+             exit;
+        }
+    }
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         echo json_encode(['success' => false, 'error' => 'POST only']);
@@ -47,7 +61,11 @@ try {
         'deleteBooking' => ['AdminApi', 'deleteBooking'],
         'getBookingList' => ['AdminApi', 'getBookingList'],
         'addBooking'    => ['AdminApi', 'addBooking'],
+        'getBookingList' => ['AdminApi', 'getBookingList'],
+        'addBooking'    => ['AdminApi', 'addBooking'],
         'editBooking' => ['AdminApi', 'editBooking'],
+        'getStudentRequests' => ['AdminApi', 'getStudentRequests'],
+        'adminActionRequest' => ['AdminApi', 'actionRequest'],
 
         // Student Routes
         'getRooms' => ['StudentApi', 'getRooms'],
@@ -64,7 +82,10 @@ try {
         'facultyMyBookings' => ['FacultyApi', 'myBookings'],
         'facultyRequests' => ['FacultyApi', 'studentRequests'],
         'facultyActionRequest' => ['FacultyApi', 'actionRequest'],
+        'facultyActionRequest' => ['FacultyApi', 'actionRequest'],
         'facultyCreateBooking' => ['FacultyApi', 'createBooking'],
+        'facultyCancelBooking' => ['FacultyApi', 'cancelBooking'],
+        'facultyEditBooking'   => ['FacultyApi', 'editBooking'],
 
         // Super Admin Routes
         'superAdminLogin' => ['SuperAdminApi', 'login'],

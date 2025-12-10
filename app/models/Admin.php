@@ -458,5 +458,79 @@ class Admin {
         ];
     }
 
+    // ------------------------------------------
+    // 11. Get All Student Requests
+    // ------------------------------------------
+    public function getAllStudentRequests($status = 'pending') {
+        // Status column in DB might be lowercase 'pending' or 'Pending'? 
+        // Based on faculty_dashboard.js logic, it expects lowercase 'pending'.
+        
+        $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.comments, 
+                       rm.room_name, u.full_name as student_name
+                FROM student_booking_requests r
+                JOIN rooms rm ON r.room_id = rm.id
+                JOIN users u ON r.student_id = u.id
+                WHERE r.status = ?
+                ORDER BY r.date ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $status);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        $data = [];
+        while($row = $res->fetch_assoc()) {
+            $row['start_time'] = $this->formatTime12($row['start_time']);
+            $data[] = $row;
+        }
+        return $data;
+    }
+
+    // ------------------------------------------
+    // 12. Action Request
+    // ------------------------------------------
+    public function actionRequest($requestId, $action, $comments) {
+        if ($action === 'approve') {
+            $q = "SELECT * FROM student_booking_requests WHERE id = ?";
+            $s = $this->conn->prepare($q);
+            $s->bind_param("i", $requestId);
+            $s->execute();
+            $req = $s->get_result()->fetch_assoc();
+
+            if (!$req) return ['success' => false, 'message' => 'Request not found'];
+            if ($req['status'] !== 'pending') return ['success' => false, 'message' => 'Request not pending'];
+
+            // Conflict check logic (duplicated from addBooking but adapted)
+            // Note: addBooking computes end time via SQL. Here we do same.
+             $sqlOverlap = "SELECT id FROM bookings 
+                           WHERE room_id = ? AND date = ? 
+                           AND ( ? < ADDTIME(start_time, SEC_TO_TIME(duration * 3600)) 
+                           AND ADDTIME(?, SEC_TO_TIME(?*3600)) > start_time )";
+            
+            // start_time in req is HH:MM:SS
+            $so = $this->conn->prepare($sqlOverlap);
+            $so->bind_param("issii", $req['room_id'], $req['date'], $req['start_time'], $req['start_time'], $req['duration']);
+            $so->execute();
+            if ($so->get_result()->num_rows > 0) {
+                 return ['success' => false, 'message' => 'Conflict with existing booking'];
+            }
+
+            // Create booking
+            $sqlIns = "INSERT INTO bookings (user_id, room_id, date, start_time, duration, purpose) VALUES (?, ?, ?, ?, ?, ?)";
+            $ins = $this->conn->prepare($sqlIns);
+            $ins->bind_param("iissis", $req['student_id'], $req['room_id'], $req['date'], $req['start_time'], $req['duration'], $req['purpose']);
+            if (!$ins->execute()) return ['success' => false, 'message' => 'Booking insert failed: ' . $ins->error];
+
+            $newStatus = 'approved';
+        } else {
+            $newStatus = 'denied';
+        }
+
+        $upd = "UPDATE student_booking_requests SET status = ?, comments = ? WHERE id = ?";
+        $u = $this->conn->prepare($upd);
+        $u->bind_param("ssi", $newStatus, $comments, $requestId);
+        if ($u->execute()) return ['success' => true];
+        return ['success' => false, 'message' => 'Update failed'];
+    }
 
 }

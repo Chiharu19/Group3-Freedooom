@@ -51,4 +51,8 @@ class AdminController {
         require __DIR__ . '/../views/adminViews/adminUsers.php';
     }
 
+    public function requests() {
+        require __DIR__ . '/../views/adminViews/adminRequests.php';
+    }
+
 }

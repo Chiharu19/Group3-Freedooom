@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+// Helper for CSRF
+function getCsrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
+
 // ==========================================
 // DASHBOARD PAGE
 // ==========================================
@@ -26,7 +31,8 @@ function initDashboard() {
     fetch('api.php', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': getCsrfToken()
         },
         body: 'action=dashboard'
     })
@@ -124,7 +130,7 @@ function initSubmitRequest() {
     // Fetch Rooms
     fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
         body: 'action=getRooms'
     })
         .then(response => response.json())
@@ -162,7 +168,7 @@ function initSubmitRequest() {
     // Fetch Faculty
     fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
         body: 'action=getFaculty'
     })
         .then(response => response.json())
@@ -189,6 +195,7 @@ function initSubmitRequest() {
 
         const formData = new FormData(form);
         formData.append('action', 'submitRequest');
+        formData.append('csrf_token', getCsrfToken());
 
         fetch('api.php', {
             method: 'POST',
@@ -219,7 +226,7 @@ function initMyRequests() {
 
     fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
         body: 'action=myRequests'
     })
         .then(response => response.json())
@@ -276,6 +283,7 @@ function initMyRequests() {
         const formData = new FormData();
         formData.append('action', 'cancelRequest');
         formData.append('request_id', requestId);
+        formData.append('csrf_token', getCsrfToken());
 
         fetch('api.php', {
             method: 'POST',
@@ -313,7 +321,8 @@ function initRoomAvailability() {
     fetch('api.php', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': getCsrfToken()
         },
         body: 'action=getRooms'
     })
@@ -447,7 +456,7 @@ function showRoomDetails(id, name, status, capacity) {
 
     fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
         body: `action=getRoomSchedule&room_id=${id}&date=${today}`
     })
         .then(res => res.json())

@@ -12,7 +12,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css">
 
   <!-- Your Main CSS -->
+  <!-- Your Main CSS -->
   <link rel="stylesheet" href="assets/css/faculty/faculty_dashboard.css">
+  <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
 </head>
 
 <body>

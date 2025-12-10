@@ -81,24 +81,34 @@ class FacultyApi
             return;
         }
 
-        $result = $this->facultyModel->actionRequest($requestId, $action, $comments);
+        $result = $this->facultyModel->actionRequest($requestId, $this->userId, $action, $comments);
         echo json_encode($result);
     }
 
-    public function createBooking()
-    {
+    public function createBooking() {
         $roomId = $this->params['room_id'] ?? 0;
         $date = $this->params['date'] ?? '';
-        $start = $this->params['start'] ?? '';
-        $end = $this->params['end'] ?? '';
+        $startTime = $this->params['start_time'] ?? '';
+        $duration = $this->params['duration'] ?? 1;
+        $purpose = $this->params['purpose'] ?? 'Class';
+
+        $res = $this->facultyModel->createBooking($this->userId, $roomId, $date, $startTime, $duration, $purpose);
+        echo json_encode($res);
+    }
+
+    public function cancelBooking() {
+        $bookingId = $this->params['booking_id'] ?? 0;
+        $res = $this->facultyModel->cancelBooking($bookingId, $this->userId);
+        echo json_encode($res);
+    }
+
+    public function editBooking() {
+        $bookingId = $this->params['booking_id'] ?? 0;
+        $roomId = $this->params['room_id'] ?? 0;
+        $date = $this->params['date'] ?? '';
+        $startTime = $this->params['start_time'] ?? '';
+        $duration = $this->params['duration'] ?? 1;
         $purpose = $this->params['purpose'] ?? '';
 
-        if (!$roomId || !$date || !$start || !$end || !$purpose) {
-            echo json_encode(['success' => false, 'message' => 'Missing fields']);
-            return;
-        }
-
-        $result = $this->facultyModel->createBooking($this->userId, $roomId, $date, $start, $end, $purpose);
-        echo json_encode($result);
     }
 }

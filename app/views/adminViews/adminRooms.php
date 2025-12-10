@@ -14,8 +14,9 @@
         <div class="sidebar">
             <h3 class="text-center mt-3 mb-4">Admin</h3>
             <a href="?page=admin">Dashboard</a>
-            <a href="#" class="active">Rooms</a>
+            <a href="?page=admin-rooms" class="active">Rooms</a>
             <a href="?page=admin-schedules">Schedules</a>
+            <a href="?page=admin-requests">Student Requests</a>
             <a href="?page=admin-users">Manage Users</a>
             <a href="?page=logout">Logout</a>
         </div>

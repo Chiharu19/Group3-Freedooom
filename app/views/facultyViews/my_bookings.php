@@ -7,6 +7,7 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/faculty/faculty_dashboard.css">
+  <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?? '' ?>">
 </head>
 <body>
 <div class="wrapper">
@@ -56,30 +57,30 @@
 <!-- Edit Modal -->
 <div class="modal fade" id="editBookingModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <form id="edit-booking-form" class="modal-content" onsubmit="return false;">
+    <form id="editBookingForm" class="modal-content" onsubmit="return false;">
       <div class="modal-header">
         <h5 class="modal-title">Edit Booking</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="edit-booking-id" name="booking_id" />
+        <input type="hidden" id="editBookingId" name="booking_id" />
         <div class="mb-2">
           <label class="form-label">Date</label>
-          <input id="edit-date" name="edit_date" data-field="edit_date" type="date" class="form-control" required />
+          <input id="editDate" name="edit_date" data-field="edit_date" type="date" class="form-control" required />
         </div>
         <div class="row g-2">
           <div class="col">
             <label class="form-label">Start</label>
-            <input id="edit-start" name="edit_start" data-field="edit_start" type="time" class="form-control" required />
+            <input id="editStartTime" name="edit_start" data-field="edit_start" type="time" class="form-control" required />
           </div>
           <div class="col">
-            <label class="form-label">End</label>
-            <input id="edit-end" name="edit_end" data-field="edit_end" type="time" class="form-control" required />
+            <label class="form-label">Duration (Hours)</label>
+            <input id="editDuration" name="duration" type="number" class="form-control" value="1" required />
           </div>
         </div>
         <div class="mb-2 mt-2">
           <label class="form-label">Purpose</label>
-          <textarea id="edit-purpose" name="edit_purpose" data-field="edit_purpose" rows="3" class="form-control"></textarea>
+          <textarea id="editPurpose" name="edit_purpose" data-field="edit_purpose" rows="3" class="form-control"></textarea>
         </div>
         <div id="edit-feedback" role="status" aria-live="polite"></div>
       </div>
