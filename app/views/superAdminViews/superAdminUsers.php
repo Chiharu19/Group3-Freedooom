@@ -112,6 +112,8 @@
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
         loadAdmins();
 
         // ADD
@@ -119,6 +121,7 @@
             e.preventDefault();
             const formData = new FormData(this);
             formData.append("action", "addAdmin");
+            formData.append("csrf_token", csrfToken);
 
             fetch("/public/api.php", { method: "POST", body: formData })
                 .then(res => res.json())
@@ -137,6 +140,7 @@
             e.preventDefault();
             const formData = new FormData(this);
             formData.append("action", "editAdmin");
+            formData.append("csrf_token", csrfToken);
 
             fetch("/public/api.php", { method: "POST", body: formData })
                 .then(res => res.json())
@@ -152,8 +156,10 @@
     });
 
     function loadAdmins() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const formData = new FormData();
         formData.append("action", "getAdminsList");
+        formData.append("csrf_token", csrfToken);
 
         fetch("/public/api.php", { method: "POST", body: formData })
         .then(res => res.json())
@@ -209,6 +215,7 @@
         const formData = new FormData();
         formData.append("action", "toggleAdminStatus");
         formData.append("id", id);
+        formData.append("csrf_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
         fetch("/public/api.php", { method: "POST", body: formData })
         .then(res => res.json())
