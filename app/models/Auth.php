@@ -132,4 +132,44 @@ class Auth{
         $stmt->bind_param("si", $hashed, $user['id']);
         return $stmt->execute();
     }
+
+    public function checkRateLimit($ip, $action) {
+        $limit = 3; // Max attempts
+        $window = 15; // Minutes
+
+        $sql = "SELECT id, attempt_count, last_attempt FROM rate_limits WHERE ip_address = ? AND action = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $ip, $action);
+        $stmt->execute();
+        $res = $stmt->get_result()->fetch_assoc();
+
+        if ($res) {
+            $lastAttempt = strtotime($res['last_attempt']);
+            $timeDiff = (time() - $lastAttempt) / 60; // in minutes
+
+            if ($timeDiff > $window) {
+                // Reset count
+                $upd = $this->conn->prepare("UPDATE rate_limits SET attempt_count = 1, last_attempt = NOW() WHERE id = ?");
+                $upd->bind_param("i", $res['id']);
+                $upd->execute();
+                return true; // Allowed
+            } else {
+                if ($res['attempt_count'] >= $limit) {
+                    return false; // Blocked
+                } else {
+                    // Increment
+                    $upd = $this->conn->prepare("UPDATE rate_limits SET attempt_count = attempt_count + 1, last_attempt = NOW() WHERE id = ?");
+                    $upd->bind_param("i", $res['id']);
+                    $upd->execute();
+                    return true; // Allowed
+                }
+            }
+        } else {
+            // New record
+            $ins = $this->conn->prepare("INSERT INTO rate_limits (ip_address, action) VALUES (?, ?)");
+            $ins->bind_param("ss", $ip, $action);
+            $ins->execute();
+            return true; // Allowed
+        }
+    }
 }

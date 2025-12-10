@@ -61,72 +61,51 @@ class EmailService {
         }
     }
 
+    private function renderTemplate($template, $data) {
+        $path = __DIR__ . '/../views/emails/' . $template . '.php';
+        if (file_exists($path)) {
+            ob_start();
+            include $path;
+            return ob_get_clean();
+        }
+        return "";
+    }
+
     public function sendBookingRequestNotification($to, $requestDetails) {
         $subject = "New Booking Request Submitted";
-        $body = "
-            <h3>New Booking Request</h3>
-            <p><strong>Room:</strong> {$requestDetails['room_name']}</p>
-            <p><strong>Date:</strong> {$requestDetails['date']}</p>
-            <p><strong>Time:</strong> {$requestDetails['start_time']} ({$requestDetails['duration']} hrs)</p>
-            <p><strong>Purpose:</strong> {$requestDetails['purpose']}</p>
-            <p>Please log in to the dashboard to approve or deny this request.</p>
-        ";
+        $body = $this->renderTemplate('booking_request', $requestDetails);
         return $this->sendEmail($to, $subject, $body);
     }
 
     public function sendRequestStatusNotification($to, $status, $comments, $requestDetails = []) {
         $subject = "Booking Request Update: " . ucfirst($status);
-        $body = "
-            <h3>Your booking request has been {$status}</h3>
-            <p><strong>Comments:</strong> " . ($comments ?: "None") . "</p>
-        ";
-        // If we have details, add them
-        if (!empty($requestDetails)) {
-             $body .= "<p><strong>Details:</strong> {$requestDetails['room_name']} on {$requestDetails['date']}</p>";
-        }
-
+        $data = [
+            'status' => $status,
+            'comments' => $comments,
+            'request_details' => $requestDetails
+        ];
+        $body = $this->renderTemplate('status_update', $data);
         return $this->sendEmail($to, $subject, $body);
     }
 
     public function sendAccountCreatedNotification($to, $name, $password) {
         $subject = "Welcome to Freedooom";
-        $body = "
-            <h3>Welcome, $name!</h3>
-            <p>Your account has been created.</p>
-            <p><strong>Username/Email:</strong> $to</p>
-            <p><strong>Password:</strong> $password</p>
-            <p>Please change your password after logging in.</p>
-        ";
+        $data = ['name' => $name, 'email' => $to, 'password' => $password];
+        $body = $this->renderTemplate('account_created', $data);
         return $this->sendEmail($to, $subject, $body);
     }
 
     public function sendPasswordResetLink($to, $token) {
         $subject = "Password Reset Request";
-        // Assuming typical XAMPP path, can be adjusted or moved to config
         $link = "http://" . $_SERVER['HTTP_HOST'] . "/public/reset_password.php?token=" . $token;
-        
-        $body = "
-            <h3>Password Reset Request</h3>
-            <p>We received a request to reset your password.</p>
-            <p>Click the link below to reset it:</p>
-            <p><a href='$link'>$link</a></p>
-            <p>This link will expire in 1 hour.</p>
-            <p>If you did not request this, you can ignore this email.</p>
-        ";
+        $data = ['link' => $link];
+        $body = $this->renderTemplate('password_reset', $data);
         return $this->sendEmail($to, $subject, $body);
     }
 
     public function sendBookingCancellationNotification($to, $details) {
         $subject = "Booking Request Cancelled";
-        $body = "
-            <h3>Booking Request Cancelled</h3>
-            <p>A student has cancelled their booking request.</p>
-            <p><strong>Room:</strong> {$details['room_name']}</p>
-            <p><strong>Date:</strong> {$details['date']}</p>
-            <p><strong>Time:</strong> {$details['start_time']} ({$details['duration']} hrs)</p>
-            <p><strong>Purpose:</strong> {$details['purpose']}</p>
-            <p>No action is required from you.</p>
-        ";
+        $body = $this->renderTemplate('booking_cancellation', $details);
         return $this->sendEmail($to, $subject, $body);
     }
 }

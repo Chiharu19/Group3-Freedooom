@@ -38,6 +38,13 @@ class AuthApi
             return;
         }
 
+        // Rate Limiting
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!$this->auth->checkRateLimit($ip, 'password_reset')) {
+             echo json_encode(['success' => false, 'error' => 'Too many requests. Please try again later.']);
+             return;
+        }
+
         $user = $this->auth->getUserByEmail($email);
         if (!$user) {
             // For security, do not reveal if email exists. BUT for this internal school projects, maybe useful?
