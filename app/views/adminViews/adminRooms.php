@@ -184,6 +184,8 @@
 
             const formData = new FormData(form);
             formData.append("action", "addRoom"); // tell API which action
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if(csrfToken) formData.append("csrf_token", csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
@@ -229,6 +231,8 @@
 
             const formData = new FormData(editForm);
             formData.append("action", "updateRoom");
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if(csrfToken) formData.append("csrf_token", csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
@@ -260,6 +264,8 @@
                 const formData = new FormData();
                 formData.append("action", "deleteRoom");
                 formData.append("room-id", room_id);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                if(csrfToken) formData.append("csrf_token", csrfToken);
 
                 fetch("/public/api.php", {
                     method: "POST",
