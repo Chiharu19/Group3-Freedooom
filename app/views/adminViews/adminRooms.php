@@ -47,7 +47,7 @@
 
                             <form id="addRoomForm">
                                 <label class="form-label">Room Name</label>
-                                <input type="text" class="form-control mb-2" name="room-name" required>
+                                <input type="text" class="form-control mb-2" name="room_name" required>
 
                                 <label class="form-label">Building</label>
                                 <select class="form-select mb-2" name="building" required>
@@ -73,10 +73,10 @@
 
                             <form id="editRoomForm">
 
-                                <input type="hidden" name="room-id" id="edit-room-id">
+                                <input type="hidden" name="room_id" id="edit-room-id">
 
                                 <label class="form-label">Room Name</label>
-                                <input type="text" class="form-control mb-2" name="room-name" id="edit-room-name"
+                                <input type="text" class="form-control mb-2" name="room_name" id="edit-room-name"
                                     readonly>
 
                                 <label class="form-label">Building</label>
@@ -181,6 +181,11 @@
         form.addEventListener("submit", function (e) {
             e.preventDefault();
 
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting...';
+
             const formData = new FormData(form);
             formData.append("action", "addRoom"); // tell API which action
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -197,17 +202,17 @@
                         window.location.href = "?page=admin-rooms";
                     } else {
                         console.log(data.message);
-
-                        /* 
-                        
-                            CODE HERE WHEN UNSUCCESSFUL
-        
-                            Note: you can do console.log(data.message) here to see why unsuccessful
-                        
-                        */
+                        alert(data.message || 'Error adding room');
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = originalText;
                     }
                 })
-                .catch(err => console.error(err));
+                .catch(err => {
+                    console.error(err);
+                    alert('Network error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
+                });
         });
 
         // event listener to edit button per list
@@ -228,6 +233,11 @@
         editForm.addEventListener("submit", function (e) {
             e.preventDefault();
 
+            const submitBtn = editForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting...';
+
             const formData = new FormData(editForm);
             formData.append("action", "updateRoom");
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -243,15 +253,16 @@
                         window.location.href = "?page=admin-rooms";
                     } else {
                         console.log(data.message);
-
-                        /* 
-                        
-                            CODE HERE WHEN UNSUCCESSFUL
-        
-                            Note: you can do console.log(data.message) here to see why unsuccessful
-                        
-                        */
+                        alert(data.message || 'Error updating room');
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = originalText;
                     }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Network error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
                 });
         });
 
@@ -263,7 +274,7 @@
                 const room_id = btn.dataset.id;
                 const formData = new FormData();
                 formData.append("action", "deleteRoom");
-                formData.append("room-id", room_id);
+                formData.append("room_id", room_id);
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                 if(csrfToken) formData.append("csrf_token", csrfToken);
 

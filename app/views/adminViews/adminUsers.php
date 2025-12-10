@@ -59,7 +59,7 @@
 
                 <form name="addUserForm" id="addUserForm">
                     <label class="form-label">Full Name</label>
-                    <input type="text" name="full-name" class="form-control mb-2">
+                    <input type="text" name="full_name" class="form-control mb-2">
 
                     <label class="form-label">Email</label>
                     <input type="email" name="email" class="form-control mb-2">
@@ -85,10 +85,10 @@
                 <h5 class="fw-bold mb-3">Edit User</h5>
 
                 <form name="editUserForm" id="editUserForm">
-                    <input type="hidden" name="user-id" id="edit-user-id">
+                    <input type="hidden" name="user_id" id="edit-user-id">
                     
                     <label class="form-label">Full Name</label>
-                    <input type="text" name="full-name" id="edit-full-name" class="form-control mb-2" required>
+                    <input type="text" name="full_name" id="edit-full-name" class="form-control mb-2" required>
 
                     <label class="form-label">Email</label>
                     <input type="email" name="email" id="edit-email" class="form-control mb-2" required>
@@ -212,8 +212,8 @@
         if(!confirm("Are you sure?")) return;
         const formData = new FormData();
         formData.append("action", "changeUserStatus");
-        formData.append("user-id", userId);
-        formData.append("new-status", newStatus);
+        formData.append("user_id", userId);
+        formData.append("new_status", newStatus);
 
         // CSRF
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -252,10 +252,15 @@
         new bootstrap.Modal(document.getElementById('editUserModal')).show();
     }
 
-    const editUserForm = document.getElementById('editUserForm');
     if (editUserForm) {
         editUserForm.addEventListener('submit', (e) => {
             e.preventDefault();
+
+            const submitBtn = editUserForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting...';
+
             const formData = new FormData(editUserForm);
             formData.append("action", "editUser");
 
@@ -274,11 +279,15 @@
                     location.reload(); // or just loadUsers()
                 }else{
                     alert(data.message || "Failed to update user");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
                 }
             })
             .catch(err => {
                 console.error(err);
                 alert("An error occurred");
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
             });
         });
     }
@@ -286,6 +295,11 @@
     const addUserForm = document.getElementById('addUserForm');
     addUserForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const submitBtn = addUserForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting...';
 
         const formData = new FormData(addUserForm);
         formData.append("action", "addUser");
@@ -304,10 +318,16 @@
                 window.location.href = "?page=admin-users";
             }else{
                 console.log(data.message);
+                alert(data.message || 'Error adding user');
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
             }
         })
         .catch(err => {
             console.error(err);
+            alert('Network error');
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
         });
     });
 

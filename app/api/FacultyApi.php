@@ -162,4 +162,18 @@ class FacultyApi
         $res = $this->facultyModel->updateBooking($bookingId, $this->userId, $roomId, $date, $startTime, $duration, $purpose);
         echo json_encode($res);
     }
+
+    public function checkAvailability() {
+        $date = $this->params['date'] ?? '';
+        $startTime = $this->params['start_time'] ?? '';
+        $endTime = $this->params['end_time'] ?? '';
+
+        if (!$date || !$startTime || !$endTime) {
+             echo json_encode(['success' => false, 'message' => 'Missing date or time range']);
+             return;
+        }
+
+        $rooms = $this->facultyModel->getAvailableRooms($date, $startTime, $endTime);
+        echo json_encode(['success' => true, 'data' => $rooms]);
+    }
 }

@@ -260,4 +260,36 @@ class Faculty
         
         return $stmt->execute() ? ['success' => true, 'message' => 'Booking updated successfully'] : ['success' => false, 'message' => $stmt->error];
     }
+
+    // 8. Get Available Rooms
+    public function getAvailableRooms($date, $startTime, $endTime) {
+         // Calculate duration to help with overlap check logic or just use explicit time check
+         // We need to find rooms where NO booking overlaps with requested range.
+         
+         // Overlap logic: (StartA < EndB) and (EndA > StartB)
+         // Request: StartReq, EndReq.
+         // Existing Booking: StartBook, EndBook (calculated from duration).
+         
+         // Query: Select all rooms NOT IN (Select room_id from bookings where overlap)
+         
+         // We need EndReq. Input is HH:MM.
+         
+         $sql = "SELECT r.id, r.room_name, r.capacity, r.building, r.status
+                 FROM rooms r
+                 WHERE r.status = 'available'
+                 AND r.id NOT IN (
+                    SELECT b.room_id 
+                    FROM bookings b
+                    WHERE b.date = ?
+                    AND (
+                        ? < ADDTIME(b.start_time, SEC_TO_TIME(b.duration * 3600))
+                        AND ? > b.start_time
+                    )
+                 )";
+                 
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sss", $date, $startTime, $endTime);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 }

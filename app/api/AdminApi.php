@@ -20,7 +20,7 @@ class AdminApi {
 
     public function addRoom() {
         $this->checkAuth();
-        $roomName = $this->data['room-name'] ?? '';
+        $roomName = $this->data['room_name'] ?? '';
         $building = $this->data['building'] ?? '';
         $capacity = $this->data['capacity'] ?? '';
 
@@ -36,8 +36,8 @@ class AdminApi {
 
     public function updateRoom() {
         $this->checkAuth();
-        $roomId   = $this->data['room-id'] ?? '';
-        $roomName = $this->data['room-name'] ?? '';
+        $roomId   = $this->data['room_id'] ?? '';
+        $roomName = $this->data['room_name'] ?? '';
         $building = $this->data['building'] ?? '';
         $capacity = $this->data['capacity'] ?? '';
         $status   = $this->data['status'] ?? '';
@@ -56,7 +56,7 @@ class AdminApi {
 
     public function deleteRoom(){
         $this->checkAuth();
-        $roomId   = $this->data['room-id'] ?? '';
+        $roomId   = $this->data['room_id'] ?? '';
         
         if (!$roomId) {
             echo json_encode(['success' => false, 'error' => 'Missing fields']);
@@ -70,7 +70,7 @@ class AdminApi {
 
     public function deleteBooking(){
 
-        $bookingId   = $this->data['booking-id'] ?? '';
+        $bookingId   = $this->data['booking_id'] ?? '';
         
         if (!$bookingId) {
             echo json_encode(['success' => false, 'error' => 'Missing fields']);
@@ -96,11 +96,11 @@ class AdminApi {
 
     public function addBooking() {
 
-        $room      = $this->data['room-id'] ?? '';
+        $room      = $this->data['room_id'] ?? '';
         $date      = $this->data['date'] ?? '';
-        $startTime = $this->data['start-time'] ?? '';
+        $startTime = $this->data['start_time'] ?? '';
         $duration   = $this->data['duration'] ?? '';
-        $faculty   = $this->data['faculty-id'] ?? '';
+        $faculty   = $this->data['faculty_id'] ?? '';
 
         // Basic validation
         if (!$room || !$date || !$startTime || !$duration || !$faculty) {
@@ -122,12 +122,12 @@ class AdminApi {
 
     public function editBooking() {
 
-        $bookingId = $this->data['booking-id'] ?? '';
-        $room      = $this->data['room-name'] ?? '';
+        $bookingId = $this->data['booking_id'] ?? '';
+        $room      = $this->data['room_name'] ?? '';
         $date      = $this->data['date'] ?? '';
-        $startTime = $this->data['start-time'] ?? '';
+        $startTime = $this->data['start_time'] ?? '';
         $duration   = $this->data['duration'] ?? '';
-        $faculty   = $this->data['faculty-id'] ?? '';
+        $faculty   = $this->data['faculty_id'] ?? '';
 
         // Basic validation
         if (!$bookingId || !$room || !$date || !$startTime || !$duration || !$faculty) {
@@ -219,7 +219,7 @@ class AdminApi {
 
     public function addUser(){
 
-        $full_name = $this->data['full-name'];
+        $full_name = $this->data['full_name'];
         $email = $this->data['email'];
         $password = $this->data['password'];
         $role = $this->data['role'];
@@ -235,8 +235,8 @@ class AdminApi {
     }
 
     public function editUser() {
-        $userId = $this->data['user-id'] ?? '';
-        $fullName = $this->data['full-name'] ?? '';
+        $userId = $this->data['user_id'] ?? '';
+        $fullName = $this->data['full_name'] ?? '';
         $email = $this->data['email'] ?? '';
         $role = $this->data['role'] ?? '';
 
@@ -251,8 +251,8 @@ class AdminApi {
 
     public function changeUserStatus(){
 
-        $userId = $this->data['user-id'];
-        $currentStatus = $this->data['new-status']; // incoming current status
+        $userId = $this->data['user_id'];
+        $currentStatus = $this->data['new_status']; // incoming current status
 
         // Flip the status
         $newStatus = ($currentStatus === "active") ? "inactive" : "active";

@@ -90,7 +90,7 @@
                             <form id="addBookingForm">
 
                                 <label class="form-label">Room Name</label>
-                                <select class="form-select mb-2" name="room-id" id="add-room-id" required>
+                                <select class="form-select mb-2" name="room_id" id="add-room-id" required>
                                     <?php foreach ($allRoomsList as $room): ?>
                                         <option value="<?= htmlspecialchars($room['id']); ?>">
                                             <?= htmlspecialchars($room['room_name']); ?>
@@ -102,13 +102,13 @@
                                 <input type="date" class="form-control mb-2" name="date" id="add-date" required>
 
                                 <label class="form-label">Start Time</label>
-                                <input type="time" class="form-control mb-2" name="start-time" id="add-start-time" required>
+                                <input type="time" class="form-control mb-2" name="start_time" id="add-start-time" required>
                                 
                                 <label class="form-label">Duration (Hours)</label>
                                 <input type="number" class="form-control mb-2" name="duration" id="add-duration" required>
 
                                 <label class="form-label">Faculty</label>
-                                <select class="form-select mb-2" name="faculty-id" id="add-faculty-name" required>
+                                <select class="form-select mb-2" name="faculty_id" id="add-faculty-name" required>
                                     <?php foreach ($allFacultyUserList as $user): ?>
                                         <option value="<?= htmlspecialchars($user['id']); ?>">
                                             <?= htmlspecialchars($user['full_name']); ?>
@@ -132,23 +132,23 @@
 
                             <form id="editBookingForm">
 
-                                <input type="hidden" name="booking-id" id="edit-booking-id">
+                                <input type="hidden" name="booking_id" id="edit-booking-id">
 
                                 <label class="form-label">Room Name</label>
-                                <input type="text" class="form-control mb-2" name="room-name" id="edit-room-name"
+                                <input type="text" class="form-control mb-2" name="room_name" id="edit-room-name"
                                     readonly>
 
                                 <label class="form-label">Date</label>
                                 <input type="date" class="form-control mb-2" name="date" id="edit-date">
 
                                 <label class="form-label">Start Time</label>
-                                <input type="time" class="form-control mb-2" name="start-time" id="edit-start-time">
+                                <input type="time" class="form-control mb-2" name="start_time" id="edit-start-time">
 
                                 <label class="form-label">Duration (Hours)</label>
                                 <input type="number" class="form-control mb-2" name="duration" id="edit-duration">
 
                                 <label class="form-label">Faculty</label>
-                                <select class="form-select mb-2" name="faculty-id" id="edit-faculty-name">
+                                <select class="form-select mb-2" name="faculty_id" id="edit-faculty-name">
                                     <?php foreach ($allFacultyUserList as $user): ?>
                                         <option value="<?= htmlspecialchars($user['id']); ?>">
                                             <?= htmlspecialchars($user['full_name']); ?>
@@ -241,7 +241,7 @@
 
                     const formData = new FormData();
                     formData.append("action", "deleteBooking");
-                    formData.append("booking-id", booking_id);
+                    formData.append("booking_id", booking_id);
                     // CSRF
                     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                     if(csrfToken) formData.append('csrf_token', csrfToken);
@@ -330,6 +330,11 @@
         addBookingForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
+            const submitBtn = addBookingForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting...';
+
             const formData = new FormData(addBookingForm);
             formData.append("action", "addBooking");
             
@@ -348,13 +353,27 @@
                     loadBookings();
                 } else {
                     console.log(data.message);
+                    alert(data.message || 'Error adding booking');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
                 }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Network error');
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
             });
         });
 
         const editBookingForm = document.getElementById("editBookingForm");
         editBookingForm.addEventListener('submit', (e) => {
             e.preventDefault();
+
+            const submitBtn = editBookingForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting...';
 
             const formData = new FormData(editBookingForm);
             formData.append("action", "editBooking");
@@ -373,7 +392,16 @@
                         window.location.href = "?page=admin-schedules";
                     } else {
                         console.log(data.message);
+                        alert(data.message || 'Error editing booking');
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = originalText;
                     }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Network error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
                 });
         });
 
