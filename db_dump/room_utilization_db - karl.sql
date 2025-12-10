@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 10, 2025 at 06:33 AM
+-- Generation Time: Dec 10, 2025 at 11:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -60,7 +60,10 @@ CREATE TABLE `bookings` (
 INSERT INTO `bookings` (`id`, `room_id`, `user_id`, `date`, `start_time`, `duration`, `purpose`, `created_at`, `updated_at`) VALUES
 (1, 9, 4, '2025-12-04', '10:00:00', 5, 'tangina', '2025-12-03 10:10:21', '2025-12-07 08:08:36'),
 (4, 14, 2, '2025-12-12', '10:00:00', 5, 'hhahahahahaha', '2025-12-05 19:32:09', '2025-12-07 08:08:43'),
-(5, 15, 2, '2025-12-09', '10:28:00', 1, 'afwefewf', '2025-12-09 19:28:56', '2025-12-09 19:28:56');
+(5, 15, 2, '2025-12-09', '10:28:00', 1, 'afwefewf', '2025-12-09 19:28:56', '2025-12-09 19:28:56'),
+(7, 24, 2, '2025-12-10', '07:00:00', 5, NULL, '2025-12-10 15:57:25', '2025-12-10 15:57:25'),
+(8, 9, 3, '2025-12-10', '07:00:00', 12, 'vfdvfdvd', '2025-12-10 17:14:44', '2025-12-10 17:14:44'),
+(9, 42, 3, '2025-12-10', '08:00:00', 5, 'ertyjmbvfrtyuj', '2025-12-10 18:10:26', '2025-12-10 18:10:26');
 
 -- --------------------------------------------------------
 
@@ -105,10 +108,45 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`id`, `room_name`, `building`, `capacity`, `status`, `created_at`, `updated_at`) VALUES
-(9, '102', 'CICS', 30, 'available', '2025-12-01 19:09:40', '2025-12-02 15:30:34'),
-(14, '503', 'CICS', 50, 'available', '2025-12-04 14:17:14', '2025-12-04 14:17:14'),
-(15, '201', 'CICS', 20, 'available', '2025-12-04 14:17:23', '2025-12-04 14:17:23'),
-(16, '601', 'CIT', 35, 'available', '2025-12-09 18:13:38', '2025-12-09 18:13:38');
+(22, '201', 'CICS', 30, 'available', '2025-12-10 14:43:55', '2025-12-10 14:43:55'),
+(23, '202', 'CICS', 30, 'available', '2025-12-10 14:44:45', '2025-12-10 14:44:45'),
+(24, '203', 'CICS', 30, 'available', '2025-12-10 14:45:14', '2025-12-10 14:45:14'),
+(25, '204', 'CICS', 30, 'available', '2025-12-10 14:45:25', '2025-12-10 14:45:25'),
+(26, '205', 'CICS', 30, 'available', '2025-12-10 14:45:34', '2025-12-10 14:45:34'),
+(27, '301', 'CICS', 30, 'available', '2025-12-10 14:45:42', '2025-12-10 14:45:42'),
+(28, '302', 'CICS', 30, 'available', '2025-12-10 15:03:04', '2025-12-10 15:03:04'),
+(29, '303', 'CICS', 30, 'available', '2025-12-10 15:03:13', '2025-12-10 15:03:13'),
+(30, '304', 'CICS', 30, 'available', '2025-12-10 15:03:21', '2025-12-10 15:03:21'),
+(31, '305', 'CICS', 30, 'available', '2025-12-10 15:03:38', '2025-12-10 15:03:38'),
+(32, '401', 'CICS', 30, 'available', '2025-12-10 15:09:19', '2025-12-10 15:09:19'),
+(33, '402', 'CICS', 30, 'available', '2025-12-10 15:09:33', '2025-12-10 15:09:33'),
+(34, '403', 'CICS', 30, 'available', '2025-12-10 15:09:43', '2025-12-10 15:09:43'),
+(36, '405', 'CICS', 30, 'available', '2025-12-10 15:10:00', '2025-12-10 15:10:00'),
+(37, '501', 'CICS', 30, 'available', '2025-12-10 15:10:13', '2025-12-10 15:10:13'),
+(38, '502', 'CICS', 30, 'available', '2025-12-10 15:10:26', '2025-12-10 15:10:26'),
+(39, '503', 'CICS', 30, 'available', '2025-12-10 15:10:37', '2025-12-10 15:10:37'),
+(40, '504', 'CICS', 30, 'available', '2025-12-10 15:10:50', '2025-12-10 15:10:50'),
+(41, '505', 'CICS', 30, 'available', '2025-12-10 15:10:57', '2025-12-10 15:10:57'),
+(42, '101', 'CIT', 30, 'available', '2025-12-10 15:11:30', '2025-12-10 15:11:30'),
+(45, '103', 'CIT', 30, 'available', '2025-12-10 15:12:08', '2025-12-10 15:12:08'),
+(46, '104', 'CIT', 30, 'available', '2025-12-10 15:12:41', '2025-12-10 15:12:41'),
+(47, '105', 'CIT', 30, 'available', '2025-12-10 15:12:53', '2025-12-10 15:12:53'),
+(48, '203', 'CIT', 30, 'available', '2025-12-10 15:13:28', '2025-12-10 15:13:28'),
+(49, '102', 'CIT', 30, 'available', '2025-12-10 15:14:30', '2025-12-10 15:14:30'),
+(50, '204', 'CIT', 30, 'available', '2025-12-10 15:14:46', '2025-12-10 15:14:46'),
+(51, '205', 'CIT', 30, 'available', '2025-12-10 15:15:00', '2025-12-10 15:15:00'),
+(52, '301', 'CIT', 30, 'available', '2025-12-10 15:15:15', '2025-12-10 15:15:15'),
+(53, '303', 'CIT', 30, 'available', '2025-12-10 15:15:24', '2025-12-10 15:15:24'),
+(54, '302', 'CIT', 30, 'available', '2025-12-10 15:16:53', '2025-12-10 15:16:53'),
+(55, '304', 'CIT', 30, 'available', '2025-12-10 15:17:28', '2025-12-10 15:17:28'),
+(56, '305', 'CIT', 30, 'available', '2025-12-10 15:17:37', '2025-12-10 15:17:37'),
+(57, '401', 'CIT', 30, 'available', '2025-12-10 15:17:52', '2025-12-10 15:17:52'),
+(58, '402', 'CIT', 30, 'available', '2025-12-10 15:18:06', '2025-12-10 15:18:06'),
+(59, '403', 'CIT', 30, 'available', '2025-12-10 15:18:16', '2025-12-10 15:18:16'),
+(60, '404', 'CIT', 30, 'available', '2025-12-10 15:18:42', '2025-12-10 15:18:42'),
+(61, '405', 'CIT', 30, 'available', '2025-12-10 15:18:51', '2025-12-10 15:18:51'),
+(62, '503', 'CIT', 30, 'available', '2025-12-10 15:19:24', '2025-12-10 15:19:24'),
+(63, 'TestRoom_7645', 'CICS', 50, 'available', '2025-12-10 15:55:07', '2025-12-10 15:55:07');
 
 -- --------------------------------------------------------
 
@@ -144,7 +182,15 @@ INSERT INTO `student_booking_requests` (`id`, `student_id`, `room_id`, `date`, `
 (5, 3, 9, '2025-12-11', '08:17:00', 12, 'dscdsfdsgsfgdfsa', 'pending', 4, NULL, '2025-12-08 16:21:07', '2025-12-08 16:21:07'),
 (6, 3, 15, '2025-12-17', '07:21:00', 9, 'asdfsadfsadfsda', 'cancelled', 2, NULL, '2025-12-08 16:21:32', '2025-12-08 16:21:32'),
 (7, 3, 14, '2025-12-19', '22:30:00', 1, 'Matutulog lang po hihi', 'cancelled', 2, NULL, '2025-12-09 18:21:52', '2025-12-09 18:21:52'),
-(8, 3, 9, '2025-12-10', '07:00:00', 12, 'vfdvfdvd', 'pending', 2, NULL, '2025-12-10 12:16:59', '2025-12-10 12:16:59');
+(8, 3, 9, '2025-12-10', '07:00:00', 12, 'vfdvfdvd', 'approved', 2, '', '2025-12-10 12:16:59', '2025-12-10 12:16:59'),
+(9, 3, 9, '2025-12-10', '07:00:00', 12, 'dsdfgyhh', 'denied', 2, 'asdfg', '2025-12-10 13:48:56', '2025-12-10 13:48:56'),
+(10, 3, 42, '2025-12-10', '07:00:00', 12, 'juytrew', 'denied', 2, '', '2025-12-10 15:47:45', '2025-12-10 15:47:45'),
+(11, 3, 63, '2025-12-10', '10:00:00', 1, 'Testing Fix', 'denied', 0, 'iuytrew', '2025-12-10 15:55:07', '2025-12-10 15:55:07'),
+(13, 3, 42, '2025-12-10', '07:00:00', 1, 'qwertyuiop', 'pending', 2, NULL, '2025-12-10 17:25:46', '2025-12-10 17:25:46'),
+(14, 3, 42, '2025-12-10', '09:00:00', 1, '345678765eyuyfd', 'pending', 2, NULL, '2025-12-10 17:28:45', '2025-12-10 17:28:45'),
+(15, 3, 51, '2026-01-07', '07:00:00', 5, 'qwertyuilmnbvcxz', 'pending', 2, NULL, '2025-12-10 17:52:11', '2025-12-10 17:52:11'),
+(16, 3, 42, '2025-12-10', '08:00:00', 5, 'ertyjmbvfrtyuj', 'approved', 2, '', '2025-12-10 17:56:36', '2025-12-10 17:56:36'),
+(17, 3, 45, '2025-12-10', '09:00:00', 5, 'qwikmnbvcs', 'pending', 2, NULL, '2025-12-10 18:12:19', '2025-12-10 18:12:19');
 
 -- --------------------------------------------------------
 
@@ -168,9 +214,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'chiharu', 'admin@gmail.com', '$2y$12$MzXDBPqSnJpTFZp8mu0EFeiGgrnuew9Cu4jKejifm3wGhe5o6.9Hm', 'admin', 'active', '2025-11-30 06:54:09', '2025-11-30 11:16:22'),
-(2, 'tungtung sahur', 'faculty@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50'),
-(3, 'Princess Shrek', 'student@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00'),
+(1, 'chiharu', 'admin@venb.top', '$2y$12$MzXDBPqSnJpTFZp8mu0EFeiGgrnuew9Cu4jKejifm3wGhe5o6.9Hm', 'admin', 'active', '2025-11-30 06:54:09', '2025-11-30 11:16:22'),
+(2, 'tungtung sahur', 'faculty@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50'),
+(3, 'Princess Shrek', 'student@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00'),
 (4, 'ven', 'super@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'super', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50');
 
 --
@@ -227,7 +273,7 @@ ALTER TABLE `activity_logs`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `booking_modification_requests`
@@ -239,13 +285,13 @@ ALTER TABLE `booking_modification_requests`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `student_booking_requests`
 --
 ALTER TABLE `student_booking_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `users`
