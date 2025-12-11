@@ -60,6 +60,9 @@
                 <label for="booking-duration" class="form-label">Duration (Hours)</label>
                 <select id="booking-duration" name="duration" data-field="duration" class="form-select" required>
                   <option value="1" selected>1 Hour</option>
+                  <option value="2">2 Hours</option>
+                  <option value="3">3 Hours</option>
+                  <option value="4">4 Hours</option>
                   <option value="5">5 Hours</option>
                 </select>
               </div>
