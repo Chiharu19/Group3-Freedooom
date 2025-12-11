@@ -1,18 +1,21 @@
 <?php
 
-class SuperAdminApi {
+class SuperAdminApi
+{
 
     private $superAdminModel;
     private $data;
     private $auth;
 
-    public function __construct($data) {
+    public function __construct($data)
+    {
         $this->superAdminModel = new SuperAdmin();
         $this->auth = new Auth();
         $this->data = $data;
     }
 
-    public function login() {
+    public function login()
+    {
         $email = $this->data['email'] ?? '';
         $password = $this->data['password'] ?? '';
 
@@ -27,7 +30,7 @@ class SuperAdminApi {
             if ($result['user']['role'] === 'super' || $result['user']['role'] === 'super_admin') {
                 $_SESSION['user'] = $result['user'];
                 // Normalize session role to what code expects if needed, or just allow 'super'
-                $_SESSION['user']['role'] = 'super_admin'; 
+                $_SESSION['user']['role'] = 'super_admin';
                 echo json_encode(['success' => true]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Unauthorized Access']);
@@ -37,12 +40,14 @@ class SuperAdminApi {
         }
     }
 
-    public function getAdminsList() {
+    public function getAdminsList()
+    {
         $admins = $this->superAdminModel->getAllAdmins();
         echo json_encode(['success' => true, 'data' => $admins]);
     }
 
-    public function addAdmin() {
+    public function addAdmin()
+    {
         $name = $this->data['full_name'] ?? '';
         $email = $this->data['email'] ?? '';
         $password = $this->data['password'] ?? '';
@@ -53,16 +58,17 @@ class SuperAdminApi {
         }
 
         $result = $this->superAdminModel->addAdmin($name, $email, $password);
-        
+
         if ($result['success']) {
-             $emailService = new EmailService();
-             $emailService->sendAccountCreatedNotification($email, $name, $password);
+            $emailService = new EmailService();
+            $emailService->sendAccountCreatedNotification($email, $name, $password);
         }
 
         echo json_encode($result);
     }
 
-    public function editAdmin() {
+    public function editAdmin()
+    {
         $id = $this->data['id'] ?? '';
         $name = $this->data['full_name'] ?? '';
         $email = $this->data['email'] ?? '';
@@ -76,7 +82,8 @@ class SuperAdminApi {
         echo json_encode($result);
     }
 
-    public function toggleStatus() {
+    public function toggleStatus()
+    {
         $id = $this->data['id'] ?? '';
         if (!$id) {
             echo json_encode(['success' => false, 'message' => 'Missing ID']);
@@ -85,5 +92,40 @@ class SuperAdminApi {
 
         $result = $this->superAdminModel->toggleStatus($id);
         echo json_encode($result);
+    }
+
+    public function transferOwnership()
+    {
+        $this->checkAuth();
+        $id = $_SESSION['user']['id']; // Current Super Admin ID
+        $name = $this->data['full_name'] ?? '';
+        $email = $this->data['email'] ?? '';
+        $password = $this->data['password'] ?? '';
+
+        if (!$name || !$email || !$password) {
+            echo json_encode(['success' => false, 'message' => 'Missing fields']);
+            return;
+        }
+
+        $result = $this->superAdminModel->updateSuperAdminCredentials($id, $name, $email, $password);
+
+        if ($result['success']) {
+            // Force Logout
+            session_destroy();
+            echo json_encode(['success' => true, 'message' => 'Ownership transferred. Logging out...']);
+        } else {
+            echo json_encode($result);
+        }
+    }
+
+    private function checkAuth()
+    {
+        if (session_status() === PHP_SESSION_NONE)
+            session_start();
+        // Check strict super admin
+        if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] !== 'super' && $_SESSION['user']['role'] !== 'super_admin')) {
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            exit;
+        }
     }
 }

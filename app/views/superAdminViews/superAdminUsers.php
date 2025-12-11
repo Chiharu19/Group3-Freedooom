@@ -11,6 +11,7 @@
             <h3 class="text-center mt-3 mb-4 text-white">Super Admin</h3>
             <a href="?page=super-admin">Dashboard</a>
             <a href="#" class="active">Manage Admins</a>
+            <a href="?page=super-admin-transfer">Transfer Rights</a>
             <a href="#"
                 onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('saLogoutModal')).show();">Logout</a>
         </div>

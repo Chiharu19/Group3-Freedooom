@@ -73,8 +73,6 @@ try {
         'deleteBooking' => ['AdminApi', 'deleteBooking'],
         'getBookingList' => ['AdminApi', 'getBookingList'],
         'addBooking' => ['AdminApi', 'addBooking'],
-        'getBookingList' => ['AdminApi', 'getBookingList'],
-        'addBooking' => ['AdminApi', 'addBooking'],
         'editBooking' => ['AdminApi', 'editBooking'],
         'editUser' => ['AdminApi', 'editUser'],
         'getStudentRequests' => ['AdminApi', 'getStudentRequests'],
@@ -96,7 +94,6 @@ try {
         'facultyMyBookings' => ['FacultyApi', 'myBookings'],
         'facultyRequests' => ['FacultyApi', 'studentRequests'],
         'facultyActionRequest' => ['FacultyApi', 'actionRequest'],
-        'facultyActionRequest' => ['FacultyApi', 'actionRequest'],
         'facultyCreateBooking' => ['FacultyApi', 'createBooking'],
         'facultyCancelBooking' => ['FacultyApi', 'cancelBooking'],
         'facultyEditBooking' => ['FacultyApi', 'editBooking'],
@@ -107,6 +104,7 @@ try {
         'addAdmin' => ['SuperAdminApi', 'addAdmin'],
         'editAdmin' => ['SuperAdminApi', 'editAdmin'],
         'toggleAdminStatus' => ['SuperAdminApi', 'toggleStatus'],
+        'transferSuperAdminOwnership' => ['SuperAdminApi', 'transferOwnership'],
     ];
 
     if (!isset($routes[$action])) {

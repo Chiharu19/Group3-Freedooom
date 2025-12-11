@@ -41,7 +41,7 @@ $routes = [
     'student-rooms' => ['StudentController', 'rooms'],
     'student-submit' => ['StudentController', 'submitRequest'],
     'student-requests' => ['StudentController', 'myRequests'],
-    
+
     // Faculty Pages
     'faculty' => ['FacultyController', 'dashboard'],
     'faculty-rooms' => ['FacultyController', 'rooms'],
@@ -52,6 +52,7 @@ $routes = [
     // Super Admin Routes
     'super-admin' => ['SuperAdminController', 'dashboard'],
     'super-admin-users' => ['SuperAdminController', 'users'],
+    'super-admin-transfer' => ['SuperAdminController', 'transferRights'],
     'super-admin-login' => ['SuperAdminController', 'loginView'],
     'super-admin-logout' => ['SuperAdminController', 'logout'],
 

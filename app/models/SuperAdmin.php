@@ -1,10 +1,12 @@
 <?php
 
-class SuperAdmin {
+class SuperAdmin
+{
 
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
         global $conn;
         $this->conn = $conn;
     }
@@ -12,7 +14,8 @@ class SuperAdmin {
     // ------------------------------------------
     // 1. Total Admins
     // ------------------------------------------
-    public function getTotalAdmins() {
+    public function getTotalAdmins()
+    {
         $sql = "SELECT COUNT(*) AS total FROM users WHERE role = 'admin'";
         $res = $this->conn->query($sql);
         return $res->fetch_assoc()['total'];
@@ -21,7 +24,8 @@ class SuperAdmin {
     // ------------------------------------------
     // 2. All Users Count (for overview)
     // ------------------------------------------
-    public function getTotalUsers() {
+    public function getTotalUsers()
+    {
         $sql = "SELECT COUNT(*) AS total FROM users";
         $res = $this->conn->query($sql);
         return $res->fetch_assoc()['total'];
@@ -30,19 +34,22 @@ class SuperAdmin {
     // ------------------------------------------
     // New Stats
     // ------------------------------------------
-    public function getTotalRooms() {
+    public function getTotalRooms()
+    {
         $sql = "SELECT COUNT(*) AS total FROM rooms";
         $res = $this->conn->query($sql);
         return $res->fetch_assoc()['total'];
     }
 
-    public function getTotalBookings() {
+    public function getTotalBookings()
+    {
         $sql = "SELECT COUNT(*) AS total FROM bookings";
         $res = $this->conn->query($sql);
         return $res->fetch_assoc()['total'];
     }
 
-    public function getPendingRequests() {
+    public function getPendingRequests()
+    {
         $sql = "SELECT COUNT(*) AS total FROM student_booking_requests WHERE status = 'pending'";
         $res = $this->conn->query($sql);
         return $res->fetch_assoc()['total'];
@@ -52,10 +59,11 @@ class SuperAdmin {
     // ------------------------------------------
     // 3. Get All Admins
     // ------------------------------------------
-    public function getAllAdmins() {
+    public function getAllAdmins()
+    {
         $sql = "SELECT * FROM users WHERE role = 'admin' ORDER BY full_name ASC";
         $res = $this->conn->query($sql);
-        
+
         $data = [];
         while ($row = $res->fetch_assoc()) {
             $data[] = $row;
@@ -66,7 +74,8 @@ class SuperAdmin {
     // ------------------------------------------
     // 4. Add Admin
     // ------------------------------------------
-    public function addAdmin($fullName, $email, $password) {
+    public function addAdmin($fullName, $email, $password)
+    {
         // Check if email exists
         $check = $this->conn->prepare("SELECT id FROM users WHERE email = ?");
         $check->bind_param("s", $email);
@@ -93,7 +102,8 @@ class SuperAdmin {
     // ------------------------------------------
     // 5. Edit Admin
     // ------------------------------------------
-    public function editAdmin($id, $fullName, $email) {
+    public function editAdmin($id, $fullName, $email)
+    {
         // Check if email exists for OTHER users
         $check = $this->conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
         $check->bind_param("si", $email, $id);
@@ -116,13 +126,14 @@ class SuperAdmin {
     // ------------------------------------------
     // 6. Toggle Status (Active/Inactive)
     // ------------------------------------------
-    public function toggleStatus($id) {
+    public function toggleStatus($id)
+    {
         // Get current status
         $get = $this->conn->prepare("SELECT status FROM users WHERE id = ? AND role = 'admin'");
         $get->bind_param("i", $id);
         $get->execute();
         $res = $get->get_result();
-        
+
         if ($res->num_rows === 0) {
             return ["success" => false, "message" => "Admin not found"];
         }
@@ -138,5 +149,22 @@ class SuperAdmin {
         }
 
         return ["success" => false, "message" => $update->error];
+    }
+    // ------------------------------------------
+    // 7. Update Super Admin Credentials (Transfer)
+    // ------------------------------------------
+    public function updateSuperAdminCredentials($id, $name, $email, $password)
+    {
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = "UPDATE users SET full_name = ?, email = ?, password = ? WHERE id = ? AND (role = 'super' OR role = 'super_admin')";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssi", $name, $email, $hashed, $id);
+
+        if ($stmt->execute()) {
+            return ["success" => true];
+        }
+
+        return ["success" => false, "message" => $stmt->error];
     }
 }
