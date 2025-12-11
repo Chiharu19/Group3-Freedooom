@@ -222,7 +222,9 @@ class AdminApi
                     $comments,
                     [
                         'room_name' => $targetRequest['room_name'],
-                        'date' => $targetRequest['date']
+                        'date' => $targetRequest['date'],
+                        'start_time' => $targetRequest['start_time'],
+                        'duration' => $targetRequest['duration']
                     ]
                 );
             }
