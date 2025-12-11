@@ -105,6 +105,7 @@ try {
         'editAdmin' => ['SuperAdminApi', 'editAdmin'],
         'toggleAdminStatus' => ['SuperAdminApi', 'toggleStatus'],
         'transferSuperAdminOwnership' => ['SuperAdminApi', 'transferOwnership'],
+        'registerFirstSuperAdmin' => ['SuperAdminApi', 'registerFirstSuperAdmin'],
     ];
 
     if (!isset($routes[$action])) {

@@ -19,6 +19,12 @@ class SuperAdminController
     // Separate View file entirely
     public function loginView()
     {
+        // Check if any super admin exists
+        if ($this->superAdminModel->countSuperAdmins() == 0) {
+            require __DIR__ . '/../views/superAdminRegister.php';
+            return;
+        }
+
         // If already logged in as super admin, redirect to dashboard
         if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'super_admin') {
             header('Location: ?page=super-admin');

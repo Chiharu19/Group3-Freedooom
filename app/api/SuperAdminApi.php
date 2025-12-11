@@ -128,4 +128,19 @@ class SuperAdminApi
             exit;
         }
     }
+
+    public function registerFirstSuperAdmin()
+    {
+        $name = $this->data['full_name'] ?? '';
+        $email = $this->data['email'] ?? '';
+        $password = $this->data['password'] ?? '';
+
+        if (!$name || !$email || !$password) {
+            echo json_encode(['success' => false, 'message' => 'Missing fields']);
+            return;
+        }
+
+        $result = $this->superAdminModel->registerSuperAdmin($name, $email, $password);
+        echo json_encode($result);
+    }
 }

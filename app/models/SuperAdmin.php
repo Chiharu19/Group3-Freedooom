@@ -167,4 +167,39 @@ class SuperAdmin
 
         return ["success" => false, "message" => $stmt->error];
     }
+
+    // ------------------------------------------
+    // 8. Count Super Admins
+    // ------------------------------------------
+    public function countSuperAdmins()
+    {
+        $sql = "SELECT COUNT(*) AS total FROM users WHERE role = 'super' OR role = 'super_admin'";
+        $res = $this->conn->query($sql);
+        return $res->fetch_assoc()['total'];
+    }
+
+    // ------------------------------------------
+    // 9. Register First Super Admin
+    // ------------------------------------------
+    public function registerSuperAdmin($name, $email, $password)
+    {
+        // Double check count to be safe
+        if ($this->countSuperAdmins() > 0) {
+            return ["success" => false, "message" => "Super Admin already exists", "redirect_to_login" => true];
+        }
+
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $role = 'super';
+        $status = 'active';
+
+        $sql = "INSERT INTO users (full_name, email, password, role, status) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssss", $name, $email, $hashed, $role, $status);
+
+        if ($stmt->execute()) {
+            return ["success" => true];
+        }
+
+        return ["success" => false, "message" => $stmt->error];
+    }
 }
