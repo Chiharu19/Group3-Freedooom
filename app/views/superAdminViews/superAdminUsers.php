@@ -195,7 +195,7 @@
                     <td>${statusBadge}</td>
                     <td>
                         <button class="btn btn-sm btn-primary" onclick='openEdit(${user.id}, "${safeName}", "${safeEmail}")'>Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id})">
+                        <button class="btn btn-sm ${user.status === 'active' ? 'btn-danger' : 'btn-success'}" onclick="toggleStatus(${user.id})">
                             ${user.status === "active" ? "Deactivate" : "Activate"}
                         </button>
                     </td>

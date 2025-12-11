@@ -188,7 +188,7 @@
                     <td>
                         <button class="btn btn-sm btn-primary" onclick="openEditUserModal(${user.id}, '${safeName}', '${safeEmail}', '${safeRole}')">Edit</button>
                         <button class="btn btn-sm btn-info text-white" onclick="initiatePasswordReset(${user.id}, '${safeEmail}')">Reset PW</button>
-                        <button class="btn btn-sm btn-danger" onclick="toggleStatus(${user.id}, '${user.status}')">
+                        <button class="btn btn-sm ${user.status === 'active' ? 'btn-danger' : 'btn-success'}" onclick="toggleStatus(${user.id}, '${user.status}')">
                             ${user.status === "active" ? "Deactivate" : "Activate"}
                         </button>
                     </td>
