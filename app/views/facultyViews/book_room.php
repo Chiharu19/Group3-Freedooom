@@ -13,16 +13,7 @@
 
 <body>
   <div class="wrapper">
-    <nav class="sidebar">
-      <h3 class="text-center mt-3 mb-4">Faculty</h3>
-      <a href="index.php?page=faculty">Dashboard</a>
-      <a href="index.php?page=faculty-rooms">Rooms</a>
-      <a href="index.php?page=faculty-book" class="active">Book a Room</a>
-      <a href="index.php?page=faculty-my-bookings">My Bookings</a>
-      <a href="index.php?page=faculty-requests">Student Requests</a>
-      <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();"
-        class="mt-3">Logout</a>
-    </nav>
+    <?php include __DIR__ . '/../layouts/faculty_sidebar.php'; ?>
 
     <main class="main-content">
       <div class="topbar d-flex justify-content-between align-items-center px-4">
@@ -97,26 +88,9 @@
     </main>
   </div>
 
-  </div>
 
-  <!-- Logout Confirmation Modal -->
-  <div class="modal fade" id="logoutModal" tabindex="-1">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title fw-bold">Confirm Logout</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to logout?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <a href="index.php?page=logout" class="btn btn-primary">Logout</a>
-        </div>
-      </div>
-    </div>
-  </div>
+
+
 
   <!-- Bootstrap & app -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
