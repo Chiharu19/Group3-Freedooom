@@ -94,9 +94,16 @@ class EmailService
 
     public function sendRequestStatusNotification($to, $status, $comments, $requestDetails = [])
     {
-        $subject = "Booking Request Update: " . ucfirst($status);
+        // Format status for display (e.g. approve -> Approved, reject -> Rejected)
+        $displayStatus = ucfirst($status);
+        if (strtolower($status) === 'approve')
+            $displayStatus = 'Approved';
+        if (strtolower($status) === 'reject')
+            $displayStatus = 'Rejected';
+
+        $subject = "Booking Request Update: " . $displayStatus;
         $data = [
-            'status' => $status,
+            'status' => $displayStatus, // Pass the formatted status to the view
             'comments' => $comments,
             'request_details' => $requestDetails
         ];

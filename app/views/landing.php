@@ -33,7 +33,7 @@
                 <div class="col-lg-5">
                     <h2 class="fw-bold mb-4 text-danger">Visit Us</h2>
                     <p class="mb-4 text-muted">
-                        We are located at the heart of Batangas City. Feel free to drop by for inquiries or assistance regarding facility reservations.
+                        Feel free to drop by for inquiries or assistance regarding facility reservations.
                     </p>
                     
                     <div class="d-flex align-items-start mb-3">
@@ -42,7 +42,7 @@
                         </div>
                         <div>
                             <h6 class="fw-bold mb-0">Address</h6>
-                            <p class="mb-0 text-muted">Batangas State University - Alangilan Campus<br>P5W3+23 Alangilan, Batangas City</p>
+                            <p class="mb-0 text-muted">Batangas State University - JPLPC Malvar Campus<br>G. Leviste St., Poblacion, Malvar Batangas</p>
                         </div>
                     </div>
 

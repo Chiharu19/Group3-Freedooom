@@ -173,11 +173,25 @@ async function initCreateBooking() {
   const sel = document.getElementById('room-select');
   if (sel) {
     sel.innerHTML = '<option value="">-- Select Room --</option>';
-    rooms.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r.id;
-      opt.textContent = r.room_name;
-      sel.appendChild(opt);
+    // Group by building
+    const grouped = rooms.reduce((acc, r) => {
+      const b = r.building || 'Other';
+      if (!acc[b]) acc[b] = [];
+      acc[b].push(r);
+      return acc;
+    }, {});
+
+    // Sort buildings (optional)
+    Object.keys(grouped).sort().forEach(bName => {
+      const group = document.createElement('optgroup');
+      group.label = bName;
+      grouped[bName].forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.id;
+        opt.textContent = r.room_name;
+        group.appendChild(opt);
+      });
+      sel.appendChild(group);
     });
     // Preselect from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -199,8 +213,8 @@ async function initCreateBooking() {
       const data = {
         room_id: form.room_id.value,
         date: form.booking_date.value,
-        start: form.booking_start.value,
-        end: form.booking_end.value,
+        start_time: form.booking_start.value,
+        duration: form.duration.value,
         purpose: form.purpose.value
       };
 

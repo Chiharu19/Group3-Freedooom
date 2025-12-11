@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 10, 2025 at 12:21 PM
+-- Generation Time: Dec 11, 2025 at 01:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -61,12 +61,9 @@ INSERT INTO `bookings` (`id`, `room_id`, `user_id`, `date`, `start_time`, `durat
 (1, 9, 4, '2025-12-04', '10:00:00', 5, 'tangina', '2025-12-03 10:10:21', '2025-12-07 08:08:36'),
 (4, 14, 2, '2025-12-12', '10:00:00', 5, 'hhahahahahaha', '2025-12-05 19:32:09', '2025-12-07 08:08:43'),
 (5, 15, 2, '2025-12-09', '10:28:00', 1, 'afwefewf', '2025-12-09 19:28:56', '2025-12-09 19:28:56'),
-(7, 24, 2, '2025-12-10', '07:00:00', 5, NULL, '2025-12-10 15:57:25', '2025-12-10 15:57:25'),
 (8, 9, 3, '2025-12-10', '07:00:00', 12, 'vfdvfdvd', '2025-12-10 17:14:44', '2025-12-10 17:14:44'),
-(9, 42, 3, '2025-12-10', '08:00:00', 5, 'ertyjmbvfrtyuj', '2025-12-10 18:10:26', '2025-12-10 18:10:26'),
-(10, 45, 3, '2025-12-10', '09:00:00', 5, 'qwikmnbvcs', '2025-12-10 18:56:53', '2025-12-10 18:56:53'),
-(11, 42, 3, '2025-12-10', '07:00:00', 1, 'qwertyuiop', '2025-12-10 18:57:07', '2025-12-10 18:57:07'),
-(12, 42, 3, '2025-12-10', '09:00:00', 1, '345678765eyuyfd', '2025-12-10 18:58:10', '2025-12-10 18:58:10');
+(13, 14, 3, '2025-12-11', '16:39:00', 2, 'asfasdfdas', '2025-12-11 19:10:50', '2025-12-11 19:10:50'),
+(16, 63, 5, '2025-12-23', '10:30:00', 40, NULL, '2025-12-11 19:46:05', '2025-12-11 19:46:05');
 
 -- --------------------------------------------------------
 
@@ -179,10 +176,10 @@ CREATE TABLE `student_booking_requests` (
 
 INSERT INTO `student_booking_requests` (`id`, `student_id`, `room_id`, `date`, `start_time`, `duration`, `purpose`, `status`, `faculty_id`, `notes`, `created_at`, `updated_at`) VALUES
 (1, 3, 14, '2025-12-13', '15:38:00', 4, 'gfrefdsgrgfse', 'cancelled', 2, NULL, '2025-12-08 15:38:12', '2025-12-08 15:38:12'),
-(2, 3, 14, '2025-12-11', '16:39:00', 2, 'asfasdfdas', 'pending', 2, NULL, '2025-12-08 15:39:15', '2025-12-08 15:39:15'),
-(3, 3, 15, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', 'pending', 4, NULL, '2025-12-08 16:17:20', '2025-12-08 16:17:20'),
+(2, 3, 14, '2025-12-11', '16:39:00', 2, 'asfasdfdas', 'approved', 2, '', '2025-12-08 15:39:15', '2025-12-08 15:39:15'),
+(3, 3, 15, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', 'denied', 4, 'eag', '2025-12-08 16:17:20', '2025-12-08 16:17:20'),
 (4, 3, 9, '2025-12-11', '17:17:00', 3, 'dscdsfdsgsfgdfsa', 'cancelled', 4, NULL, '2025-12-08 16:19:24', '2025-12-08 16:19:24'),
-(5, 3, 9, '2025-12-11', '08:17:00', 12, 'dscdsfdsgsfgdfsa', 'pending', 4, NULL, '2025-12-08 16:21:07', '2025-12-08 16:21:07'),
+(5, 3, 9, '2025-12-11', '08:17:00', 12, 'dscdsfdsgsfgdfsa', 'denied', 4, 'wala lang', '2025-12-08 16:21:07', '2025-12-08 16:21:07'),
 (6, 3, 15, '2025-12-17', '07:21:00', 9, 'asdfsadfsadfsda', 'cancelled', 2, NULL, '2025-12-08 16:21:32', '2025-12-08 16:21:32'),
 (7, 3, 14, '2025-12-19', '22:30:00', 1, 'Matutulog lang po hihi', 'cancelled', 2, NULL, '2025-12-09 18:21:52', '2025-12-09 18:21:52'),
 (8, 3, 9, '2025-12-10', '07:00:00', 12, 'vfdvfdvd', 'approved', 2, '', '2025-12-10 12:16:59', '2025-12-10 12:16:59'),
@@ -191,10 +188,23 @@ INSERT INTO `student_booking_requests` (`id`, `student_id`, `room_id`, `date`, `
 (11, 3, 63, '2025-12-10', '10:00:00', 1, 'Testing Fix', 'denied', 0, 'iuytrew', '2025-12-10 15:55:07', '2025-12-10 15:55:07'),
 (13, 3, 42, '2025-12-10', '07:00:00', 1, 'qwertyuiop', 'approved', 2, '', '2025-12-10 17:25:46', '2025-12-10 17:25:46'),
 (14, 3, 42, '2025-12-10', '09:00:00', 1, '345678765eyuyfd', 'approved', 2, '', '2025-12-10 17:28:45', '2025-12-10 17:28:45'),
-(15, 3, 51, '2026-01-07', '07:00:00', 5, 'qwertyuilmnbvcxz', 'pending', 2, NULL, '2025-12-10 17:52:11', '2025-12-10 17:52:11'),
+(15, 3, 51, '2026-01-07', '07:00:00', 5, 'qwertyuilmnbvcxz', 'cancelled', 2, NULL, '2025-12-10 17:52:11', '2025-12-10 17:52:11'),
 (16, 3, 42, '2025-12-10', '08:00:00', 5, 'ertyjmbvfrtyuj', 'approved', 2, '', '2025-12-10 17:56:36', '2025-12-10 17:56:36'),
 (17, 3, 45, '2025-12-10', '09:00:00', 5, 'qwikmnbvcs', 'approved', 2, '', '2025-12-10 18:12:19', '2025-12-10 18:12:19'),
-(18, 3, 49, '2025-12-10', '07:00:00', 1, 'sresthgrafe', 'pending', 5, NULL, '2025-12-10 18:54:03', '2025-12-10 18:54:03');
+(18, 3, 49, '2025-12-10', '07:00:00', 1, 'sresthgrafe', 'denied', 5, 'etdy', '2025-12-10 18:54:03', '2025-12-10 18:54:03'),
+(19, 3, 42, '2025-12-14', '10:04:00', 3, 'wala lang\r\n', 'cancelled', 5, NULL, '2025-12-11 19:06:25', '2025-12-11 19:06:25'),
+(20, 3, 49, '2025-12-12', '10:30:00', 4, 'wala lang\r\n', 'cancelled', 5, NULL, '2025-12-11 19:06:55', '2025-12-11 19:06:55'),
+(21, 3, 63, '2025-12-16', '07:30:00', 5, 'wala lang\r\n', 'cancelled', 6, NULL, '2025-12-11 19:24:33', '2025-12-11 19:24:33'),
+(22, 3, 63, '2025-12-16', '07:30:00', 5, 'wala lang\r\n', 'cancelled', 6, NULL, '2025-12-11 19:24:40', '2025-12-11 19:24:40'),
+(23, 3, 63, '2025-12-16', '07:30:00', 5, 'wala lang\r\n', 'cancelled', 2, NULL, '2025-12-11 19:24:51', '2025-12-11 19:24:51'),
+(24, 3, 63, '2025-12-16', '07:30:00', 5, 'wala lang\r\n', 'cancelled', 5, NULL, '2025-12-11 19:24:56', '2025-12-11 19:24:56'),
+(25, 3, 63, '2025-12-16', '07:30:00', 5, 'wala lang\r\n', 'cancelled', 6, NULL, '2025-12-11 19:25:11', '2025-12-11 19:25:11'),
+(26, 3, 63, '2025-12-25', '08:30:00', 3, 'walaaaaaaaaaaaaa\r\n', 'cancelled', 6, NULL, '2025-12-11 19:25:50', '2025-12-11 19:25:50'),
+(27, 3, 47, '2025-12-28', '07:30:00', 1, '5 lang', 'cancelled', 6, NULL, '2025-12-11 19:27:06', '2025-12-11 19:27:06'),
+(28, 3, 63, '2025-12-26', '07:30:00', 1, 'antok na\r\n', 'cancelled', 5, NULL, '2025-12-11 19:41:46', '2025-12-11 19:41:46'),
+(29, 3, 42, '2025-12-11', '07:00:00', 5, 'asdfasdfadsf', 'cancelled', 6, NULL, '2025-12-11 20:40:14', '2025-12-11 20:40:14'),
+(30, 3, 56, '2025-12-16', '07:30:00', 4, 'Trip lang po', 'pending', 6, NULL, '2025-12-11 20:44:19', '2025-12-11 20:44:19'),
+(31, 3, 49, '2025-12-11', '18:00:00', 1, 'artykjrew', 'pending', 7, NULL, '2025-12-11 20:47:25', '2025-12-11 20:47:25');
 
 -- --------------------------------------------------------
 
@@ -223,8 +233,19 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `
 (1, 'chiharu', 'admin@venb.top', '$2y$12$MzXDBPqSnJpTFZp8mu0EFeiGgrnuew9Cu4jKejifm3wGhe5o6.9Hm', 'admin', 'active', '2025-11-30 06:54:09', '2025-11-30 11:16:22', NULL, NULL),
 (2, 'tungtung sahur', 'faculty@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50', NULL, NULL),
 (3, 'Princess Shrek', 'student@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00', '072ccc00bf008012c80fb0190436cd72528383d6f4500b9fdc2620e5a9f112bc', '2025-12-10 13:20:07'),
-(4, 'ven', 'super@gmail.com', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'super', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50', NULL, NULL),
-(5, 'quijano', 'emmanuelequijanoboss02@gmail.com', '$2y$10$xKJ3ZL3G/D8FVNQbAaYekO/5yUP3SywuSNSwHCHDBwkOnYVLpyDci', 'faculty', 'active', '2025-12-10 18:53:26', '2025-12-10 18:53:26', NULL, NULL);
+(4, 'ven', 'super@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'super', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50', NULL, NULL),
+(5, 'quijano', 'emmanuelequijanoboss02@gmail.com', '$2y$10$xKJ3ZL3G/D8FVNQbAaYekO/5yUP3SywuSNSwHCHDBwkOnYVLpyDci', 'admin', 'active', '2025-12-10 18:53:26', '2025-12-10 18:53:26', NULL, NULL),
+(6, 'akuma', 'johnrusseltagpeo1129@gmail.com', '$2y$10$QRZ9Q09tvyptmX3cgHJnYekkBBz5CfwmqQlcNjn2BfbrzvhzTExgq', 'faculty', 'active', '2025-12-11 19:11:56', '2025-12-11 19:11:56', NULL, NULL),
+(7, 'Emmanuel Quijano', 'quijanoemman99@gmail.com', '$2y$10$n1MD1Ep/ObZ7QA5W4NSsyuP14jXTVyURan6czttqRQInK0mKne3HS', 'faculty', 'active', '2025-12-11 19:19:50', '2025-12-11 19:19:50', NULL, NULL),
+(8, 'dana', 'admin.dana@admin', '$2y$10$dODU0K6NP9eAW.A7RCy6aOoR6bDx6MAa/ndmWzfDWzjvT46KepDcu', 'admin', 'active', '2025-12-11 19:42:47', '2025-12-11 19:42:47', NULL, NULL),
+(9, 'dana Pigar', 'dana@admin', '$2y$10$fdH6DhiaR3pmcqit6FlOIeNEePwt8VsJLoWGSpRDZqWIL0OfdhXrS', 'admin', 'active', '2025-12-11 19:43:02', '2025-12-11 19:43:02', NULL, NULL),
+(10, 'dana', 'dana@admin.com', '$2y$10$yVDyO282pw.nt.Sr1ilAnuqxDjEyITDxKkDhfSYR1ww9bPi7263Mq', 'admin', 'active', '2025-12-11 19:43:12', '2025-12-11 19:43:12', NULL, NULL),
+(11, 'dana Habagat', 'danalynpigar460@gmail.com', '$2y$10$zOwg/a/MO33J.H4tWHiR2eELc/R4CudZ1HGOLHJVZJaBQAecZlfbG', 'admin', 'inactive', '2025-12-11 19:44:35', '2025-12-11 19:44:35', NULL, NULL),
+(12, 'akuma', 'johnrusseltagpeo1130@gmail.com', '$2y$10$TQongQuuLKq4rdF/w7Q0d.UpPg4MguJchxJrHfAT93TqemY64brkW', 'admin', 'active', '2025-12-11 20:18:43', '2025-12-11 20:18:43', NULL, NULL),
+(13, 'akumajdwfgg', 'johnrusseltagpe@gmail.com', '$2y$10$N7f9woOoRR8glcP36C7sPuyrXTXyIxYCIuB8ssbNVHG8B1cZDWkG2', 'admin', 'inactive', '2025-12-11 20:19:11', '2025-12-11 20:19:11', NULL, NULL),
+(14, 'korl', 'ventralberry@gmail.com', '$2y$10$GFPo8FRXGJ/g/xltcrrEue.gvFRoj9FXyTnuA1snJOhkqX56smGUK', 'admin', 'active', '2025-12-11 20:22:00', '2025-12-11 20:22:00', NULL, NULL),
+(15, 'dnp', 'deezernpandora@gmail.com', '$2y$10$uL1xTdCygMKBfNxbmUv.ze/9TLEKED00IZgXXwC.6XYLfLfFTNPrm', 'admin', 'active', '2025-12-11 20:25:11', '2025-12-11 20:25:11', NULL, NULL),
+(16, 'kuroya', 'kuroya.x13@gmail.com', '$2y$10$opFoTvxh62j48vckk7qoP.q1JNyEbYswwb5XYqDi5DB5LTVx7WybW', 'faculty', 'active', '2025-12-11 20:47:33', '2025-12-11 20:47:33', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -280,7 +301,7 @@ ALTER TABLE `activity_logs`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `booking_modification_requests`
@@ -292,19 +313,19 @@ ALTER TABLE `booking_modification_requests`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT for table `student_booking_requests`
 --
 ALTER TABLE `student_booking_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
