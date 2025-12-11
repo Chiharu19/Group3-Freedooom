@@ -11,15 +11,7 @@
     <div class="wrapper">
 
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Admin</h3>
-            <a href="?page=admin">Dashboard</a>
-            <a href="?page=admin-rooms" class="active">Rooms</a>
-            <a href="?page=admin-schedules">Schedules</a>
-            <a href="?page=admin-requests">Student Requests</a>
-            <a href="?page=admin-users">Manage Users</a>
-            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
-        </div>
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
         <!-- Main Content -->
         <div class="main-content">
@@ -189,7 +181,7 @@
             const formData = new FormData(form);
             formData.append("action", "addRoom"); // tell API which action
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            if(csrfToken) formData.append("csrf_token", csrfToken);
+            if (csrfToken) formData.append("csrf_token", csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
@@ -241,7 +233,7 @@
             const formData = new FormData(editForm);
             formData.append("action", "updateRoom");
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            if(csrfToken) formData.append("csrf_token", csrfToken);
+            if (csrfToken) formData.append("csrf_token", csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
@@ -276,7 +268,7 @@
                 formData.append("action", "deleteRoom");
                 formData.append("room_id", room_id);
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                if(csrfToken) formData.append("csrf_token", csrfToken);
+                if (csrfToken) formData.append("csrf_token", csrfToken);
 
                 fetch("/public/api.php", {
                     method: "POST",

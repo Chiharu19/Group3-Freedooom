@@ -11,16 +11,8 @@
     <div class="wrapper">
 
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Admin</h3>
-            <a href="?page=admin">Dashboard</a>
-            <a href="?page=admin-rooms">Rooms</a>
-            <a href="?page=admin-schedules" class="active">Schedules</a>
-            <a href="?page=admin-requests">Student Requests</a>
-            <a href="?page=admin-users">Manage Users</a>
-            <a href="#"
-                onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
-        </div>
+        <!-- Sidebar -->
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
         <!-- Main Content -->
         <div class="main-content">
@@ -434,21 +426,20 @@
         loadBookings();
 
 
-        <script>
+
         // Set minimum date to tomorrow for Add/Edit Booking
-            function setMinDates() {
+        function setMinDates() {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const minDate = tomorrow.toISOString().split('T')[0];
 
             const addDate = document.getElementById('add-date');
-            if(addDate) addDate.min = minDate;
+            if (addDate) addDate.min = minDate;
 
             const editDate = document.getElementById('edit-date');
-            if(editDate) editDate.min = minDate;
+            if (editDate) editDate.min = minDate;
         }
-            document.addEventListener('DOMContentLoaded', setMinDates);
-    </script>
+        document.addEventListener('DOMContentLoaded', setMinDates);
     </script>
 
     <?php require __DIR__ . '/../layouts/footer.php'; ?>

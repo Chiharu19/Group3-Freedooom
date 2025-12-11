@@ -7,16 +7,7 @@
 
     <div class="wrapper">
 
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Admin</h3>
-            <a href="?page=admin">Dashboard</a>
-            <a href="?page=admin-rooms">Rooms</a>
-            <a href="?page=admin-schedules">Schedules</a>
-            <a href="?page=admin-requests">Student Requests</a>
-            <a href="#" class="active">Manage Users</a>
-            <a href="#"
-                onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
-        </div>
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
         <div class="main-content">
 

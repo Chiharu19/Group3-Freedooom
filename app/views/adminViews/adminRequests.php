@@ -9,15 +9,8 @@
     <div class="wrapper">
 
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Admin</h3>
-            <a href="?page=admin">Dashboard</a>
-            <a href="?page=admin-rooms">Rooms</a>
-            <a href="?page=admin-schedules">Schedules</a>
-            <a href="#" class="active">Student Requests</a>
-            <a href="?page=admin-users">Manage Users</a>
-            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
-        </div>
+        <!-- Sidebar -->
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
         <div class="main-content">
 
@@ -42,7 +35,9 @@
                                 </tr>
                             </thead>
                             <tbody id="requests-body">
-                                <tr><td colspan="6" class="text-center text-muted">Loading...</td></tr>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">Loading...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -67,20 +62,20 @@
 
             fetch('/public/api.php', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'X-CSRF-TOKEN': csrfToken || ''
                 },
                 body: formData
             })
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.getElementById('requests-body');
-                if (!data.success || data.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No pending requests.</td></tr>';
-                    return;
-                }
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('requests-body');
+                    if (!data.success || data.data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No pending requests.</td></tr>';
+                        return;
+                    }
 
-                tbody.innerHTML = data.data.map(r => `
+                    tbody.innerHTML = data.data.map(r => `
                     <tr>
                         <td>${r.date}</td>
                         <td>${r.start_time} - ${r.duration}h</td>
@@ -93,8 +88,8 @@
                         </td>
                     </tr>
                 `).join('');
-            })
-            .catch(err => console.error(err));
+                })
+                .catch(err => console.error(err));
         }
 
         function handleRequest(id, action) {
@@ -119,20 +114,20 @@
 
             fetch('/public/api.php', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'X-CSRF-TOKEN': csrfToken || ''
                 },
                 body: formData
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Success!');
-                    loadRequests();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            });
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Success!');
+                        loadRequests();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
         }
     </script>
-<?php require __DIR__ . '/../layouts/footer.php'; ?>
+    <?php require __DIR__ . '/../layouts/footer.php'; ?>
