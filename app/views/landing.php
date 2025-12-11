@@ -19,8 +19,7 @@
     </div>
 
     <!-- Simple Footer (Optional, can be removed if cleaner look desired) -->
-    <footer
-        style="position: absolute; bottom: 0; width: 100%; text-align: center; color: rgba(255,255,255,0.6); padding: 10px; font-size: 0.8rem;">
+    <footer class="landing-footer">
         &copy; <?= date('Y') ?> Batangas State University. All rights reserved.
     </footer>
 
@@ -35,14 +34,15 @@
                     <p class="mb-4 text-muted">
                         Feel free to drop by for inquiries or assistance regarding facility reservations.
                     </p>
-                    
+
                     <div class="d-flex align-items-start mb-3">
                         <div class="me-3 text-danger">
                             <i class="bi bi-geo-alt-fill fs-4"></i>
                         </div>
                         <div>
                             <h6 class="fw-bold mb-0">Address</h6>
-                            <p class="mb-0 text-muted">Batangas State University - JPLPC Malvar Campus<br>G. Leviste St., Poblacion, Malvar Batangas</p>
+                            <p class="mb-0 text-muted">Batangas State University - JPLPC Malvar Campus<br>G. Leviste
+                                St., Poblacion, Malvar Batangas</p>
                         </div>
                     </div>
 
@@ -71,10 +71,10 @@
                 <div class="col-lg-7">
                     <div class="map-container shadow-lg rounded-4 overflow-hidden">
                         <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4631.550868348818!2d121.15337827576698!3d14.044949990437589!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd6ed9735068d7%3A0x97fd25b226e150e7!2sBatangas%20State%20University%20Jose%20P.%20Laurel%20Polytechnic%20College!5e1!3m2!1sen!2sph!4v1765456270052!5m2!1sen!2sph"
-                        width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4631.550868348818!2d121.15337827576698!3d14.044949990437589!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd6ed9735068d7%3A0x97fd25b226e150e7!2sBatangas%20State%20University%20Jose%20P.%20Laurel%20Polytechnic%20College!5e1!3m2!1sen!2sph!4v1765456270052!5m2!1sen!2sph"
+                            width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
                 </div>
             </div>

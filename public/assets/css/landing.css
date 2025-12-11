@@ -128,3 +128,13 @@ body.landing-body {
 .bi {
     line-height: 1;
 }
+
+.landing-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 10px;
+    font-size: 0.8rem;
+}
