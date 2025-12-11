@@ -6,7 +6,8 @@ error_reporting(E_ALL);
 header("Content-Type: application/json");
 
 // Error Handler to return JSON
-function jsonErrorHandler($errno, $errstr, $errfile, $errline) {
+function jsonErrorHandler($errno, $errstr, $errfile, $errline)
+{
     echo json_encode(['success' => false, 'error' => "Error: $errstr in $errfile line $errline"]);
     exit;
 }
@@ -21,7 +22,7 @@ try {
     }
 
     require_once __DIR__ . '/../app/config/database.php';
-    
+
     // CSRF Token Generation
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -42,8 +43,8 @@ try {
         // CSRF Check
         $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
         if (!hash_equals($_SESSION['csrf_token'], $token)) {
-             echo json_encode(['success' => false, 'error' => 'CSRF Token Validation Failed']);
-             exit;
+            echo json_encode(['success' => false, 'error' => 'CSRF Token Validation Failed']);
+            exit;
         }
     }
 
@@ -61,8 +62,9 @@ try {
         'resetPassword' => ['AuthApi', 'resetPassword'],
 
         // Admin Routes
+        'initiatePasswordReset' => ['AdminApi', 'initiatePasswordReset'],
         'getUsersList' => ['AdminApi', 'getUsersList'],
-        'addUser'      => ['AdminApi', 'addUser'],
+        'addUser' => ['AdminApi', 'addUser'],
         'changeUserStatus' => ['AdminApi', 'changeUserStatus'],
         'changeUserPassword' => ['AdminApi', 'changeUserPassword'],
         'addRoom' => ['AdminApi', 'addRoom'],
@@ -70,11 +72,11 @@ try {
         'deleteRoom' => ['AdminApi', 'deleteRoom'],
         'deleteBooking' => ['AdminApi', 'deleteBooking'],
         'getBookingList' => ['AdminApi', 'getBookingList'],
-        'addBooking'    => ['AdminApi', 'addBooking'],
+        'addBooking' => ['AdminApi', 'addBooking'],
         'getBookingList' => ['AdminApi', 'getBookingList'],
-        'addBooking'    => ['AdminApi', 'addBooking'],
+        'addBooking' => ['AdminApi', 'addBooking'],
         'editBooking' => ['AdminApi', 'editBooking'],
-        'editUser'      => ['AdminApi', 'editUser'],
+        'editUser' => ['AdminApi', 'editUser'],
         'getStudentRequests' => ['AdminApi', 'getStudentRequests'],
         'adminActionRequest' => ['AdminApi', 'actionRequest'],
 
@@ -82,7 +84,7 @@ try {
         'getRooms' => ['StudentApi', 'getRooms'],
         'getFaculty' => ['StudentApi', 'getFaculty'],
         'submitRequest' => ['StudentApi', 'submitRequest'],
-        'editRequest'   => ['StudentApi', 'editRequest'],
+        'editRequest' => ['StudentApi', 'editRequest'],
         'myRequests' => ['StudentApi', 'myRequests'],
         'dashboard' => ['StudentApi', 'dashboard'],
         'getRoomSchedule' => ['StudentApi', 'getRoomSchedule'],
@@ -97,7 +99,7 @@ try {
         'facultyActionRequest' => ['FacultyApi', 'actionRequest'],
         'facultyCreateBooking' => ['FacultyApi', 'createBooking'],
         'facultyCancelBooking' => ['FacultyApi', 'cancelBooking'],
-        'facultyEditBooking'   => ['FacultyApi', 'editBooking'],
+        'facultyEditBooking' => ['FacultyApi', 'editBooking'],
 
         // Super Admin Routes
         'superAdminLogin' => ['SuperAdminApi', 'login'],
@@ -115,12 +117,12 @@ try {
     [$apiName, $method] = $routes[$action];
     $api = new $apiName($_POST);
     $api->$method();
-    
+
     // Ensure session is saved before exit
     if (session_status() === PHP_SESSION_ACTIVE) {
         session_write_close();
     }
-    
+
 } catch (Throwable $e) {
     echo json_encode(['success' => false, 'error' => 'Exception: ' . $e->getMessage()]);
 }

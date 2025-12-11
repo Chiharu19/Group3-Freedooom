@@ -1,24 +1,29 @@
 <?php
 
-class AdminApi {
+class AdminApi
+{
 
     private $adminModel;
     private $data;
 
-    public function __construct($data) {
+    public function __construct($data)
+    {
         $this->adminModel = new Admin();
         $this->data = $data;
     }
 
-    private function checkAuth() {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+    private function checkAuth()
+    {
+        if (session_status() === PHP_SESSION_NONE)
+            session_start();
         if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
             echo json_encode(['success' => false, 'error' => 'Unauthorized']);
             exit;
         }
     }
 
-    public function addRoom() {
+    public function addRoom()
+    {
         $this->checkAuth();
         $roomName = $this->data['room_name'] ?? '';
         $building = $this->data['building'] ?? '';
@@ -34,13 +39,14 @@ class AdminApi {
         echo json_encode($result);
     }
 
-    public function updateRoom() {
+    public function updateRoom()
+    {
         $this->checkAuth();
-        $roomId   = $this->data['room_id'] ?? '';
+        $roomId = $this->data['room_id'] ?? '';
         $roomName = $this->data['room_name'] ?? '';
         $building = $this->data['building'] ?? '';
         $capacity = $this->data['capacity'] ?? '';
-        $status   = $this->data['status'] ?? '';
+        $status = $this->data['status'] ?? '';
 
         // Basic validation
         if (!$roomId || !$roomName || !$building || !$capacity || !$status) {
@@ -54,34 +60,37 @@ class AdminApi {
         echo json_encode($result);
     }
 
-    public function deleteRoom(){
+    public function deleteRoom()
+    {
         $this->checkAuth();
-        $roomId   = $this->data['room_id'] ?? '';
-        
+        $roomId = $this->data['room_id'] ?? '';
+
         if (!$roomId) {
             echo json_encode(['success' => false, 'error' => 'Missing fields']);
             return;
         }
-        
+
         $result = $this->adminModel->deleteRoom($roomId);
         echo json_encode($result);
 
     }
 
-    public function deleteBooking(){
+    public function deleteBooking()
+    {
 
-        $bookingId   = $this->data['booking_id'] ?? '';
-        
+        $bookingId = $this->data['booking_id'] ?? '';
+
         if (!$bookingId) {
             echo json_encode(['success' => false, 'error' => 'Missing fields']);
             return;
         }
-        
+
         $result = $this->adminModel->deleteBooking($bookingId);
         echo json_encode($result);
     }
 
-    public function getBookingList(){
+    public function getBookingList()
+    {
         $room = $_POST['room'] ?? null;
         $date = $_POST['date'] ?? null;
         $faculty = $_POST['faculty'] ?? null;
@@ -94,13 +103,14 @@ class AdminApi {
         ]);
     }
 
-    public function addBooking() {
+    public function addBooking()
+    {
 
-        $room      = $this->data['room_id'] ?? '';
-        $date      = $this->data['date'] ?? '';
+        $room = $this->data['room_id'] ?? '';
+        $date = $this->data['date'] ?? '';
         $startTime = $this->data['start_time'] ?? '';
-        $duration   = $this->data['duration'] ?? '';
-        $faculty   = $this->data['faculty_id'] ?? '';
+        $duration = $this->data['duration'] ?? '';
+        $faculty = $this->data['faculty_id'] ?? '';
 
         // Basic validation
         if (!$room || !$date || !$startTime || !$duration || !$faculty) {
@@ -120,14 +130,15 @@ class AdminApi {
         echo json_encode($result);
     }
 
-    public function editBooking() {
+    public function editBooking()
+    {
 
         $bookingId = $this->data['booking_id'] ?? '';
-        $room      = $this->data['room_name'] ?? '';
-        $date      = $this->data['date'] ?? '';
+        $room = $this->data['room_name'] ?? '';
+        $date = $this->data['date'] ?? '';
         $startTime = $this->data['start_time'] ?? '';
-        $duration   = $this->data['duration'] ?? '';
-        $faculty   = $this->data['faculty_id'] ?? '';
+        $duration = $this->data['duration'] ?? '';
+        $faculty = $this->data['faculty_id'] ?? '';
 
         // Basic validation
         if (!$bookingId || !$room || !$date || !$startTime || !$duration || !$faculty) {
@@ -148,20 +159,23 @@ class AdminApi {
         echo json_encode($result);
     }
 
-    public function getUsersList(){
+    public function getUsersList()
+    {
 
         $result = $this->adminModel->getManageableUsers();
         echo json_encode(['data' => $result]);
 
     }
 
-    public function getStudentRequests() {
+    public function getStudentRequests()
+    {
         $status = $_POST['status'] ?? 'pending';
         $data = $this->adminModel->getAllStudentRequests($status);
         echo json_encode(['success' => true, 'data' => $data]);
     }
 
-    public function actionRequest() {
+    public function actionRequest()
+    {
         $id = $_POST['request_id'] ?? '';
         $action = $_POST['req_action'] ?? '';
         $comments = $_POST['comments'] ?? '';
@@ -172,11 +186,11 @@ class AdminApi {
         }
 
         $res = $this->adminModel->actionRequest($id, $action, $comments);
-        
+
         if ($res['success']) {
             // Send Email to Student
             $emailService = new EmailService();
-            
+
             // Need Student Email and Request Details.
             // Fetch all requests to find this one (inefficient but safe without model changes)
             $allRequests = $this->adminModel->getAllStudentRequests('all'); // 'all' might not be supported, default is pending.
@@ -184,14 +198,14 @@ class AdminApi {
             // However, we just changed it. 
             // Better approach: We need the student email.
             // Let's assume the frontend might pass it? No, security risk.
-            
+
             // I'll try to fetch it.
             // If I can't easily get it, I'll skip for now to avoid breaking things, 
             // OR I'll add a helper method to AdminModel if I can.
             // Actually, I can use the `getAllStudentRequests` with specific status or just assume I can fetch it.
             // Let's try to fetch all requests including the one we just handled.
             // Since we updated it, its status is now `$action`.
-            
+
             $updatedRequests = $this->adminModel->getAllStudentRequests($action);
             $targetRequest = null;
             foreach ($updatedRequests as $r) {
@@ -200,24 +214,25 @@ class AdminApi {
                     break;
                 }
             }
-            
+
             if ($targetRequest && !empty($targetRequest['email'])) {
-                 $emailService->sendRequestStatusNotification(
-                     $targetRequest['email'], 
-                     $action, 
-                     $comments,
-                     [
-                         'room_name' => $targetRequest['room_name'],
-                         'date' => $targetRequest['date']
-                     ]
-                 );
+                $emailService->sendRequestStatusNotification(
+                    $targetRequest['email'],
+                    $action,
+                    $comments,
+                    [
+                        'room_name' => $targetRequest['room_name'],
+                        'date' => $targetRequest['date']
+                    ]
+                );
             }
         }
 
         echo json_encode($res);
     }
 
-    public function addUser(){
+    public function addUser()
+    {
 
         $full_name = $this->data['full_name'];
         $email = $this->data['email'];
@@ -225,16 +240,17 @@ class AdminApi {
         $role = $this->data['role'];
 
         $result = $this->adminModel->addUser($full_name, $email, $password, $role);
-        
+
         if ($result['success']) {
-             $emailService = new EmailService();
-             $emailService->sendAccountCreatedNotification($email, $full_name, $password);
+            $emailService = new EmailService();
+            $emailService->sendAccountCreatedNotification($email, $full_name, $password);
         }
 
         echo json_encode($result);
     }
 
-    public function editUser() {
+    public function editUser()
+    {
         $userId = $this->data['user_id'] ?? '';
         $fullName = $this->data['full_name'] ?? '';
         $email = $this->data['email'] ?? '';
@@ -249,7 +265,8 @@ class AdminApi {
         echo json_encode($res);
     }
 
-    public function changeUserStatus(){
+    public function changeUserStatus()
+    {
 
         $userId = $this->data['user_id'];
         $currentStatus = $this->data['new_status']; // incoming current status
@@ -262,7 +279,8 @@ class AdminApi {
         echo json_encode($result);
     }
 
-    public function changeUserPassword() {
+    public function changeUserPassword()
+    {
         $userId = $this->data['user_id'] ?? '';
         $newPassword = $this->data['new_password'] ?? '';
 
@@ -273,6 +291,42 @@ class AdminApi {
 
         $result = $this->adminModel->changeUserPassword($userId, $newPassword);
         echo json_encode($result);
+    }
+
+    public function initiatePasswordReset()
+    {
+        $this->checkAuth();
+        $userId = $this->data['user_id'] ?? '';
+
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Missing ID']);
+            return;
+        }
+
+        // Fetch User
+        $user = $this->adminModel->getUserById($userId);
+        if (!$user) {
+            echo json_encode(['success' => false, 'message' => 'User not found']);
+            return;
+        }
+
+        // Generate Token
+        $token = bin2hex(random_bytes(32));
+
+        // Save Token (Need Auth Model - instantiate it)
+        $auth = new Auth();
+        if ($auth->saveResetToken($user['email'], $token)) {
+            $emailService = new EmailService();
+            if ($emailService->sendPasswordResetLink($user['email'], $token)) {
+                echo json_encode(['success' => true, 'message' => 'Password reset link sent to ' . $user['email']]);
+                return;
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to send email']);
+                return;
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to save reset token']);
+        }
     }
 
 
