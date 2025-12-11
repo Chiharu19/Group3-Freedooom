@@ -19,15 +19,8 @@
   <div class="wrapper">
 
     <!-- Sidebar -->
-    <div class="sidebar">
-      <h3 class="text-center mt-3 mb-4">Student</h3>
-      <a href="?page=student">Dashboard</a>
-      <a href="?page=student-rooms">Rooms</a>
-      <a href="?page=student-submit">Submit Booking</a>
-      <a href="?page=student-requests" class="active">My Requests</a>
-      <a href="#"
-        onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('studentLogoutModal')).show();">Logout</a>
-    </div>
+    <!-- Sidebar -->
+    <?php include __DIR__ . '/../layouts/student_sidebar.php'; ?>
 
     <!-- Main content -->
     <div class="main-content">
@@ -148,24 +141,7 @@
     </div>
   </div>
 
-  <!-- Student Logout Modal -->
-  <div class="modal fade" id="studentLogoutModal" tabindex="-1">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title fw-bold">Confirm Logout</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to logout?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <a href="?page=logout" class="btn btn-primary">Logout</a>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Bootstrap Bundle with Popper (Required for Modals) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
