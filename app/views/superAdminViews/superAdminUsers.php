@@ -11,7 +11,8 @@
             <h3 class="text-center mt-3 mb-4 text-white">Super Admin</h3>
             <a href="?page=super-admin">Dashboard</a>
             <a href="#" class="active">Manage Admins</a>
-            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('saLogoutModal')).show();">Logout</a>
+            <a href="#"
+                onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('saLogoutModal')).show();">Logout</a>
         </div>
 
         <div class="main-content">
@@ -78,7 +79,7 @@
 
                 <form id="editAdminForm">
                     <input type="hidden" name="id" id="edit_id">
-                    
+
                     <label class="form-label">Full Name</label>
                     <input type="text" class="form-control mb-2" name="full_name" id="edit_name" required>
 
@@ -93,99 +94,100 @@
 
     <!-- SA Logout Modal -->
     <div class="modal fade" id="saLogoutModal" tabindex="-1">
-      <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title fw-bold">Confirm Logout</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to logout?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <a href="?page=super-admin-logout" class="btn btn-primary">Logout</a>
-          </div>
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Confirm Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to logout?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="?page=super-admin-logout" class="btn btn-primary">Logout</a>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
-        loadAdmins();
+        document.addEventListener("DOMContentLoaded", function () {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        // ADD
-        document.getElementById("addAdminForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            formData.append("action", "addAdmin");
+            loadAdmins();
+
+            // ADD
+            document.getElementById("addAdminForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                formData.append("action", "addAdmin");
+                formData.append("csrf_token", csrfToken);
+
+                fetch("/public/api.php", { method: "POST", body: formData })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Admin added successfully!");
+                            location.reload();
+                        } else {
+                            alert(data.message || data.error || "Error adding admin");
+
+                        }
+                    });
+            });
+
+            // EDIT
+            document.getElementById("editAdminForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                formData.append("action", "editAdmin");
+                formData.append("csrf_token", csrfToken);
+
+                fetch("/public/api.php", { method: "POST", body: formData })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Admin updated successfully!");
+                            location.reload();
+                        } else {
+                            alert(data.message || "Error updating admin");
+                        }
+                    });
+            });
+        });
+
+        function loadAdmins() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const formData = new FormData();
+            formData.append("action", "getAdminsList");
             formData.append("csrf_token", csrfToken);
 
             fetch("/public/api.php", { method: "POST", body: formData })
                 .then(res => res.json())
                 .then(data => {
-                    if(data.success) {
-                        alert("Admin added successfully!");
-                        location.reload();
-                    } else {
-                        alert(data.message || "Error adding admin");
+                    if (!data.data || data.data.length === 0) {
+                        document.getElementById("adminTableBody").innerHTML = `<tr><td colspan="4" class="text-center">No admins found</td></tr>`;
+                        return;
                     }
+                    renderAdmins(data.data);
                 });
-        });
+        }
 
-        // EDIT
-        document.getElementById("editAdminForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            formData.append("action", "editAdmin");
-            formData.append("csrf_token", csrfToken);
+        function renderAdmins(users) {
+            const tbody = document.getElementById("adminTableBody");
+            tbody.innerHTML = "";
 
-            fetch("/public/api.php", { method: "POST", body: formData })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success) {
-                        alert("Admin updated successfully!");
-                        location.reload();
-                    } else {
-                        alert(data.message || "Error updating admin");
-                    }
-                });
-        });
-    });
+            users.forEach(user => {
+                const statusBadge = user.status === "active"
+                    ? `<span class="badge bg-success">Active</span>`
+                    : `<span class="badge bg-secondary">Inactive</span>`;
 
-    function loadAdmins() {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const formData = new FormData();
-        formData.append("action", "getAdminsList");
-        formData.append("csrf_token", csrfToken);
+                // Escaping for safety
+                const safeName = user.full_name.replace(/"/g, '&quot;');
+                const safeEmail = user.email.replace(/"/g, '&quot;');
 
-        fetch("/public/api.php", { method: "POST", body: formData })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.data || data.data.length === 0) {
-                document.getElementById("adminTableBody").innerHTML = `<tr><td colspan="4" class="text-center">No admins found</td></tr>`;
-                return;
-            }
-            renderAdmins(data.data);
-        });
-    }
-
-    function renderAdmins(users) {
-        const tbody = document.getElementById("adminTableBody");
-        tbody.innerHTML = "";
-        
-        users.forEach(user => {
-            const statusBadge = user.status === "active" 
-                ? `<span class="badge bg-success">Active</span>` 
-                : `<span class="badge bg-secondary">Inactive</span>`;
-
-            // Escaping for safety
-            const safeName = user.full_name.replace(/"/g, '&quot;');
-            const safeEmail = user.email.replace(/"/g, '&quot;');
-
-            tbody.innerHTML += `
+                tbody.innerHTML += `
                 <tr>
                     <td>${user.full_name}</td>
                     <td>${user.email}</td>
@@ -198,35 +200,35 @@
                     </td>
                 </tr>
             `;
-        });
-    }
+            });
+        }
 
-    function openEdit(id, name, email) {
-        document.getElementById("edit_id").value = id;
-        document.getElementById("edit_name").value = name;
-        document.getElementById("edit_email").value = email;
-        const modal = new bootstrap.Modal(document.getElementById("editAdminModal"));
-        modal.show();
-    }
+        function openEdit(id, name, email) {
+            document.getElementById("edit_id").value = id;
+            document.getElementById("edit_name").value = name;
+            document.getElementById("edit_email").value = email;
+            const modal = new bootstrap.Modal(document.getElementById("editAdminModal"));
+            modal.show();
+        }
 
-    function toggleStatus(id) {
-        if(!confirm("Are you sure?")) return;
+        function toggleStatus(id) {
+            if (!confirm("Are you sure?")) return;
 
-        const formData = new FormData();
-        formData.append("action", "toggleAdminStatus");
-        formData.append("id", id);
-        formData.append("csrf_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            const formData = new FormData();
+            formData.append("action", "toggleAdminStatus");
+            formData.append("id", id);
+            formData.append("csrf_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
-        fetch("/public/api.php", { method: "POST", body: formData })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success) {
-                loadAdmins();
-            } else {
-                alert(data.message || "Error");
-            }
-        });
-    }
+            fetch("/public/api.php", { method: "POST", body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadAdmins();
+                    } else {
+                        alert(data.message || "Error");
+                    }
+                });
+        }
     </script>
 
     <?php require __DIR__ . '/../layouts/footer.php'; ?>
