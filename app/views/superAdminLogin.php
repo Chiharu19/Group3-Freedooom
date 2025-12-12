@@ -1,34 +1,6 @@
 <?php require __DIR__ . '/layouts/header.php'; ?>
 
-<style>
-    body {
-        background: #1a1a2e;
-        color: #fff;
-    }
-    .login-card {
-        background: #16213e;
-        border: 1px solid #0f3460;
-    }
-    .form-control {
-        background: #0f3460;
-        border: 1px solid #1a1a2e;
-        color: #fff;
-    }
-    .form-control:focus {
-        background: #1a1a2e;
-        color: #fff;
-        border-color: #e94560;
-        box-shadow: none;
-    }
-    .btn-super {
-        background: #e94560;
-        color: #fff;
-    }
-    .btn-super:hover {
-        background: #c33c50;
-        color: #fff;
-    }
-</style>
+<link rel="stylesheet" href="../../public/assets/css/superAdminLogin.css">
 </head>
 
 <body class="d-flex justify-content-center align-items-center min-vh-100">
@@ -61,6 +33,12 @@
             </button>
         </form>
 
+        <div class="text-center mt-3">
+            <a href="landing.php" class="text-decoration-none text-white small">
+                <i class="bi bi-arrow-left"></i> Back to Landing
+            </a>
+        </div>
+
     </div>
 
     <script>
@@ -74,7 +52,7 @@
             const formData = new FormData(form);
             formData.append("action", "superAdminLogin");
 
-            fetch("/public/api.php", {
+            fetch("api.php", {
                 method: "POST",
                 body: formData
             })

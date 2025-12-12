@@ -17,14 +17,7 @@
     <label for="sidebar-toggle" class="sidebar-toggle-label">&#9776; Menu</label>
 
     <div class="wrapper">
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Student</h3>
-            <a href="?page=student">Dashboard</a>
-            <a href="?page=student-rooms" class="active">Rooms</a>
-            <a href="?page=student-submit">Submit Booking</a>
-            <a href="?page=student-requests">My Requests</a>
-            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('studentLogoutModal')).show();">Logout</a>
-        </div>
+        <?php include __DIR__ . '/../layouts/student_sidebar.php'; ?>
 
         <div class="main-content">
             <div class="topbar">
@@ -94,6 +87,8 @@
             </div>
         </div>
     </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/student.js"></script>

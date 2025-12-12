@@ -33,7 +33,7 @@ class Student
     // ==========================================
     public function getFaculty()
     {
-        $sql = "SELECT id, full_name, email FROM users WHERE role = 'faculty' ORDER BY full_name ASC";
+        $sql = "SELECT id, full_name, email FROM users WHERE role = 'faculty' AND status = 'active' ORDER BY full_name ASC";
         $result = $this->conn->query($sql);
 
         $faculty = [];
@@ -51,7 +51,8 @@ class Student
     public function submitRequest($studentId, $roomId, $facultyId, $date, $startTime, $duration, $purpose)
     {
         // Validation? Duration is already int from controller?
-        if ($duration < 1) $duration = 1;
+        if ($duration < 1)
+            $duration = 1;
 
         // Basic validation: Check if room is already booked/requested for overlapping time? 
         // For now, we will just insert as 'pending'. Admin/Faculty handles approval/conflict.
@@ -207,6 +208,25 @@ class Student
     // ==========================================
     // 7. Cancel Booking Request
     // ==========================================
+    public function getRequestById($requestId, $studentId)
+    {
+        $sql = "SELECT r.*, rm.room_name, u.full_name, u.email as faculty_email 
+                FROM student_booking_requests r
+                JOIN rooms rm ON r.room_id = rm.id
+                JOIN users u ON r.faculty_id = u.id
+                WHERE r.id = ? AND r.student_id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt)
+            return null;
+
+        $stmt->bind_param("ii", $requestId, $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_assoc();
+    }
+
     public function cancelRequest($requestId, $studentId)
     {
         // Only allow cancelling if status is 'pending'
@@ -220,7 +240,7 @@ class Student
         }
 
         $stmt->bind_param("ii", $requestId, $studentId);
-        
+
         if ($stmt->execute()) {
             if ($stmt->affected_rows > 0) {
                 return ['success' => true, 'message' => 'Request cancelled successfully'];
@@ -252,7 +272,7 @@ class Student
         $duration = max(1, ceil(($end - $start) / 3600)); // Min 1 hour, int
 
         $stmt->bind_param("issisii", $roomId, $date, $startTime, $duration, $purpose, $requestId, $studentId);
-        
+
         if ($stmt->execute()) {
             if ($stmt->affected_rows > 0) {
                 return ['success' => true, 'message' => 'Request updated successfully'];
@@ -276,11 +296,11 @@ class Student
         // New Request: [NewStart, NewEnd]
         // Existing:    [OldStart, OldEnd]
         // Overlap if: NewStart < OldEnd AND NewEnd > OldStart
-        
+
         // SQL: 
         // start_time < ADDTIME(?, SEC_TO_TIME(?*3600))  (NewEnd)
         // AND end_time > ? (NewStart)
-        
+
         $sql = "SELECT id FROM bookings 
                 WHERE room_id = ? 
                 AND date = ? 
@@ -303,7 +323,7 @@ class Student
         $stmt->bind_param("issis", $roomId, $date, $startTime, $duration, $startTime);
         $stmt->execute();
         $stmt->store_result();
-        
+
         return $stmt->num_rows === 0;
     }
 }

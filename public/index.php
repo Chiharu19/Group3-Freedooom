@@ -25,10 +25,11 @@ spl_autoload_register(function ($class) {
 });
 
 // Current page
-$page = $_GET['page'] ?? 'login';
+$page = $_GET['page'] ?? 'landing';
 
 // Page routes
 $routes = [
+    'landing' => ['AuthController', 'landing'],
     'login' => ['AuthController', 'login'],
     'logout' => ['AuthController', 'logout'],
     'admin' => ['AdminController', 'dashboard'],
@@ -40,7 +41,7 @@ $routes = [
     'student-rooms' => ['StudentController', 'rooms'],
     'student-submit' => ['StudentController', 'submitRequest'],
     'student-requests' => ['StudentController', 'myRequests'],
-    
+
     // Faculty Pages
     'faculty' => ['FacultyController', 'dashboard'],
     'faculty-rooms' => ['FacultyController', 'rooms'],
@@ -51,6 +52,7 @@ $routes = [
     // Super Admin Routes
     'super-admin' => ['SuperAdminController', 'dashboard'],
     'super-admin-users' => ['SuperAdminController', 'users'],
+    'super-admin-transfer' => ['SuperAdminController', 'transferRights'],
     'super-admin-login' => ['SuperAdminController', 'loginView'],
     'super-admin-logout' => ['SuperAdminController', 'logout'],
 

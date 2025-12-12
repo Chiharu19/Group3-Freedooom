@@ -27,14 +27,8 @@
 
     <div class="wrapper">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Student</h3>
-            <a href="?page=student">Dashboard</a>
-            <a href="?page=student-rooms">Rooms</a>
-            <a href="?page=student-submit" class="active">Submit Booking</a>
-            <a href="?page=student-requests">My Requests</a>
-            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('studentLogoutModal')).show();">Logout</a>
-        </div>
+
+        <?php include __DIR__ . '/../layouts/student_sidebar.php'; ?>
 
         <div class="main-content">
             <div class="topbar">
@@ -67,18 +61,37 @@
 
                         <div class="mb-3">
                             <label for="startTime" class="form-label">Start Time</label>
-                            <input type="time" id="startTime" name="start_time" min="07:00" max="19:00" class="form-control" required>
+                            <input type="time" id="startTime" name="start_time" min="07:00" max="19:00"
+                                class="form-control" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="duration" class="form-label">Duration (Hours)</label>
-                            <input type="number" id="duration" name="duration" min="1" max="5" value="1" class="form-control" required>
+                            <select id="duration" name="duration" class="form-select" required>
+                                <option value="1" selected>1 Hour</option>
+                                <option value="5">5 Hours</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
                             <label for="purpose" class="form-label">Purpose / Activity</label>
                             <textarea id="purpose" name="purpose" class="form-control" rows="3" required></textarea>
                         </div>
+
+                        <script>
+                            // Set minimum date to tomorrow
+                            const dateSelect = document.getElementById('dateSelect');
+                            const tomorrow = new Date();
+                            tomorrow.setDate(tomorrow.getDate() + 1);
+                            const minDate = tomorrow.toISOString().split('T')[0];
+
+                            dateSelect.min = minDate;
+
+                            // Also ensure if it switches type dynamically, min is preserved or re-applied if needed
+                            dateSelect.addEventListener('focus', () => {
+                                dateSelect.min = minDate;
+                            });
+                        </script>
 
                         <button type="submit" class="btn btn-bsu-red">Submit Request</button>
                         <p class="mt-2 text-muted">Notice: Request needs faculty or admin approval.</p>
@@ -90,24 +103,7 @@
 
     </div>
 
-    <!-- Student Logout Modal -->
-    <div class="modal fade" id="studentLogoutModal" tabindex="-1">
-      <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title fw-bold">Confirm Logout</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to logout?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <a href="?page=logout" class="btn btn-primary">Logout</a>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <script src="assets/js/student.js?v=<?php echo time(); ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

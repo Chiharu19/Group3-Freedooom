@@ -1,0 +1,32 @@
+body {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+.login-card {
+    background: #16213e;
+    border: 1px solid #0f3460;
+}
+
+.form-control {
+    background: #0f3460;
+    border: 1px solid #1a1a2e;
+    color: #fff;
+}
+
+.form-control:focus {
+    background: #1a1a2e;
+    color: #fff;
+    border-color: #e94560;
+    box-shadow: none;
+}
+
+.btn-super {
+    background: #e94560;
+    color: #fff;
+}
+
+.btn-super:hover {
+    background: #c33c50;
+    color: #fff;
+}

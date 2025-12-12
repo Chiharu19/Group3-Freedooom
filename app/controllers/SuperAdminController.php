@@ -1,10 +1,12 @@
 <?php
 
-class SuperAdminController {
+class SuperAdminController
+{
 
     private $superAdminModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->superAdminModel = new SuperAdmin();
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -15,7 +17,14 @@ class SuperAdminController {
     }
 
     // Separate View file entirely
-    public function loginView() {
+    public function loginView()
+    {
+        // Check if any super admin exists
+        if ($this->superAdminModel->countSuperAdmins() == 0) {
+            require __DIR__ . '/../views/superAdminRegister.php';
+            return;
+        }
+
         // If already logged in as super admin, redirect to dashboard
         if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'super_admin') {
             header('Location: ?page=super-admin');
@@ -24,12 +33,13 @@ class SuperAdminController {
         require __DIR__ . '/../views/superAdminLogin.php';
     }
 
-    public function dashboard() {
+    public function dashboard()
+    {
         $this->checkSession();
 
         $totalAdmins = $this->superAdminModel->getTotalAdmins();
         $totalUsers = $this->superAdminModel->getTotalUsers();
-        
+
         // New Stats
         $totalRooms = $this->superAdminModel->getTotalRooms();
         $totalBookings = $this->superAdminModel->getTotalBookings();
@@ -38,12 +48,20 @@ class SuperAdminController {
         require __DIR__ . '/../views/superAdminViews/superAdminDashboard.php';
     }
 
-    public function users() {
+    public function users()
+    {
         $this->checkSession();
         require __DIR__ . '/../views/superAdminViews/superAdminUsers.php';
     }
 
-    public function logout() {
+    public function transferRights()
+    {
+        $this->checkSession();
+        require __DIR__ . '/../views/superAdminViews/superAdminTransfer.php';
+    }
+
+    public function logout()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -52,7 +70,8 @@ class SuperAdminController {
         exit;
     }
 
-    private function checkSession() {
+    private function checkSession()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }

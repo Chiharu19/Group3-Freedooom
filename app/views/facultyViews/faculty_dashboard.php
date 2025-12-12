@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -19,121 +20,99 @@
 
 <body>
 
-<!-- Mobile Toggle -->
-<div class="sidebar-toggle-label d-md-none">
-  <label for="sidebar-toggle" class="m-0">☰ Menu</label>
-</div>
-<input type="checkbox" id="sidebar-toggle" />
+  <!-- Mobile Toggle -->
+  <div class="sidebar-toggle-label d-md-none">
+    <label for="sidebar-toggle" class="m-0">☰ Menu</label>
+  </div>
+  <input type="checkbox" id="sidebar-toggle" />
 
-<div class="wrapper">
+  <div class="wrapper">
 
-  <!-- Sidebar -->
-  <nav class="sidebar">
-    <h3 class="text-center mt-3 mb-4">Faculty</h3>
-    <a class="active" href="index.php?page=faculty">Dashboard</a>
-    <a href="index.php?page=faculty-rooms">Rooms</a>
-    <a href="index.php?page=faculty-book">Book a Room</a>
-    <a href="index.php?page=faculty-my-bookings">My Bookings</a>
-    <a href="index.php?page=faculty-requests">Student Requests</a>
-    <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();" class="mt-3">Logout</a>
-  </nav>
+    <!-- Sidebar -->
+    <?php include __DIR__ . '/../layouts/faculty_sidebar.php'; ?>
 
-  <!-- Main Content -->
-  <main class="main-content">
+    <!-- Main Content -->
+    <main class="main-content">
 
-    <div class="topbar d-flex justify-content-between align-items-center px-4">
-      <h4 class="fw-bold m-0">Dashboard</h4>
-      <span class="fw-semibold">Welcome, <?= htmlspecialchars($_SESSION['user']['full_name'] ?? 'Instructor') ?></span>
-    </div>
+      <div class="topbar d-flex justify-content-between align-items-center px-4">
+        <h4 class="fw-bold m-0">Dashboard</h4>
+        <span class="fw-semibold">Welcome,
+          <?= htmlspecialchars($_SESSION['user']['full_name'] ?? 'Instructor') ?></span>
+      </div>
 
-    <div class="container mt-3">
+      <div class="container mt-3">
 
-      <!-- Dashboard Stats -->
-      <div class="row g-3">
-        <div class="col-12 col-md-6">
-          <div class="card-custom text-center">
-            <h5>My Bookings Today</h5>
-            <h3 id="dashboard-today-count">0</h3>
-            <small id="dashboard-today-list"></small>
+        <!-- Dashboard Stats -->
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <div class="card-custom text-center">
+              <h5>My Bookings Today</h5>
+              <h3 id="dashboard-today-count">0</h3>
+              <small id="dashboard-today-list"></small>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="card-custom text-center">
+              <h5>Pending Student Requests</h5>
+              <h3 id="dashboard-requests-count">0</h3>
+              <small id="dashboard-requests-list"></small>
+            </div>
           </div>
         </div>
 
-        <div class="col-12 col-md-6">
-          <div class="card-custom text-center">
-            <h5>Pending Student Requests</h5>
-            <h3 id="dashboard-requests-count">0</h3>
-            <small id="dashboard-requests-list"></small>
-          </div>
+        <!-- Quick Action Buttons -->
+        <div class="mt-3 d-flex gap-2 flex-wrap">
+          <a href="index.php?page=faculty-book" class="btn btn-bsu-red px-4 py-2">Book a Room</a>
+          <a href="index.php?page=faculty-rooms" class="btn btn-outline-secondary px-4 py-2">View Rooms</a>
+          <a href="index.php?page=faculty-my-bookings" class="btn btn-outline-secondary px-4 py-2">My Bookings</a>
         </div>
+
+        <!-- Calendar Section -->
+        <div class="mt-4">
+          <h5 class="fw-bold mb-2">My Schedule</h5>
+          <div id="faculty-calendar" style="background:white; padding:20px; border-radius:12px;"></div>
+        </div>
+
       </div>
-
-      <!-- Quick Action Buttons -->
-      <div class="mt-3 d-flex gap-2 flex-wrap">
-        <a href="index.php?page=faculty-book" class="btn btn-bsu-red px-4 py-2">Book a Room</a>
-        <a href="index.php?page=faculty-rooms" class="btn btn-outline-secondary px-4 py-2">View Rooms</a>
-        <a href="index.php?page=faculty-my-bookings" class="btn btn-outline-secondary px-4 py-2">My Bookings</a>
-      </div>
-
-      <!-- Calendar Section -->
-      <div class="mt-4">
-        <h5 class="fw-bold mb-2">My Schedule</h5>
-        <div id="faculty-calendar" style="background:white; padding:20px; border-radius:12px;"></div>
-      </div>
-
-    </div>
-  </main>
-</div>
-
-<!-- Booking Detail Modal -->
-<div class="modal fade" id="eventDetailModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 id="eventDetailTitle" class="modal-title fw-bold"></h5>
-        <button class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body small" id="eventDetailBody"></div>
-
-      <div class="modal-footer">
-        <a id="editBookingBtn" href="index.php?page=faculty-my-bookings" class="btn btn-outline-primary">Open My Bookings</a>
-        <button id="requestModBtn" class="btn btn-warning text-dark">Request Modification</button>
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-
-    </div>
+    </main>
   </div>
-</div>
 
-<!-- Logout Confirmation Modal -->
-<div class="modal fade" id="logoutModal" tabindex="-1">
-  <div class="modal-dialog modal-sm modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title fw-bold">Confirm Logout</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to logout?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <a href="index.php?page=logout" class="btn btn-primary">Logout</a>
+  <!-- Booking Detail Modal -->
+  <div class="modal fade" id="eventDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 id="eventDetailTitle" class="modal-title fw-bold"></h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body small" id="eventDetailBody"></div>
+
+        <div class="modal-footer">
+          <a id="editBookingBtn" href="index.php?page=faculty-my-bookings" class="btn btn-outline-primary">Open My
+            Bookings</a>
+          <button id="requestModBtn" class="btn btn-warning text-dark">Request Modification</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+
       </div>
     </div>
   </div>
-</div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- FIXED FullCalendar JS -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
-<!-- Your App Logic -->
-<script src="assets/js/faculty/app.js?v=<?= time() ?>"></script>
-<script src="assets/js/faculty/faculty_dashboard.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- FIXED FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+  <!-- Your App Logic -->
+  <script src="assets/js/faculty/app.js?v=<?= time() ?>"></script>
+  <script src="assets/js/faculty/faculty_dashboard.js"></script>
 
 </body>
+
 </html>

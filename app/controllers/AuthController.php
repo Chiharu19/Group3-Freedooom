@@ -12,6 +12,11 @@ class AuthController
         require __DIR__ . '/../views/login.php';
     }
 
+    public function landing()
+    {
+        require __DIR__ . '/../views/landing.php';
+    }
+
     public function logout()
     {
         if (session_status() === PHP_SESSION_NONE) {

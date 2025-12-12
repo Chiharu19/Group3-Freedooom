@@ -26,6 +26,10 @@
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Password</label>
                     <input type="password" class="form-control" name="password" required>
+                    <div class="text-end mt-1">
+                        <a href="forgot_password.php" class="text-decoration-none small" style="color: #0d6efd;">Forgot
+                            Password?</a>
+                    </div>
                 </div>
 
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -34,36 +38,21 @@
                 </button>
             </form>
 
-        </div>
-    </div>
-
-    <!-- Error Modal -->
-    <div class="modal fade" id="loginErrorModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Login Failed</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p id="modalErrorText" class="fw-bold mt-2"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+            <div class="text-center mt-3">
+                <a href="landing.php" class="text-decoration-none text-muted small">
+                    <i class="bi bi-arrow-left"></i> Back to Landing
+                </a>
             </div>
         </div>
     </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         const form = document.getElementById("login-form");
-        const errorModalEl = document.getElementById('loginErrorModal');
-        const modalErrorText = document.getElementById('modalErrorText');
-        // Initialize modal if bootstrap is loaded
-        // We need to ensure bootstrap is available. header.php likely has it, or we added it above.
-        // If not, we added the script tag above.
+        const errorDiv = document.getElementById("errorMsg");
 
         form.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -72,8 +61,7 @@
             formData.append("action", "logIn");
 
             // clear error
-            const errDiv = document.getElementById('errorMsg');
-            if(errDiv) errDiv.classList.add('d-none');
+            if (errorDiv) errorDiv.classList.add('d-none');
 
             fetch("api.php", {
                 method: "POST",
@@ -83,32 +71,21 @@
                 .then(data => {
                     if (data.success) {
                         try {
-                             window.location.href = `?page=${data.user.role}`;
-                        } catch(e) {
-                             console.error('Role redirection error', e); 
-                             window.location.reload(); 
+                            window.location.href = `?page=${data.user.role}`;
+                        } catch (e) {
+                            console.error('Role redirection error', e);
+                            window.location.reload();
                         }
                     } else {
-                        // Show Modal
-                        if (typeof bootstrap !== 'undefined') {
-                            modalErrorText.textContent = data.message || data.error || 'Incorrect Email or Password';
-                            let loginModal = bootstrap.Modal.getOrCreateInstance(errorModalEl);
-                            loginModal.show();
-                        } else {
-                            // Fallback if bootstrap fails
-                            alert(data.message || data.error || 'Login failed');
-                        }
+                        // Show Error Div
+                        errorDiv.textContent = data.message || data.error || 'Incorrect Email or Password';
+                        errorDiv.classList.remove('d-none');
                     }
                 })
                 .catch(err => {
                     console.error('Network/Parse error:', err);
-                    modalErrorText.textContent = 'A network error occurred.';
-                    if (typeof bootstrap !== 'undefined') {
-                        let loginModal = bootstrap.Modal.getOrCreateInstance(errorModalEl);
-                        loginModal.show();
-                    } else {
-                        alert('Network Error');
-                    }
+                    errorDiv.textContent = 'A network error occurred.';
+                    errorDiv.classList.remove('d-none');
                 });
         });
     </script>

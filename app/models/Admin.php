@@ -1,17 +1,21 @@
 <?php
 
-class Admin {
+class Admin
+{
 
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
         global $conn;
         $this->conn = $conn;
     }
 
     // Helper function/s
-    private function formatTime12($time) {
-        if (!$time) return null;
+    private function formatTime12($time)
+    {
+        if (!$time)
+            return null;
         return date("g:i A", strtotime($time));
     }
 
@@ -21,7 +25,8 @@ class Admin {
     // ------------------------------------------
     // 1. Total Rooms
     // ------------------------------------------
-    public function getTotalRooms() {
+    public function getTotalRooms()
+    {
         $sql = "SELECT COUNT(*) AS total FROM rooms";
         $res = $this->conn->query($sql);
         return $res->fetch_assoc()['total'];
@@ -30,7 +35,8 @@ class Admin {
     // ------------------------------------------
     // 2. Total Faculty / Staff (role = faculty)
     // ------------------------------------------
-    public function getTotalFaculty() {
+    public function getTotalFaculty()
+    {
         $sql = "SELECT COUNT(*) AS total FROM users WHERE role = 'faculty'";
         $res = $this->conn->query($sql);
         return $res->fetch_assoc()['total'];
@@ -39,7 +45,8 @@ class Admin {
     // ------------------------------------------
     // 3. Pending Student Requests
     // ------------------------------------------
-    public function getPendingStudentRequests() {
+    public function getPendingStudentRequests()
+    {
         $sql = "SELECT COUNT(*) AS total 
                 FROM student_booking_requests 
                 WHERE status = 'pending'";
@@ -51,7 +58,8 @@ class Admin {
     // ------------------------------------------
     // 4. Today's Bookings
     // ------------------------------------------
-    public function getTodaysBookings() {
+    public function getTodaysBookings()
+    {
         $sql = "SELECT COUNT(*) AS total 
                 FROM bookings 
                 WHERE date = CURDATE()";
@@ -63,7 +71,8 @@ class Admin {
     // ------------------------------------------
     // 6. Full list of rooms
     // ------------------------------------------
-    public function getAllRooms() {
+    public function getAllRooms()
+    {
         $sql = "SELECT * FROM rooms ORDER BY room_name ASC";
         $res = $this->conn->query($sql);
 
@@ -79,7 +88,8 @@ class Admin {
     // ------------------------------------------
     // 7. List of every bookings (w/ optional filters): 
     // ------------------------------------------
-    public function getBookingList($room = null, $date = null, $faculty = null) {
+    public function getBookingList($room = null, $date = null, $faculty = null)
+    {
         $sql = "SELECT b.*, u.full_name, r.room_name
                 FROM bookings b
                 JOIN users u ON b.user_id = u.id
@@ -108,7 +118,7 @@ class Admin {
 
             // Convert to 12-hour format
             $row['start_time'] = $this->formatTime12($row['start_time']);
-            $row['end_time']   = $this->formatTime12($row['end_time']);
+            $row['end_time'] = $this->formatTime12($row['end_time']);
 
             $data[] = $row;
         }
@@ -120,9 +130,10 @@ class Admin {
     // ------------------------------------------
     // 8. Checks if the combination of room name and building already exists
     // ------------------------------------------
-    public function roomExists($roomName, $building, $excludeId = null) {
+    public function roomExists($roomName, $building, $excludeId = null)
+    {
         $sql = "SELECT id FROM rooms WHERE room_name = ? AND building = ?";
-        
+
         // If editing, exclude the current room ID
         if ($excludeId !== null) {
             $sql .= " AND id != ?";
@@ -145,13 +156,13 @@ class Admin {
     // ------------------------------------------
     // 6. Full list of users
     // ------------------------------------------
-    public function getAllUsers($role = null) {
+    public function getAllUsers($role = null)
+    {
         // If no role provided → fetch all users
         if ($role === null || $role === "") {
             $sql = "SELECT * FROM users ORDER BY full_name ASC";
             $stmt = $this->conn->prepare($sql);
-        } 
-        else {
+        } else {
             // Fetch only matching role
             $sql = "SELECT * FROM users WHERE role = ? ORDER BY full_name ASC";
             $stmt = $this->conn->prepare($sql);
@@ -169,7 +180,8 @@ class Admin {
         return $data;
     }
 
-    public function getManageableUsers() {
+    public function getManageableUsers()
+    {
         // Fetch only faculty and student roles
         $sql = "SELECT * FROM users WHERE role IN ('faculty', 'student') ORDER BY full_name ASC";
         $stmt = $this->conn->prepare($sql);
@@ -184,16 +196,25 @@ class Admin {
         return $data;
     }
 
+    public function getUserById($userId)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
 
 
-    
+
+
     // INSERTION METHODS
 
-    
+
     // ------------------------------------------
     // 8. Add new room
     // ------------------------------------------
-    public function addRoom($roomName, $building, $capacity) {
+    public function addRoom($roomName, $building, $capacity)
+    {
         // check duplicates
         if ($this->roomExists($roomName, $building)) {
             return [
@@ -218,7 +239,8 @@ class Admin {
     // ------------------------------------------
     // 8. Add new booking
     // ------------------------------------------
-    public function addBooking($roomId, $date, $startTime, $duration, $facultyId) {
+    public function addBooking($roomId, $date, $startTime, $duration, $facultyId)
+    {
         // normalize start_time input to HH:MM:SS
         if (preg_match('/^\d{2}:\d{2}$/', $startTime)) {
             $startTime .= ":00";
@@ -300,7 +322,7 @@ class Admin {
             return [
                 "success" => true,
                 "message" => "Booking added successfully",
-                'data'      => $startTime
+                'data' => $startTime
             ];
         }
 
@@ -309,8 +331,9 @@ class Admin {
             "message" => $stmt->error
         ];
     }
-    
-    public function addUser($name, $email, $password, $role) {
+
+    public function addUser($name, $email, $password, $role)
+    {
 
         // 1. Check if email already exists
         $checkSql = "SELECT id FROM users WHERE email = ?";
@@ -356,7 +379,8 @@ class Admin {
     // ------------------------------------------
     // 8. edit existing room
     // ------------------------------------------
-    public function editRoom($id, $roomName, $building, $capacity, $status) {
+    public function editRoom($id, $roomName, $building, $capacity, $status)
+    {
         // Check duplicates but exclude itself
         if ($this->roomExists($roomName, $building, $id)) {
             return [
@@ -382,7 +406,8 @@ class Admin {
     // ------------------------------------------
     // 11. Edit Booking
     // ------------------------------------------
-    public function editBooking($bookingId, $room, $date, $startTime, $duration, $faculty) {
+    public function editBooking($bookingId, $room, $date, $startTime, $duration, $faculty)
+    {
 
         // Get room id
         $stmt = $this->conn->prepare("SELECT id FROM rooms WHERE room_name = ?");
@@ -416,7 +441,8 @@ class Admin {
         ];
     }
 
-    public function updateUser($userId, $fullName, $email, $role) {
+    public function updateUser($userId, $fullName, $email, $role)
+    {
         // 1. Check if email exists for *other* users
         $check = $this->conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
         $check->bind_param("si", $email, $userId);
@@ -437,7 +463,8 @@ class Admin {
         return ["success" => false, "message" => $stmt->error];
     }
 
-    public function changeUserStatus($userId, $newStatus) {
+    public function changeUserStatus($userId, $newStatus)
+    {
         // Validate allowed status values (optional but recommended)
         $allowed = ["active", "inactive"];
         if (!in_array($newStatus, $allowed)) {
@@ -479,7 +506,8 @@ class Admin {
         ];
     }
 
-    public function changeUserPassword($userId, $newPassword) {
+    public function changeUserPassword($userId, $newPassword)
+    {
         // Hash the new password
         $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
 
@@ -503,7 +531,8 @@ class Admin {
     // ------------------------------------------
     // 9. Delete room
     // ------------------------------------------
-    public function deleteRoom($id) {
+    public function deleteRoom($id)
+    {
         $sql = "DELETE FROM rooms WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $id);
@@ -529,7 +558,8 @@ class Admin {
     // ------------------------------------------
     // 10. Delete Booking
     // ------------------------------------------
-    public function deleteBooking($id) {
+    public function deleteBooking($id)
+    {
         $sql = "DELETE FROM bookings WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $id);
@@ -555,10 +585,11 @@ class Admin {
     // ------------------------------------------
     // 11. Get All Student Requests
     // ------------------------------------------
-    public function getAllStudentRequests($status = 'pending') {
+    public function getAllStudentRequests($status = 'pending')
+    {
         // Status column in DB might be lowercase 'pending' or 'Pending'? 
         // Based on faculty_dashboard.js logic, it expects lowercase 'pending'.
-        
+
         $sql = "SELECT r.id, r.date, r.start_time, r.duration, r.purpose, r.status, r.notes as comments, 
                        rm.room_name, u.full_name as student_name, u.email
                 FROM student_booking_requests r
@@ -573,7 +604,7 @@ class Admin {
         $res = $stmt->get_result();
 
         $data = [];
-        while($row = $res->fetch_assoc()) {
+        while ($row = $res->fetch_assoc()) {
             $row['start_time'] = $this->formatTime12($row['start_time']);
             $data[] = $row;
         }
@@ -583,7 +614,8 @@ class Admin {
     // ------------------------------------------
     // 12. Action Request
     // ------------------------------------------
-    public function actionRequest($requestId, $action, $comments) {
+    public function actionRequest($requestId, $action, $comments)
+    {
         if ($action === 'approve') {
             $q = "SELECT * FROM student_booking_requests WHERE id = ?";
             $s = $this->conn->prepare($q);
@@ -591,29 +623,32 @@ class Admin {
             $s->execute();
             $req = $s->get_result()->fetch_assoc();
 
-            if (!$req) return ['success' => false, 'message' => 'Request not found'];
-            if ($req['status'] !== 'pending') return ['success' => false, 'message' => 'Request not pending'];
+            if (!$req)
+                return ['success' => false, 'message' => 'Request not found'];
+            if ($req['status'] !== 'pending')
+                return ['success' => false, 'message' => 'Request not pending'];
 
             // Conflict check logic (duplicated from addBooking but adapted)
             // Note: addBooking computes end time via SQL. Here we do same.
-             $sqlOverlap = "SELECT id FROM bookings 
+            $sqlOverlap = "SELECT id FROM bookings 
                            WHERE room_id = ? AND date = ? 
                            AND ( ? < ADDTIME(start_time, SEC_TO_TIME(duration * 3600)) 
                            AND ADDTIME(?, SEC_TO_TIME(?*3600)) > start_time )";
-            
+
             // start_time in req is HH:MM:SS
             $so = $this->conn->prepare($sqlOverlap);
             $so->bind_param("issii", $req['room_id'], $req['date'], $req['start_time'], $req['start_time'], $req['duration']);
             $so->execute();
             if ($so->get_result()->num_rows > 0) {
-                 return ['success' => false, 'message' => 'Conflict with existing booking'];
+                return ['success' => false, 'message' => 'Conflict with existing booking'];
             }
 
             // Create booking
             $sqlIns = "INSERT INTO bookings (user_id, room_id, date, start_time, duration, purpose) VALUES (?, ?, ?, ?, ?, ?)";
             $ins = $this->conn->prepare($sqlIns);
             $ins->bind_param("iissis", $req['student_id'], $req['room_id'], $req['date'], $req['start_time'], $req['duration'], $req['purpose']);
-            if (!$ins->execute()) return ['success' => false, 'message' => 'Booking insert failed: ' . $ins->error];
+            if (!$ins->execute())
+                return ['success' => false, 'message' => 'Booking insert failed: ' . $ins->error];
 
             $newStatus = 'approved';
         } else {

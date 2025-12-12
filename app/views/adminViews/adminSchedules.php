@@ -11,15 +11,8 @@
     <div class="wrapper">
 
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Admin</h3>
-            <a href="?page=admin">Dashboard</a>
-            <a href="?page=admin-rooms">Rooms</a>
-            <a href="?page=admin-schedules" class="active">Schedules</a>
-            <a href="?page=admin-requests">Student Requests</a>
-            <a href="?page=admin-users">Manage Users</a>
-            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
-        </div>
+        <!-- Sidebar -->
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
         <!-- Main Content -->
         <div class="main-content">
@@ -102,10 +95,14 @@
                                 <input type="date" class="form-control mb-2" name="date" id="add-date" required>
 
                                 <label class="form-label">Start Time</label>
-                                <input type="time" class="form-control mb-2" name="start_time" id="add-start-time" required>
-                                
+                                <input type="time" class="form-control mb-2" name="start_time" id="add-start-time"
+                                    required>
+
                                 <label class="form-label">Duration (Hours)</label>
-                                <input type="number" class="form-control mb-2" name="duration" id="add-duration" required>
+                                <select class="form-select mb-2" name="duration" id="add-duration" required>
+                                    <option value="1" selected>1 Hour</option>
+                                    <option value="5">5 Hours</option>
+                                </select>
 
                                 <label class="form-label">Faculty</label>
                                 <select class="form-select mb-2" name="faculty_id" id="add-faculty-name" required>
@@ -145,7 +142,10 @@
                                 <input type="time" class="form-control mb-2" name="start_time" id="edit-start-time">
 
                                 <label class="form-label">Duration (Hours)</label>
-                                <input type="number" class="form-control mb-2" name="duration" id="edit-duration">
+                                <select class="form-select mb-2" name="duration" id="edit-duration">
+                                    <option value="1">1 Hour</option>
+                                    <option value="5">5 Hours</option>
+                                </select>
 
                                 <label class="form-label">Faculty</label>
                                 <select class="form-select mb-2" name="faculty_id" id="edit-faculty-name">
@@ -168,7 +168,8 @@
                 <div class="card p-3 shadow-sm" style="height: 500px;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold mb-0">Room Booking Overview</h5>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addBookingModal">Add Booking</button>
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addBookingModal">Add
+                            Booking</button>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle table-custom-header">
@@ -184,7 +185,9 @@
                             </thead>
 
                             <tbody id="booking-table-body">
-                                <tr><td colspan="5" class="text-center py-3 text-muted">Loading...</td></tr>
+                                <tr>
+                                    <td colspan="5" class="text-center py-3 text-muted">Loading...</td>
+                                </tr>
                             </tbody>
 
                         </table>
@@ -244,7 +247,7 @@
                     formData.append("booking_id", booking_id);
                     // CSRF
                     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                    if(csrfToken) formData.append('csrf_token', csrfToken);
+                    if (csrfToken) formData.append('csrf_token', csrfToken);
 
                     fetch("/public/api.php", {
                         method: "POST",
@@ -273,10 +276,10 @@
             formData.append("room", room);
             formData.append("date", date);
             formData.append("faculty", faculty);
-            
+
             // CSRF
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            if(csrfToken) formData.append('csrf_token', csrfToken);
+            if (csrfToken) formData.append('csrf_token', csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
@@ -337,33 +340,33 @@
 
             const formData = new FormData(addBookingForm);
             formData.append("action", "addBooking");
-            
+
             // CSRF
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            if(csrfToken) formData.append('csrf_token', csrfToken);
+            if (csrfToken) formData.append('csrf_token', csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
                 body: formData
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = "?page=admin-schedules";
-                    loadBookings();
-                } else {
-                    console.log(data.message);
-                    alert(data.message || 'Error adding booking');
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = "?page=admin-schedules";
+                        loadBookings();
+                    } else {
+                        console.log(data.message);
+                        alert(data.message || 'Error adding booking');
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = originalText;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Network error');
                     submitBtn.disabled = false;
                     submitBtn.innerText = originalText;
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Network error');
-                submitBtn.disabled = false;
-                submitBtn.innerText = originalText;
-            });
+                });
         });
 
         const editBookingForm = document.getElementById("editBookingForm");
@@ -377,10 +380,10 @@
 
             const formData = new FormData(editBookingForm);
             formData.append("action", "editBooking");
-            
+
             // CSRF
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            if(csrfToken) formData.append('csrf_token', csrfToken);
+            if (csrfToken) formData.append('csrf_token', csrfToken);
 
             fetch("/public/api.php", {
                 method: "POST",
@@ -423,6 +426,20 @@
         loadBookings();
 
 
+
+        // Set minimum date to tomorrow for Add/Edit Booking
+        function setMinDates() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const minDate = tomorrow.toISOString().split('T')[0];
+
+            const addDate = document.getElementById('add-date');
+            if (addDate) addDate.min = minDate;
+
+            const editDate = document.getElementById('edit-date');
+            if (editDate) editDate.min = minDate;
+        }
+        document.addEventListener('DOMContentLoaded', setMinDates);
     </script>
 
     <?php require __DIR__ . '/../layouts/footer.php'; ?>

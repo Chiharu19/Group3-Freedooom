@@ -6,44 +6,40 @@
 
 <body>
 
-<div class="wrapper">
+    <div class="wrapper">
 
-        <div class="sidebar">
-            <h3 class="text-center mt-3 mb-4">Admin</h3>
-            <a href="#" class="active">Dashboard</a>
-            <a href="?page=admin-rooms">Rooms</a>
-            <a href="?page=admin-schedules">Schedules</a>
-            <a href="?page=admin-requests">Student Requests</a>
-            <a href="?page=admin-users">Manage Users</a>
-            <a href="#" onclick="event.preventDefault(); new bootstrap.Modal(document.getElementById('logoutModal')).show();">Logout</a>
-        </div>
+        <?php include __DIR__ . '/../layouts/admin_sidebar.php'; ?>
 
         <div class="main-content">
 
             <div class="topbar d-flex justify-content-between align-items-center px-4">
                 <h4 class="fw-bold">Dashboard</h4>
-                <span class="fw-semibold">Welcome, <?= htmlspecialchars($_SESSION['user']['full_name'] ?? 'Administrator') ?></span>
+                <span class="fw-semibold">Welcome,
+                    <?= htmlspecialchars($_SESSION['user']['full_name'] ?? 'Administrator') ?></span>
             </div>
 
             <div class="container mt-4">
 
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
+                        <div
+                            class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Total Rooms</h5>
                             <h3><?= $totalRooms ?></h3>
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
+                        <div
+                            class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Total Faculty/Staff</h5>
                             <h3><?= $totalFacultyStaff ?></h3>
                         </div>
                     </div>
 
                     <div class="col-md-3">
-                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
+                        <div
+                            class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Pending Student Requests</h5>
                             <a href="?page=admin-requests" class="text-decoration-none text-dark">
                                 <h3><?= $totalPendingStudentRequests ?></h3>
@@ -52,7 +48,8 @@
                     </div>
 
                     <div class="col-md-3">
-                        <div class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
+                        <div
+                            class="card shadow-sm p-3 text-center card-custom h-100 d-flex flex-column justify-content-center">
                             <h5>Today's Bookings</h5>
                             <h3><?= $totalTodaysBookings ?></h3>
                         </div>
