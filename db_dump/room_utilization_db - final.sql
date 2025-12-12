@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 11, 2025 at 05:07 PM
+-- Generation Time: Dec 12, 2025 at 02:45 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -89,6 +89,27 @@ CREATE TABLE `booking_modification_requests` (
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rate_limits`
+--
+
+CREATE TABLE `rate_limits` (
+  `id` int(11) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `action` varchar(50) NOT NULL,
+  `attempt_count` int(11) DEFAULT 1,
+  `last_attempt` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `rate_limits`
+--
+
+INSERT INTO `rate_limits` (`id`, `ip_address`, `action`, `attempt_count`, `last_attempt`) VALUES
+(1, '::1', 'password_reset', 1, '2025-12-12 09:43:29');
 
 -- --------------------------------------------------------
 
@@ -244,7 +265,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `created_at`, `updated_at`, `reset_token`, `reset_expires`) VALUES
 (1, 'chiharu', 'admin@venb.top', '$2y$12$MzXDBPqSnJpTFZp8mu0EFeiGgrnuew9Cu4jKejifm3wGhe5o6.9Hm', 'admin', 'active', '2025-11-30 06:54:09', '2025-11-30 11:16:22', NULL, NULL),
 (2, 'tungtung sahur', 'faculty@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'faculty', 'active', '2025-12-01 08:37:50', '2025-12-01 08:37:50', NULL, NULL),
-(3, 'Princess Shrek', 'student@venb.top', '$2y$12$F1DyeRppJ6B12y5JB.iKbep2zwLPK7NMRE4YvlwQP.7q9Ewng.4XW', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00', '072ccc00bf008012c80fb0190436cd72528383d6f4500b9fdc2620e5a9f112bc', '2025-12-10 13:20:07'),
+(3, 'Princess Shrek', 'student@venb.top', '$2y$10$TgLUovIJSjF0j6aVaPVu9u5yP3aGOl5DifPE/2lQzaQfK6UJemOJq', 'student', 'active', '2025-12-01 08:44:00', '2025-12-01 08:44:00', NULL, NULL),
 (5, 'quijano', 'emmanuelequijanoboss02@gmail.com', '$2y$10$xKJ3ZL3G/D8FVNQbAaYekO/5yUP3SywuSNSwHCHDBwkOnYVLpyDci', 'admin', 'active', '2025-12-10 18:53:26', '2025-12-10 18:53:26', NULL, NULL),
 (6, 'akuma', 'johnrusseltagpeo1129@gmail.com', '$2y$10$QRZ9Q09tvyptmX3cgHJnYekkBBz5CfwmqQlcNjn2BfbrzvhzTExgq', 'faculty', 'active', '2025-12-11 19:11:56', '2025-12-11 19:11:56', NULL, NULL),
 (7, 'Emmanuel Quijano', 'quijanoemman99@gmail.com', '$2y$10$n1MD1Ep/ObZ7QA5W4NSsyuP14jXTVyURan6czttqRQInK0mKne3HS', 'faculty', 'active', '2025-12-11 19:19:50', '2025-12-11 19:19:50', NULL, NULL),
@@ -281,6 +302,13 @@ ALTER TABLE `bookings`
 --
 ALTER TABLE `booking_modification_requests`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `rate_limits`
+--
+ALTER TABLE `rate_limits`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ip_address` (`ip_address`,`action`);
 
 --
 -- Indexes for table `rooms`
@@ -321,6 +349,12 @@ ALTER TABLE `bookings`
 --
 ALTER TABLE `booking_modification_requests`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `rate_limits`
+--
+ALTER TABLE `rate_limits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `rooms`
