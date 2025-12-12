@@ -39,7 +39,7 @@
             </form>
 
             <div class="text-center mt-3">
-                <a href="landing.php" class="text-decoration-none text-muted small">
+                <a href="../public/index.php?page=landing" class="text-decoration-none text-muted small">
                     <i class="bi bi-arrow-left"></i> Back to Landing
                 </a>
             </div>
