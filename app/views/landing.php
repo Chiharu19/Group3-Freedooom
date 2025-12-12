@@ -16,6 +16,13 @@
                 Get Started
             </a>
         </div>
+
+        <div class="landing-scroll-indicator">
+            <p class="mb-2">Find us on the map</p>
+            <a href="#contact" class="text-white">
+                <i class="bi bi-chevron-double-down fs-1 mobile-shake"></i>
+            </a>
+        </div>
     </div>
 
     <!-- Simple Footer (Optional, can be removed if cleaner look desired) -->

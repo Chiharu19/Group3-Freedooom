@@ -137,4 +137,44 @@ body.landing-body {
     color: rgba(255, 255, 255, 0.6);
     padding: 10px;
     font-size: 0.8rem;
+    z-index: 5;
+}
+
+.landing-scroll-indicator {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: var(--bsu-white);
+    animation: bounce 2s infinite;
+    z-index: 5;
+}
+
+.landing-scroll-indicator p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.landing-scroll-indicator a {
+    color: var(--bsu-white);
+    transition: opacity 0.3s;
+}
+
+.landing-scroll-indicator a:hover {
+    opacity: 0.7;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
 }
