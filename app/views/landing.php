@@ -8,8 +8,8 @@
     <div class="landing-hero">
         <div class="landing-content">
             <img src="../../public/assets/img/BSU_Logo.png" alt="BatStateU Logo" class="landing-logo">
-            <h1 class="landing-title">Resource Booking System</h1>
-            <p class="landing-subtitle">Streamlining facility reservations for Faculty and Students of Batangas State
+            <h1 class="landing-title">Room Monitoring and Scheduling System</h1>
+            <p class="landing-subtitle">Streamlining room reservations for Faculty and Students of Batangas State
                 University.</p>
 
             <a href="index.php?page=login" class="btn-landing-login">
