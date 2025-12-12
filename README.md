@@ -61,7 +61,28 @@ Ensure you have the following installed:
     *   Open `app/config/database.php`.
     *   Update `$pass = '';` to your actual password.
 
-### 4. Install Dependencies
+### 4. Email Configuration
+1.  **Navigate to Config Directory**:
+    *   Go to `app/config/`.
+2.  **Create Configuration File**:
+    *   Create a new file named `email_config.php`.
+3.  **Add Configuration Settings**:
+    *   Paste the following code into the file and update with your SMTP details:
+    ```php
+    <?php
+    return [
+        'host' => 'smtp.gmail.com', // or your SMTP host
+        'username' => 'your_email@gmail.com',
+        'password' => 'your_app_password', // App Password if using Gmail
+        'encryption' => 'tls', // 'tls' or 'ssl'
+        'port' => 587, // 587 for tls, 465 for ssl
+        'from_address' => 'no-reply@yourdomain.com',
+        'from_name' => 'Room Utilization System'
+    ];
+    ```
+    *   *Note: This file is ignored by Git to protect your credentials.*
+
+### 5. Install Dependencies
 1.  Open Command Prompt (cmd) or PowerShell.
 2.  Navigate to the project directory:
     ```bash
@@ -73,7 +94,7 @@ Ensure you have the following installed:
     ```
     *   *This will create a `vendor` folder containing PHPMailer.*
 
-### 5. Apache Configuration (httpd.conf)
+### 6. Apache Configuration (httpd.conf)
 This step points the server root directly to your project folder.
 
 1.  **Locate Config File**:
@@ -102,7 +123,7 @@ This step points the server root directly to your project folder.
     *   Save the `httpd.conf` file.
     *   In XAMPP Control Panel, **Stop** and then **Start** the **Apache** module to apply changes.
 
-### 6. Verify Installation
+### 7. Verify Installation
 1.  Open your web browser.
 2.  Navigate to [http://localhost/](http://localhost/)
 3.  You should be redirected to the Login page or the Landing page of the Room Utilization System.
